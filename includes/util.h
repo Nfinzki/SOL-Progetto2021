@@ -20,6 +20,12 @@
         exit(errno);                \
     }
 
+#define SYSCALL_ONE_EXIT(f, name)    \
+    if (f == -1) {             \
+        perror(name);               \
+        exit(errno);                \
+    }
+
 /*
 Controlla se la stringa s è un numero ed eventualmente
 la stringa convertita viene messa in n.
