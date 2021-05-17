@@ -3,10 +3,18 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <string.h>
+#include <sys/socket.h>
+#include <sys/un.h>
+#include <sys/select.h>
 
 #include "../includes/util.h"
 
 #define STRLEN 256
+#define UNIX_PATH_MAX 108
+#define MAXCONN 100
+
+static pthread_mutex_t connections = PTHREAD_MUTEX_INITIALIZER;
+static pthread_cond_t emptyConnections = PTHREAD_COND_INITIALIZER;
 
 int sigCaught = 0;
 
@@ -14,6 +22,19 @@ int max_space;
 int max_file;
 char* socketName;
 char* logFile;
+
+typedef struct _connection {
+    int fd;
+    struct _connection *next;
+} connection_t;
+
+connection_t *connectionBuffer = NULL;
+connection_t *tailCBuff = NULL;
+
+void freeGlobal(){
+    if (socketName != NULL) free(socketName);
+    if (logFile != NULL) free(logFile);
+}
 
 void* sighandler(void* arg){ //Da scrivere nella relazione: Si suppone che se fallisce la sigwait tutto il processo viene terminato perché potrei non riuscire più a terminare il server
     sigset_t mask = *(sigset_t*) arg;
@@ -130,6 +151,30 @@ int parseFile(const char* filepath, int* numWorkers, int* memorySpace, int* numF
     return 0;
 }
 
+void* workerThread(void* arg) {}
+
+void inizializeSocket(int* fd_socket) {
+    *fd_socket = socket(AF_UNIX, SOCK_STREAM, 0);
+    SYSCALL_ONE_EXIT(*fd_socket, "socket")
+
+    struct sockaddr_un sa;
+    strncpy(sa.sun_path, socketName, UNIX_PATH_MAX);
+    sa.sun_family = AF_UNIX;
+    
+    SYSCALL_ONE_EXIT(bind(*fd_socket, (struct sockaddr *) &sa, sizeof(sa)), "bind")
+    SYSCALL_ONE_EXIT(listen(*fd_socket, MAXCONN), "listen")
+}
+
+void spawnThread(int W) {
+    for(int i = 0; i < W; i++) {
+        int err;
+        pthread_t tid;
+        SYSCALL_NOT_ZERO_EXIT(err, pthread_create(&tid, NULL, workerThread, NULL), "pthread_create")
+
+        SYSCALL_NOT_ZERO_EXIT(err, pthread_detach(tid), "pthread_detach")
+    }
+}
+
 int main(int argc, char* argv[]) {
     if (argc != 2) {
         fprintf(stderr, "Invalid number of arguments...\n");
@@ -146,10 +191,65 @@ int main(int argc, char* argv[]) {
     int numW;
     if (parseFile(argv[1], &numW, &max_space, &max_file, &socketName, &logFile) != 0) {
         fprintf(stderr, "Error parsing %s\n", argv[1]);
+        freeGlobal();
         return EXIT_FAILURE;
+    }
+
+    spawnThread(numW); //Aggiungere freeGlobal
+
+    int listenSocket;
+    initializeSocket(&listenSocket); //Aggiungere freeGlobal
+
+    int fdMax = 0;
+    if (listenSocket > fdMax) fdMax = listenSocket;
+    fd_set set, rdset;
+    FD_ZERO(&set);
+    FD_SET(listenSocket, &set);
+    
+    while(!sigCaught) {
+        rdset = set;
+
+        if (select(fdMax + 1, &rdset, NULL, NULL, NULL) == -1) {
+            if (errno == EINTR && sigCaught) break;
+            perror("select");
+            freeGlobal();
+            return -1;
+        }
+
+        for(int fd = 0; fd < fdMax + 1; fd++) {
+            if (FD_ISSET(fd, &rdset)) {
+                if (fd == listenSocket) { //Dopo la accept bisognerebbe controllare EINTR e poi controllare se bisogna mettere newFd nel set
+                    int newFd;
+                    newFd = accept(listenSocket, NULL, 0);
+                    
+                    if (newFd == -1) {
+                        fprintf(stderr, "An error has occurred accepting connection\n");
+                        continue;
+                    }
+
+                    connection_t *new = malloc(sizeof(connection_t));
+                    EQ_NULL_EXIT(new, "malloc") //Aggiungere freeGlobal
+
+                    new->fd = newFd;
+                    new->next = NULL;
+
+                    Pthread_mutex_lock(&connections);
+                    if (connectionBuffer == NULL) {
+                        connectionBuffer = new;
+                        tailCBuff = new;
+                    } else {
+                        tailCBuff->next = new;
+                        tailCBuff = new;
+                    }
+                    pthread_cond_signal(&emptyConnections);
+                    Pthread_mutex_unlock(&connections);
+                }
+            }
+        }
     }
 
 
     SYSCALL_NOT_ZERO_EXIT(err, pthread_join(sighandler_thread, NULL), "pthread_join")
+    freeGlobal();
     return 0;
 }
