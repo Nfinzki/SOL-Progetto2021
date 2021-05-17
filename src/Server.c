@@ -5,7 +5,21 @@
 
 #include "../includes/util.h"
 
-void* sighandler(void* arg){}
+int sigCaught = 0;
+
+void* sighandler(void* arg){ //Da scrivere nella relazione: Si suppone che se fallisce la sigwait tutto il processo viene terminato perché potrei non riuscire più a terminare il server
+    sigset_t mask = *(sigset_t*) arg;
+    
+    while(1) {
+        int sig;
+        int err;
+        SYSCALL_NOT_ZERO_EXIT(err, sigwait(&mask, &sig), "sigwait")
+
+        sigCaught = 1;
+        return NULL;
+    }
+    return NULL;
+}
 
 void setHandlers(sigset_t *mask) {
     //Maschero i segnali SIGINT, SIGQUIT, SIGHUP che verranno gestiti dal thread handler
