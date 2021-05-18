@@ -93,7 +93,7 @@ int parseFile(const char* filepath, int* numWorkers, int* memorySpace, int* numF
             *numWorkers = num;
         }
 
-        if(strncmp(str, "MEM_SPACE", 9) == 0){
+        if(strncmp(str, "MEM_SPACE", 9) == 0){ //Aggiungere conversione in MB?
             long num;
             if(isNumber(str + 10, &num) != 0) {
                 fprintf(stderr, "Error in isNumber2\n");
@@ -148,6 +148,7 @@ int parseFile(const char* filepath, int* numWorkers, int* memorySpace, int* numF
     }
 
     free(str);
+    close(fd);
     return 0;
 }
 
@@ -251,5 +252,7 @@ int main(int argc, char* argv[]) {
 
     SYSCALL_NOT_ZERO_EXIT(err, pthread_join(sighandler_thread, NULL), "pthread_join")
     freeGlobal();
+    close(listenSocket);
+    //Aggiungere la chiusura dei fd
     return 0;
 }
