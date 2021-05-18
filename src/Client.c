@@ -100,7 +100,7 @@ void arg_h (const char* name) {
     printf("usage: %s -f <filename> -w <dirname>[,n=0] -W <file1>[,file2] -D <dirname> -r <file1>[,file2] -R [n=0] -d <dirname> -t <time> -l <file1>[,file2] -u <file1>[,file2] -c <file1>[,file2] -p -h\n", name);
 }
 
-void arg_w (char** arg) {
+void arg_w (char* arg) {
     request_t *newR = malloc(sizeof(request_t));
     if (newR == NULL) {
         perror("malloc in arg_w");
@@ -109,10 +109,54 @@ void arg_w (char** arg) {
     }
 
     newR->flag = 'w';
-    newR->option = 0;
     newR->dim = 1;
 
-    //TODO Finire questo
+    int lenDir = -1;
+    for(int i = 0; i < strlen(arg); i++) {
+        if(arg[i] == ',') {
+            arg[i] = '\0';
+            lenDir = i + 1;
+            break;
+        }
+    }
+
+    newR->arg = malloc(sizeof(char*));
+    if (newR->arg == NULL) {
+        perror("malloc in arg in arg_w");
+        free(newR);
+        freeRequests(headReq);
+        exit(EXIT_FAILURE);
+    }
+    
+    newR->arg[0] = calloc(STRLEN, sizeof(char));
+    if(newR->arg[0] == NULL) {
+        perror("malloc in arg[0] in arg_w");
+        free(newR->arg);
+        free(newR);
+        freeRequests(headReq);
+        exit(EXIT_FAILURE);
+    }
+
+    strncpy(newR->arg[0], arg, strlen(arg));
+
+    if (lenDir == -1) {
+        newR->option = 0;
+    } else {
+        long tmp;
+
+        if (isNumber(arg + lenDir + 2, &tmp) != 0) {
+            fprintf(stderr, "Errore in isNumber in arg_w\n");
+            free(newR->arg[0]);
+            free(newR->arg);
+            free(newR);
+            freeRequests(headReq);
+            exit(EXIT_FAILURE);
+        }
+        newR->option = tmp;
+    }
+
+    addTail(newR);
+
 }
 
 void arg_W(char** arg) {
@@ -235,8 +279,17 @@ int main(int argc, char* argv[]) {
             freeRequests(headReq);
             return 0;
         }
-        case 'f': socketName = optarg; break;
-        case 'w': arg_w(&optarg); break;
+        case 'f': {
+            if (socketName == NULL)
+                socketName = optarg;
+            else {
+                fprintf(stderr, "Il flag -f può essere specificato una sola volta\n");
+                freeRequests(headReq);
+                return -1;
+            }
+            break;
+        }
+        case 'w': arg_w(optarg); break;
         case 'W': arg_W(&optarg); break;
         case 'D': printf("L'operazione -D non è gestita\n"); break;
         case 'r': {
@@ -255,7 +308,7 @@ int main(int argc, char* argv[]) {
             break;
         }
         case 'd': {
-            arg_d(&optarg);
+            arg_d(optarg);
             flagd = 1;
             break;
         }
@@ -270,7 +323,16 @@ int main(int argc, char* argv[]) {
         case 'l': printf("L'operazione -l non è gestita\n"); break;
         case 'u': printf("L'operazione -u non è gestita\n"); break;
         case 'c': arg_c(&optarg); break;
-        case 'p': flagP = 1; break;
+        case 'p': {
+            if (!flagP)
+                flagP = 1;
+            else {
+                fprintf(stderr, "Il flag -p può essere specificato una sola volta\n");
+                freeRequests(headReq);
+                return -1;
+            }
+            break;
+        }
         case ':': {
             printf("L'opzione '-%c' richiede un argomento\n", optopt);
             freeRequests(headReq);
