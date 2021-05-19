@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
 
 #include "../includes/util.h"
 
@@ -242,11 +243,21 @@ void arg_d(char* arg) {
     addTail(newR);
 }
 
+void ignoreSigpipe() {
+    struct sigaction s;
+    //Ignora SIGPIPE
+    memset(&s, 0, sizeof(s));
+    s.sa_handler = SIG_IGN;
+    SYSCALL_ONE_EXIT(sigaction(SIGPIPE, &s, NULL), "sigaction");
+}
+
 int main(int argc, char* argv[]) {
     if (argc == 1) {
         fprintf(stderr, "Il numero degli argomenti non è valido\n");
         return -1;
     }
+
+    ignoreSigpipe();    
 
     char* socketName = NULL;
     int flagP = 0;
@@ -344,26 +355,17 @@ int main(int argc, char* argv[]) {
     }
     printf("Socket %s\n", socketName);
 
-    request_t *req = headReq;
-    while(req != NULL) {
-        printf("Flag: -%c, option: %d\n", req->flag, req->option);
 
-        for(int i = 0; i < req->dim; i++) {
-            printf("%s\n", req->arg[i]);
-        }
-        printf("dim: %d\n", req->dim);
-        req = req->next;
-    }
+    // request_t *req = headReq;
+    // while(req != NULL) {
+    //     printf("Flag: -%c, option: %d\n", req->flag, req->option);
 
-    // i = 0;
-    // headReq = headReq->next;
-    // tmp = headReq->arg[i++];
-    // while(tmp != NULL) {
-    //     printf("%s\n", tmp);
-    //     printf("i:%d\n", i);
-    //     tmp = headReq->arg[i++];
+    //     for(int i = 0; i < req->dim; i++) {
+    //         printf("%s\n", req->arg[i]);
+    //     }
+    //     printf("dim: %d\n", req->dim);
+    //     req = req->next;
     // }
-    // printf("dim: %d\n", headReq->dim);
 
     freeRequests(headReq);
     return 0;
