@@ -6,8 +6,10 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <sys/select.h>
+#include <unistd.h>
 
 #include "../includes/util.h"
+#include "../includes/comunication.h"
 
 #define STRLEN 256
 #define UNIX_PATH_MAX 108
@@ -18,7 +20,7 @@ static pthread_cond_t emptyConnections = PTHREAD_COND_INITIALIZER;
 
 int sigCaught = 0;
 
-int max_space;
+long max_space;
 int max_file;
 char* socketName;
 char* logFile;
@@ -47,7 +49,7 @@ void* sighandler(void* arg){ //Da scrivere nella relazione: Si suppone che se fa
         sigCaught = 1;
         printf("Segnale catturato: %d\n", sig);
         fflush(stdout);
-        return NULL;
+        return NULL; //Provvisorio. Poi bisognerà aggiungere la pipe che comunica con il thread dispatcher. Oppure usare shutdown
     }
     return NULL;
 }
@@ -69,7 +71,7 @@ void setHandlers(sigset_t *mask) {
 
 }
 
-int parseFile(const char* filepath, int* numWorkers, int* memorySpace, int* numFile, char** socketName, char** logFile) { //Migliorare il parsing controllando che la stringa sia effettivamente solo quella
+int parseFile(const char* filepath, int* numWorkers, long* memorySpace, int* numFile, char** socketName, char** logFile) { //Migliorare il parsing controllando che la stringa sia effettivamente solo quella
     FILE *fd;
     if((fd = fopen(filepath, "r")) == NULL) {
         perror("fopen");
@@ -94,14 +96,44 @@ int parseFile(const char* filepath, int* numWorkers, int* memorySpace, int* numF
         }
 
         if(strncmp(str, "MEM_SPACE", 9) == 0){ //Aggiungere conversione in MB?
-            long num;
-            if(isNumber(str + 10, &num) != 0) {
+            int K = 0;
+            int M = 0;
+            int G = 0;
+            int B = 0;
+
+            int len = strnlen(str, STRLEN);
+            for(int i = 10; i < len; i++) {
+                if (str[i] == 'K' || str[i] == 'k') {
+                    K = 1;
+                    str[i] = '\0';
+                }
+                if (str[i] == 'M' || str[i] == 'm') {
+                    M = 1;
+                    str[i] = '\0';
+                }
+                if (str[i] == 'G' || str[i] == 'g') {
+                    G = 1;
+                    str[i] = '\0';
+                }
+                if (str[i] == 'B' || str[i] == 'b') B = 1;
+                if (str[i] == ' ') str[i] = '\0';
+            }
+
+            if (!B) {
+                fprintf(stderr, "Wrong format for memory capacity\n");
+                free(str);
+                return -1;
+            }
+
+            if(isNumber(str + 10, memorySpace) != 0) {
                 fprintf(stderr, "Error in isNumber2\n");
                 free(str);
                 return -1;
             }
 
-            *memorySpace = num;
+            if (K) *memorySpace = *memorySpace * 1024;
+            if (M) *memorySpace = *memorySpace * 1024 * 1024;
+            if (G) *memorySpace = *memorySpace * 1024 * 1024 * 1024;
         }
 
         if(strncmp(str, "FILE_SPACE", 10) == 0) {
@@ -148,13 +180,13 @@ int parseFile(const char* filepath, int* numWorkers, int* memorySpace, int* numF
     }
 
     free(str);
-    close(fd);
+    fclose(fd);
     return 0;
 }
 
-void* workerThread(void* arg) {}
+void* workerThread(void* arg) {return NULL;} //Il client invierà il messaggio di termine connessione e il thread chiuderà il FD.
 
-void inizializeSocket(int* fd_socket) {
+void initializeSocket(int* fd_socket) {
     *fd_socket = socket(AF_UNIX, SOCK_STREAM, 0);
     SYSCALL_ONE_EXIT(*fd_socket, "socket")
 
@@ -166,14 +198,21 @@ void inizializeSocket(int* fd_socket) {
     SYSCALL_ONE_EXIT(listen(*fd_socket, MAXCONN), "listen")
 }
 
-void spawnThread(int W) {
+void spawnThread(int W, int writeEndpoint) {
     for(int i = 0; i < W; i++) {
         int err;
         pthread_t tid;
-        SYSCALL_NOT_ZERO_EXIT(err, pthread_create(&tid, NULL, workerThread, NULL), "pthread_create")
+        SYSCALL_NOT_ZERO_EXIT(err, pthread_create(&tid, NULL, workerThread, (void*) &writeEndpoint), "pthread_create")
 
         SYSCALL_NOT_ZERO_EXIT(err, pthread_detach(tid), "pthread_detach")
     }
+}
+
+int updateSet(fd_set *set, int fdMax) {
+    for(int i = fdMax; i >= 0; i--) {
+        if (FD_ISSET(i, set)) return i;
+    }
+    return 0;
 }
 
 int main(int argc, char* argv[]) {
@@ -196,16 +235,24 @@ int main(int argc, char* argv[]) {
         return EXIT_FAILURE;
     }
 
-    spawnThread(numW); //Aggiungere freeGlobal
+    printf("Memory capacity %ld\n", max_space);
+    return 0;
+
+    int fdPipe[2];
+
+    SYSCALL_ONE_EXIT(pipe(fdPipe), "pipe");
+    spawnThread(numW, fdPipe[1]); //Aggiungere freeGlobal
 
     int listenSocket;
     initializeSocket(&listenSocket); //Aggiungere freeGlobal
 
     int fdMax = 0;
     if (listenSocket > fdMax) fdMax = listenSocket;
+    if (fdPipe[0] > fdMax) fdMax = listenSocket;
     fd_set set, rdset;
     FD_ZERO(&set);
     FD_SET(listenSocket, &set);
+    FD_SET(fdPipe[0], &set);
     
     while(!sigCaught) {
         rdset = set;
@@ -219,19 +266,41 @@ int main(int argc, char* argv[]) {
 
         for(int fd = 0; fd < fdMax + 1; fd++) {
             if (FD_ISSET(fd, &rdset)) {
-                if (fd == listenSocket) { //Dopo la accept bisognerebbe controllare EINTR e poi controllare se bisogna mettere newFd nel set
-                    int newFd;
-                    newFd = accept(listenSocket, NULL, 0);
+                if (fd == fdPipe[0]) {
+                    int c_fd, nread;
+
+                    if ((nread = readn(fd, &c_fd, sizeof(int))) == -1) {
+                        perror("read");
+                        return errno;
+                    }
+
+                    if (nread == 0) continue; //Rivedere questo
+
+                    FD_SET(c_fd, &set);
+                    if (c_fd > fdMax) fdMax = c_fd;
+                    continue;
+                }
+                if (fd == listenSocket) { //Dopo la accept bisognerebbe controllare EINTR. No perché non si blocca mai
+                    int newFd = accept(listenSocket, NULL, 0);
                     
                     if (newFd == -1) {
                         fprintf(stderr, "An error has occurred accepting connection\n");
                         continue;
                     }
 
+                    FD_SET(newFd, &set);
+                    if (newFd > fdMax) fdMax = newFd;
+
+                    continue;
+                }
+                if (fd != fdPipe[0] && fd != listenSocket) {
+                    FD_CLR(fd, &set);
+                    fdMax = updateSet(&set, fdMax);
+
                     connection_t *new = malloc(sizeof(connection_t));
                     EQ_NULL_EXIT(new, "malloc") //Aggiungere freeGlobal
 
-                    new->fd = newFd;
+                    new->fd = fd;
                     new->next = NULL;
 
                     Pthread_mutex_lock(&connections);
@@ -253,6 +322,8 @@ int main(int argc, char* argv[]) {
     SYSCALL_NOT_ZERO_EXIT(err, pthread_join(sighandler_thread, NULL), "pthread_join")
     freeGlobal();
     close(listenSocket);
+    close(fdPipe[0]);
+    close(fdPipe[1]);
     //Aggiungere la chiusura dei fd
     return 0;
 }
