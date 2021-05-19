@@ -23,17 +23,27 @@ void freeRequests(request_t *r) {
     while(r != NULL) {
         tmp = r;
         r = r->next;
-        int i = 0;
-        while(tmp->arg[i] != NULL) {
-            free(tmp->arg[i++]);
+        for(int i = 0; i < tmp->dim; i++) {
+            free(tmp->arg[i]);
         }
         free(tmp->arg);
         free(tmp);
     }
 }
 
+int countComma (char* str) {
+    int len = strnlen(str, STRLEN);
+    int commas = 0;
+    for(int i = 0; i < len; i++) {
+        if (str[i] == ',') commas++;
+    }
+    return commas;
+}
+
 char** tokString (char** str, int* initSize) { //Se fallisce bisogna fare la free delle alloc precedenti
-    char** arg = malloc(sizeof(char*) * (*initSize)); //Contare prima il numero di virgole così non c'è bisogno di fare le realloc
+    *initSize = countComma(*str) + 1;
+
+    char** arg = malloc(sizeof(char*) * (*initSize));
 
     if (arg == NULL) {
         perror("malloc");
@@ -55,32 +65,9 @@ char** tokString (char** str, int* initSize) { //Se fallisce bisogna fare la fre
 
     int i = 0;
     while(token) {
-        if (i == *initSize - 1) {
-            *initSize *= 2;
-            arg = realloc(arg, *initSize * sizeof(char*));
-
-            if (arg == NULL) {
-                perror("realloc");
-                return NULL;
-            }
-
-            for(int j = i+1; j < *initSize; j++) {
-                arg[j] = calloc(STRLEN, sizeof(char));
-
-                if(arg[j] == NULL) {
-                    perror("calloc");
-                    return NULL;
-                }
-            }
-        }
         strncpy(arg[i], token, strnlen(token, STRLEN));
         i++;
         token = strtok_r(NULL, ",", &state);
-    }
-
-    for(int j = i; j < *initSize; j++) {
-        free(arg[j]);
-        arg[j] = (char*) NULL;
     }
 
     return arg;
@@ -169,7 +156,6 @@ void arg_W(char** arg) {
 
     newR->flag = 'W';
     newR->option = -1;
-    newR->dim = 4;
     if((newR->arg = tokString(arg, &(newR->dim))) == NULL) {
         perror("tokString");
         free(newR);
@@ -191,7 +177,6 @@ void arg_r(char** arg) {
 
     newR->flag = 'r';
     newR->option = -1;
-    newR->dim = 4;
     if((newR->arg = tokString(arg, &(newR->dim))) == NULL) {
         perror("tokString");
         free(newR);
@@ -213,7 +198,6 @@ void arg_c(char** arg) {
 
     newR->flag = 'c';
     newR->option = -1;
-    newR->dim = 4;
     if((newR->arg = tokString(arg, &(newR->dim))) == NULL) {
         perror("tokString");
         free(newR);
@@ -360,14 +344,16 @@ int main(int argc, char* argv[]) {
     }
     printf("Socket %s\n", socketName);
 
-    // int i = 0;
-    // char* tmp = headReq->arg[i++];
-    // while(tmp != NULL) {
-    //     printf("%s\n", tmp);
-    //     printf("i:%d\n", i);
-    //     tmp = headReq->arg[i++];
-    // }
-    // printf("dim: %d\n", headReq->dim);
+    request_t *req = headReq;
+    while(req != NULL) {
+        printf("Flag: -%c, option: %d\n", req->flag, req->option);
+
+        for(int i = 0; i < req->dim; i++) {
+            printf("%s\n", req->arg[i]);
+        }
+        printf("dim: %d\n", req->dim);
+        req = req->next;
+    }
 
     // i = 0;
     // headReq = headReq->next;
@@ -379,5 +365,6 @@ int main(int argc, char* argv[]) {
     // }
     // printf("dim: %d\n", headReq->dim);
 
+    freeRequests(headReq);
     return 0;
 }
