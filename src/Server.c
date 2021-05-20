@@ -19,6 +19,8 @@ static pthread_mutex_t connections = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t emptyConnections = PTHREAD_COND_INITIALIZER;
 
 int sigCaught = 0;
+int stopRequests = 0;
+int stopConnections = 0;
 
 long max_space;
 int max_file;
@@ -39,29 +41,43 @@ void freeGlobal(){
 }
 
 void* sighandler(void* arg){ //Da scrivere nella relazione: Si suppone che se fallisce la sigwait tutto il processo viene terminato perché potrei non riuscire più a terminare il server
-    sigset_t mask = *(sigset_t*) arg;
-    
-    while(1) {
+    int sigPipe = *(int*) arg;
+
+    sigset_t mask;
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGINT);
+    sigaddset(&mask, SIGQUIT);
+    sigaddset(&mask, SIGHUP);
+
+    while(!sigCaught) {
         int sig;
         int err;
         SYSCALL_NOT_ZERO_EXIT(err, sigwait(&mask, &sig), "sigwait")
 
+        switch (sig) {
+        case SIGINT:
+        case SIGQUIT: stopRequests = 1;
+        case SIGHUP: stopConnections = 1; break;
+        }
+
         sigCaught = 1;
+        // unlink(socketName); 
         printf("Segnale catturato: %d\n", sig);
         fflush(stdout);
-        return NULL; //Provvisorio. Poi bisognerà aggiungere la pipe che comunica con il thread dispatcher. Oppure usare shutdown
+        close(sigPipe);
     }
     return NULL;
 }
 
-void setHandlers(sigset_t *mask) {
+void setHandlers() {
     //Maschero i segnali SIGINT, SIGQUIT, SIGHUP che verranno gestiti dal thread handler
     int err;
-    sigemptyset(mask);
-    sigaddset(mask, SIGINT);
-    sigaddset(mask, SIGQUIT);
-    sigaddset(mask, SIGHUP);
-    SYSCALL_NOT_ZERO_EXIT(err, pthread_sigmask(SIG_BLOCK, mask, NULL), "pthread_sigmask")
+    sigset_t mask;
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGINT);
+    sigaddset(&mask, SIGQUIT);
+    sigaddset(&mask, SIGHUP);
+    SYSCALL_NOT_ZERO_EXIT(err, pthread_sigmask(SIG_BLOCK, &mask, NULL), "pthread_sigmask")
 
     //Ignoro SIGPIPE
     struct sigaction s;
@@ -215,18 +231,26 @@ int updateSet(fd_set *set, int fdMax) {
     return 0;
 }
 
+void closeConnections(fd_set *set, int max) {
+    for(int i = 0; i < max + 1; i++) {
+        if (FD_ISSET(i, set)) close(i);
+    }
+}
+
 int main(int argc, char* argv[]) {
     if (argc != 2) {
         fprintf(stderr, "Invalid number of arguments...\n");
         return EXIT_FAILURE;
     }
 
-    sigset_t mask;
-    setHandlers(&mask);
+    setHandlers();
+    
+    int signalPipe[2];
+    SYSCALL_ONE_EXIT(pipe(signalPipe), "pipe");
 
     int err;
     pthread_t sighandler_thread;
-    SYSCALL_NOT_ZERO_EXIT(err, pthread_create(&sighandler_thread, NULL, sighandler, (void*) &mask), "pthread_create")
+    SYSCALL_NOT_ZERO_EXIT(err, pthread_create(&sighandler_thread, NULL, sighandler, (void*) &signalPipe[1]), "pthread_create")
 
     int numW;
     if (parseFile(argv[1], &numW, &max_space, &max_file, &socketName, &logFile) != 0) {
@@ -238,6 +262,7 @@ int main(int argc, char* argv[]) {
     int fdPipe[2];
 
     SYSCALL_ONE_EXIT(pipe(fdPipe), "pipe");
+
     spawnThread(numW, fdPipe[1]); //Aggiungere freeGlobal
 
     int listenSocket;
@@ -245,13 +270,15 @@ int main(int argc, char* argv[]) {
 
     int fdMax = 0;
     if (listenSocket > fdMax) fdMax = listenSocket;
-    if (fdPipe[0] > fdMax) fdMax = listenSocket;
+    if (fdPipe[0] > fdMax) fdMax = fdPipe[0];
+    if (signalPipe[0] > fdMax) fdMax = signalPipe[0];
     fd_set set, rdset;
     FD_ZERO(&set);
     FD_SET(listenSocket, &set);
     FD_SET(fdPipe[0], &set);
+    FD_SET(signalPipe[0], &set);
     
-    while(!sigCaught) {
+    while(!sigCaught) { //Bisogna aggiungere che se non ci sono più client connessi e stopConnections è attivo, termina tutto.
         rdset = set;
 
         if (select(fdMax + 1, &rdset, NULL, NULL, NULL) == -1) {
@@ -263,6 +290,13 @@ int main(int argc, char* argv[]) {
 
         for(int fd = 0; fd < fdMax + 1; fd++) {
             if (FD_ISSET(fd, &rdset)) {
+                if (stopRequests) { //Chiude tutte le connessioni attive
+                    closeConnections(&set, fdMax);
+                    break;
+                }
+
+                if (fd == signalPipe[0]) break;
+
                 if (fd == fdPipe[0]) {
                     int c_fd, nread;
 
@@ -277,7 +311,7 @@ int main(int argc, char* argv[]) {
                     if (c_fd > fdMax) fdMax = c_fd;
                     continue;
                 }
-                if (fd == listenSocket) { //Dopo la accept bisognerebbe controllare EINTR? No perché non si blocca mai
+                if (fd == listenSocket && !stopConnections) { //Dopo la accept bisognerebbe controllare EINTR? No perché non si blocca mai
                     int newFd = accept(listenSocket, NULL, 0);
                     printf("Client connesso\n");
                     if (newFd == -1) {
@@ -318,7 +352,7 @@ int main(int argc, char* argv[]) {
 
     SYSCALL_NOT_ZERO_EXIT(err, pthread_join(sighandler_thread, NULL), "pthread_join")
     freeGlobal();
-    close(listenSocket);
+    close(listenSocket); //Questo dovrebbe essere tolto
     close(fdPipe[0]);
     close(fdPipe[1]);
     return 0;
