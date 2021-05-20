@@ -5,6 +5,7 @@
 #include <signal.h>
 
 #include "../includes/util.h"
+#include "../includes/comunicationProtocol.h"
 
 #define STRLEN 256
 
@@ -302,7 +303,7 @@ int main(int argc, char* argv[]) {
             flagR = tmp;
             break;
         }
-        case 'd': {
+        case 'd': { //Aggiungere i controlli che sia usato insieme a -r o -R. Forse non conviene aggiungerlo allo stack delle richieste
             arg_d(optarg);
             flagd = 1;
             break;
@@ -355,7 +356,11 @@ int main(int argc, char* argv[]) {
     }
     printf("Socket %s\n", socketName);
 
-
+    struct timespec prova;
+    if (openConnection(socketName, 2000, prova) == -1) {
+        perror("openConnection");
+        freeRequests(headReq);
+    }
     // request_t *req = headReq;
     // while(req != NULL) {
     //     printf("Flag: -%c, option: %d\n", req->flag, req->option);

@@ -95,7 +95,7 @@ int parseFile(const char* filepath, int* numWorkers, long* memorySpace, int* num
             *numWorkers = num;
         }
 
-        if(strncmp(str, "MEM_SPACE", 9) == 0){ //Aggiungere conversione in MB?
+        if(strncmp(str, "MEM_SPACE", 9) == 0){
             int K = 0;
             int M = 0;
             int G = 0;
@@ -235,9 +235,6 @@ int main(int argc, char* argv[]) {
         return EXIT_FAILURE;
     }
 
-    printf("Memory capacity %ld\n", max_space);
-    return 0;
-
     int fdPipe[2];
 
     SYSCALL_ONE_EXIT(pipe(fdPipe), "pipe");
@@ -280,9 +277,9 @@ int main(int argc, char* argv[]) {
                     if (c_fd > fdMax) fdMax = c_fd;
                     continue;
                 }
-                if (fd == listenSocket) { //Dopo la accept bisognerebbe controllare EINTR. No perché non si blocca mai
+                if (fd == listenSocket) { //Dopo la accept bisognerebbe controllare EINTR? No perché non si blocca mai
                     int newFd = accept(listenSocket, NULL, 0);
-                    
+                    printf("Client connesso\n");
                     if (newFd == -1) {
                         fprintf(stderr, "An error has occurred accepting connection\n");
                         continue;
@@ -324,6 +321,5 @@ int main(int argc, char* argv[]) {
     close(listenSocket);
     close(fdPipe[0]);
     close(fdPipe[1]);
-    //Aggiungere la chiusura dei fd
     return 0;
 }
