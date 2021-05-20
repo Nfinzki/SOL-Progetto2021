@@ -60,10 +60,8 @@ void* sighandler(void* arg){ //Da scrivere nella relazione: Si suppone che se fa
         case SIGHUP: stopConnections = 1; break;
         }
 
-        sigCaught = 1;
-        // unlink(socketName); 
-        printf("Segnale catturato: %d\n", sig);
-        fflush(stdout);
+        sigCaught = 1; //Probabilmente va tolto
+
         close(sigPipe);
     }
     return NULL;
@@ -295,7 +293,7 @@ int main(int argc, char* argv[]) {
                     break;
                 }
 
-                if (fd == signalPipe[0]) break;
+                // if (fd == signalPipe[0]) break; //Questo non ci va perché sennò non gestisce bene il tipo di segnale che gli arriva
 
                 if (fd == fdPipe[0]) {
                     int c_fd, nread;
@@ -351,9 +349,10 @@ int main(int argc, char* argv[]) {
 
 
     SYSCALL_NOT_ZERO_EXIT(err, pthread_join(sighandler_thread, NULL), "pthread_join")
-    freeGlobal();
     close(listenSocket); //Questo dovrebbe essere tolto
     close(fdPipe[0]);
     close(fdPipe[1]);
+    SYSCALL_ONE_EXIT(unlink(socketName), "unlink");
+    freeGlobal();
     return 0;
 }
