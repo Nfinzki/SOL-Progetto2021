@@ -98,10 +98,14 @@ int parseFile(const char* filepath, int* numWorkers, long* memorySpace, int* num
     while(fgets(str, STRLEN, fd) != NULL) {
         if (str[strnlen(str, STRLEN) - 1] == '\n') str[strnlen(str, STRLEN) - 1] = '\0';
 
-        if(strncmp(str, "N_WORKERS", 9) == 0){
+        if (strncmp(str, "N_WORKERS", 9) == 0){
             long num;
-            if(isNumber(str + 10, &num) != 0) { //Magari aggiungere la discriminazione tra i vari errori (anche a quelli dopo)
-                fprintf(stderr, "Error in isNumber1\n");
+            int err;
+            if ((err = isNumber(str + 10, &num)) != 0) {
+                if (err == 1)
+                    fprintf(stderr, "isNumber: %s not a number\n", str + 10);
+                else
+                    fprintf(stderr, "isNumber: overflow or underflow\n");
                 free(str);
                 return -1;
             }
@@ -139,8 +143,12 @@ int parseFile(const char* filepath, int* numWorkers, long* memorySpace, int* num
                 return -1;
             }
 
-            if(isNumber(str + 10, memorySpace) != 0) {
-                fprintf(stderr, "Error in isNumber2\n");
+            int err;
+            if ((err = isNumber(str + 10, memorySpace)) != 0) {
+                if (err == 1)
+                    fprintf(stderr, "isNumber: %s not a number\n", str + 10);
+                else
+                    fprintf(stderr, "isNumber: overflow or underflow\n");
                 free(str);
                 return -1;
             }
@@ -152,8 +160,12 @@ int parseFile(const char* filepath, int* numWorkers, long* memorySpace, int* num
 
         if(strncmp(str, "FILE_SPACE", 10) == 0) {
             long num;
-            if(isNumber(str + 11, &num) != 0) {
-                fprintf(stderr, "Error in isNumber3\n");
+            int err;
+            if ((err = isNumber(str + 11, &num)) != 0) {
+                if (err == 1)
+                    fprintf(stderr, "isNumber: %s not a number\n", str + 10);
+                else
+                    fprintf(stderr, "isNumber: overflow or underflow\n");
                 free(str);
                 return -1;
             }
@@ -229,10 +241,18 @@ int updateSet(fd_set *set, int fdMax) {
     return 0;
 }
 
-void closeConnections(fd_set *set, int max) {
+void closeConnections(fd_set *set, int max, int fd1, int fd2, int fd3) {
     for(int i = 0; i < max + 1; i++) {
-        if (FD_ISSET(i, set)) close(i);
+        if (FD_ISSET(i, set) && i != fd1 && i != fd2 && i != fd3) close(i);
     }
+}
+
+int checkConnections(fd_set *set, int max, int fd1, int fd2, int fd3) {
+    for(int i = 0; i < max; i++) {
+        if (FD_ISSET(i, set) && i != fd1 && i != fd2 && i != fd3) return 1;
+    }
+
+    return 0;
 }
 
 int main(int argc, char* argv[]) {
@@ -275,8 +295,10 @@ int main(int argc, char* argv[]) {
     FD_SET(listenSocket, &set);
     FD_SET(fdPipe[0], &set);
     FD_SET(signalPipe[0], &set);
+
+    int stillConnected = 1;
     
-    while(!sigCaught) { //Bisogna aggiungere che se non ci sono più client connessi e stopConnections è attivo, termina tutto.
+    while(stillConnected) { //Bisogna aggiungere che se non ci sono più client connessi e stopConnections è attivo, termina tutto.
         rdset = set;
 
         if (select(fdMax + 1, &rdset, NULL, NULL, NULL) == -1) {
@@ -289,26 +311,25 @@ int main(int argc, char* argv[]) {
         for(int fd = 0; fd < fdMax + 1; fd++) {
             if (FD_ISSET(fd, &rdset)) {
                 if (stopRequests) { //Chiude tutte le connessioni attive
-                    closeConnections(&set, fdMax);
+                    closeConnections(&set, fdMax, listenSocket, fdPipe[0], signalPipe[0]);
                     break;
                 }
 
                 // if (fd == signalPipe[0]) break; //Questo non ci va perché sennò non gestisce bene il tipo di segnale che gli arriva
 
-                if (fd == fdPipe[0]) {
-                    int c_fd, nread;
+                if (fd == fdPipe[0]) { //Bisogna aggiungere che il thread potrebbe rispondere che quella connessione è stata chiusa
+                    int c_fd;
 
-                    if ((nread = readn(fd, &c_fd, sizeof(int))) == -1) {
+                    if (readn(fd, &c_fd, sizeof(int)) == -1) {
                         perror("read");
                         return errno;
                     }
-
-                    if (nread == 0) continue; //Rivedere questo
 
                     FD_SET(c_fd, &set);
                     if (c_fd > fdMax) fdMax = c_fd;
                     continue;
                 }
+
                 if (fd == listenSocket && !stopConnections) { //Dopo la accept bisognerebbe controllare EINTR? No perché non si blocca mai
                     int newFd = accept(listenSocket, NULL, 0);
                     printf("Client connesso\n");
@@ -322,6 +343,7 @@ int main(int argc, char* argv[]) {
 
                     continue;
                 }
+
                 if (fd != fdPipe[0] && fd != listenSocket) {
                     FD_CLR(fd, &set);
                     fdMax = updateSet(&set, fdMax);
@@ -345,14 +367,21 @@ int main(int argc, char* argv[]) {
                 }
             }
         }
+
+        if (stopConnections) stillConnected = checkConnections(&set, fdMax, listenSocket, fdPipe[0], signalPipe[0]); //Ricontrollare
+
     }
 
 
     SYSCALL_NOT_ZERO_EXIT(err, pthread_join(sighandler_thread, NULL), "pthread_join")
+
     close(listenSocket); //Questo dovrebbe essere tolto
     close(fdPipe[0]);
     close(fdPipe[1]);
+    close(signalPipe[0]);
+    close(signalPipe[1]);
     SYSCALL_ONE_EXIT(unlink(socketName), "unlink");
     freeGlobal();
+
     return 0;
 }
