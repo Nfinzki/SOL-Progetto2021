@@ -15,25 +15,25 @@
     }
 
 #define SYSCALL_NOT_ONE_EXIT(f, name)    \
-    if (f != -1) {                  \
+    if ((f) != -1) {                  \
         perror(name);               \
         exit(errno);                \
     }
 
 #define SYSCALL_ONE_EXIT(f, name)   \
-    if (f == -1) {                  \
+    if ((f) == -1) {                  \
         perror(name);               \
         exit(errno);                \
     }
 
 #define EQ_NULL_EXIT(f, name)    \
-    if (f == NULL) {        \
+    if ((f) == NULL) {        \
         perror(name);       \
         exit(errno);        \
     }
 
 #define EQ_NULL_RETURN(f, name)    \
-    if (f == NULL) {        \
+    if ((f) == NULL) {        \
         perror(name);       \
         return errno;        \
     }
