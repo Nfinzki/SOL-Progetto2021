@@ -16,7 +16,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "icl_hash.h"
+#include "../includes/icl_hash.h"
 
 #include <limits.h>
 
