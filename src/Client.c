@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <time.h>
 
 #include "../includes/util.h"
 #include "../includes/comunicationProtocol.h"
@@ -42,7 +43,7 @@ int countComma (char* str) {
     return commas;
 }
 
-char** tokString (char** str, int* initSize) { //Se fallisce bisogna fare la free delle alloc precedenti
+char** tokString (char** str, int* initSize) {
     *initSize = countComma(*str) + 1;
 
     char** arg = malloc(sizeof(char*) * (*initSize));
@@ -52,10 +53,15 @@ char** tokString (char** str, int* initSize) { //Se fallisce bisogna fare la fre
         return NULL;
     }
 
-    for (int i = 0; i < *initSize; i++) {
+    for(int i = 0; i < *initSize; i++) {
         arg[i] = calloc(STRLEN, sizeof(char));
 
         if (arg[i] == NULL) {
+
+            for(int j = 0; j < i; j++)
+                free(arg[j]);
+            free(arg);
+
             perror("calloc");
             return NULL;
         }
@@ -303,7 +309,7 @@ int main(int argc, char* argv[]) {
             flagR = tmp;
             break;
         }
-        case 'd': { //Aggiungere i controlli che sia usato insieme a -r o -R. Forse non conviene aggiungerlo allo stack delle richieste
+        case 'd': { //Aggiungere i controlli che sia usato insieme a -r o -R. Forse non conviene aggiungerlo allo stack delle richieste. Devono essere possibili più -d
             arg_d(optarg);
             flagd = 1;
             break;
@@ -354,12 +360,21 @@ int main(int argc, char* argv[]) {
         freeRequests(headReq);
         return -1;
     }
+
     printf("Socket %s\n", socketName);
 
-    struct timespec prova;
-    if (openConnection(socketName, 2000, prova) == -1) {
+    struct timespec maxTime; //Provvisorio
+    if (clock_gettime(CLOCK_REALTIME, &maxTime) == -1) {
+        perror("clock_gettime");
+        freeRequests(headReq);
+        exit(EXIT_FAILURE);
+    }
+    maxTime.tv_sec += 2;
+
+    if (openConnection(socketName, 200, maxTime) == -1) {
         perror("openConnection");
         freeRequests(headReq);
+        exit(EXIT_FAILURE);
     }
     // request_t *req = headReq;
     // while(req != NULL) {
