@@ -11,9 +11,14 @@
 #include "../includes/util.h"
 #include "../includes/comunication.h"
 
+#include "../includes/icl_hash.h"
+
 #define STRLEN 256
 #define UNIX_PATH_MAX 108
 #define MAXCONN 100
+#define BUCKETS 250
+
+icl_hash_t *storage;
 
 static pthread_mutex_t connections = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t emptyConnections = PTHREAD_COND_INITIALIZER;
@@ -24,6 +29,7 @@ int stopConnections = 0;
 
 long max_space;
 int max_file;
+long actual_space = 0;
 char* socketName;
 char* logFile;
 
@@ -35,12 +41,18 @@ typedef struct _connection {
 connection_t *connectionBuffer = NULL;
 connection_t *tailCBuff = NULL;
 
+typedef struct _file_t {
+    char* path;
+    int* clients;
+    int byteDim;
+} file_t;
+
 void freeGlobal(){
     if (socketName != NULL) free(socketName);
     if (logFile != NULL) free(logFile);
 }
 
-void* sighandler(void* arg){ //Da scrivere nella relazione: Si suppone che se fallisce la sigwait tutto il processo viene terminato perché potrei non riuscire più a terminare il server
+void* sighandler(void* arg){ //Da scrivere nella relazione: Si suppone che se fallisce la sigwait tutto il processo viene terminato perché potrei non riuscire più a terminare il server.
     int sigPipe = *(int*) arg;
 
     sigset_t mask;
@@ -262,6 +274,9 @@ int main(int argc, char* argv[]) {
     }
 
     setHandlers();
+
+    //Inizializzazione tabella hash
+    EQ_NULL_EXIT(storage = icl_hash_create(BUCKETS, hash_pjw, string_compare), "icl_hash_create")
     
     int signalPipe[2];
     SYSCALL_ONE_EXIT(pipe(signalPipe), "pipe");
@@ -278,7 +293,6 @@ int main(int argc, char* argv[]) {
     }
 
     int fdPipe[2];
-
     SYSCALL_ONE_EXIT(pipe(fdPipe), "pipe");
 
     spawnThread(numW, fdPipe[1]); //Aggiungere freeGlobal
@@ -349,7 +363,7 @@ int main(int argc, char* argv[]) {
                     fdMax = updateSet(&set, fdMax);
 
                     connection_t *new = malloc(sizeof(connection_t));
-                    EQ_NULL_EXIT(new, "malloc") //Aggiungere freeGlobal
+                    EQ_NULL_EXIT(new, "malloc") //Aggiungere freeGlobal. Se si verifica non viene cancellato il socket
 
                     new->fd = fd;
                     new->next = NULL;
@@ -375,7 +389,7 @@ int main(int argc, char* argv[]) {
 
     SYSCALL_NOT_ZERO_EXIT(err, pthread_join(sighandler_thread, NULL), "pthread_join")
 
-    close(listenSocket); //Questo dovrebbe essere tolto
+    close(listenSocket);
     close(fdPipe[0]);
     close(fdPipe[1]);
     close(signalPipe[0]);
