@@ -66,6 +66,7 @@ int list_append(list_t* lst, void* data) {
         lst->tail = newData;
     } else {
         (lst->tail)->next = newData;
+        lst->tail = newData;
     }
 
     return 0;
@@ -112,7 +113,8 @@ int list_destroy(list_t* lst, void (*free_fun)(void*)) {
         curr = lst->head;
         lst->head = (lst->head)->next;
 
-        (*free_fun)(curr);
+        (*free_fun)(curr->data);
+        free(curr);
     }
     lst->tail = NULL;
 
