@@ -7,6 +7,7 @@
 
 #include "../includes/util.h"
 #include "../includes/comunicationProtocol.h"
+#include "../includes/list.h"
 
 #define STRLEN 256
 
@@ -15,11 +16,9 @@ typedef struct _request {
     int option;
     char** arg;
     int dim;
-    struct _request *next;
 } request_t;
 
-request_t *headReq = NULL;
-request_t *tailReq = NULL;
+list_t requestLst; //Modificare tutte le vecchie liste request_t con 
 
 void freeRequests(request_t *r) {
     request_t *tmp;

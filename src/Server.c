@@ -10,6 +10,7 @@
 
 #include "../includes/util.h"
 #include "../includes/comunication.h"
+#include "../includes/list.h"
 
 #include "../includes/icl_hash.h"
 
@@ -33,19 +34,23 @@ long actual_space = 0;
 char* socketName;
 char* logFile;
 
-typedef struct _connection {
-    int fd;
-    struct _connection *next;
-} connection_t;
+// typedef struct _connection {
+//     int fd;
+//     struct _connection *next;
+// } connection_t;
 
-connection_t *connectionBuffer = NULL;
-connection_t *tailCBuff = NULL;
+// connection_t *connectionBuffer = NULL;
+// connection_t *tailCBuff = NULL;
+
+list_t connection;
 
 typedef struct _file_t {
     char* path;
     int* clients;
     int byteDim;
 } file_t;
+
+list_t fileHistory;
 
 void freeGlobal(){
     if (socketName != NULL) free(socketName);
@@ -358,24 +363,29 @@ int main(int argc, char* argv[]) {
                     continue;
                 }
 
-                if (fd != fdPipe[0] && fd != listenSocket) {
+                if (fd != fdPipe[0] && fd != listenSocket) { //Ragionare se ho modificato correttamente
                     FD_CLR(fd, &set);
                     fdMax = updateSet(&set, fdMax);
 
-                    connection_t *new = malloc(sizeof(connection_t));
+                    // connection_t *new = malloc(sizeof(connection_t));
+                    int *new = malloc(sizeof(int));
                     EQ_NULL_EXIT(new, "malloc") //Aggiungere freeGlobal. Se si verifica non viene cancellato il socket
 
-                    new->fd = fd;
-                    new->next = NULL;
+                    // new->fd = fd;
+                    // new->next = NULL;
+                    *new = fd;
 
                     Pthread_mutex_lock(&connections);
-                    if (connectionBuffer == NULL) {
-                        connectionBuffer = new;
-                        tailCBuff = new;
-                    } else {
-                        tailCBuff->next = new;
-                        tailCBuff = new;
-                    }
+                    // if (connectionBuffer == NULL) {
+                    //     connectionBuffer = new;
+                    //     tailCBuff = new;
+                    // } else {
+                    //     tailCBuff->next = new;
+                    //     tailCBuff = new;
+                    // }
+
+                    SYSCALL_ONE_EXIT(list_append(&connection, new), "list_append")
+                    
                     pthread_cond_signal(&emptyConnections);
                     Pthread_mutex_unlock(&connections);
                 }
