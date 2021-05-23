@@ -90,7 +90,10 @@ void* list_pop(list_t* lst) {
 
     if (lst->head == NULL) lst->tail = NULL;
 
-    return oldHead->data;
+    void* result = oldHead->data;
+    free(oldHead);
+
+    return result;
 }
 
 /**
@@ -102,7 +105,7 @@ void* list_pop(list_t* lst) {
  * @return 0 on success, -1 on failure and errno is set appropriately
 **/
 int list_destroy(list_t* lst, void (*free_fun)(void*)) {
-    if (lst->head == NULL || (*free_fun) == NULL) {
+    if ((*free_fun) == NULL) {
         errno = EINVAL;
         return -1;
     }
