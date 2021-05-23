@@ -18,19 +18,14 @@ typedef struct _request {
     int dim;
 } request_t;
 
-list_t requestLst; //Modificare tutte le vecchie liste request_t con 
+list_t requestLst;
 
-void freeRequests(request_t *r) {
-    request_t *tmp;
-    while(r != NULL) {
-        tmp = r;
-        r = r->next;
-        for(int i = 0; i < tmp->dim; i++) {
-            free(tmp->arg[i]);
-        }
-        free(tmp->arg);
-        free(tmp);
-    }
+void freeRequest(void* r) {
+    request_t *req = (request_t*) r;
+    for(int i = 0; i < req->dim; i++)
+        free(req->arg[i]);
+    free(req->arg);
+    free(req);
 }
 
 int countComma (char* str) {
@@ -80,16 +75,6 @@ char** tokString (char** str, int* initSize) {
     return arg;
 }
 
-void addTail(request_t *r) {
-    if (headReq == NULL) {
-        headReq = r;
-        tailReq = r;
-    } else {
-        tailReq->next = r;
-        tailReq = r;
-    }
-}
-
 void arg_h (const char* name) {
     printf("usage: %s -f <filename> -w <dirname>[,n=0] -W <file1>[,file2] -D <dirname> -r <file1>[,file2] -R [n=0] -d <dirname> -t <time> -l <file1>[,file2] -u <file1>[,file2] -c <file1>[,file2] -p -h\n", name);
 }
@@ -98,7 +83,7 @@ void arg_w (char* arg) {
     request_t *newR = malloc(sizeof(request_t));
     if (newR == NULL) {
         perror("malloc in arg_w");
-        freeRequests(headReq);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
         exit(EXIT_FAILURE);
     }
 
@@ -118,7 +103,7 @@ void arg_w (char* arg) {
     if (newR->arg == NULL) {
         perror("malloc in arg in arg_w");
         free(newR);
-        freeRequests(headReq);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
         exit(EXIT_FAILURE);
     }
     
@@ -127,7 +112,7 @@ void arg_w (char* arg) {
         perror("malloc in arg[0] in arg_w");
         free(newR->arg);
         free(newR);
-        freeRequests(headReq);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
         exit(EXIT_FAILURE);
     }
 
@@ -140,24 +125,24 @@ void arg_w (char* arg) {
 
         if (isNumber(arg + lenDir + 2, &tmp) != 0) {
             fprintf(stderr, "Errore in isNumber in arg_w\n");
-            free(newR->arg[0]);
-            free(newR->arg);
-            free(newR);
-            freeRequests(headReq);
+            freeRequest(newR);
+            SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
             exit(EXIT_FAILURE);
         }
         newR->option = tmp;
     }
 
-    addTail(newR);
-
+    if (list_append(&requestLst, newR) == -1) {
+        freeRequest(newR);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+    }
 }
 
 void arg_W(char** arg) {
     request_t *newR = malloc(sizeof(request_t));
     if (newR == NULL) {
         perror("malloc in arg_W");
-        freeRequests(headReq);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
         exit(EXIT_FAILURE);
     }
 
@@ -166,19 +151,21 @@ void arg_W(char** arg) {
     if((newR->arg = tokString(arg, &(newR->dim))) == NULL) {
         perror("tokString");
         free(newR);
-        freeRequests(headReq);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
         exit(EXIT_FAILURE);
     }
-    newR->next = NULL;
-
-    addTail(newR);
+    
+    if (list_append(&requestLst, newR) == -1) {
+        freeRequest(newR);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+    }
 }
 
 void arg_r(char** arg) {
     request_t *newR = malloc(sizeof(request_t));
     if (newR == NULL) {
         perror("malloc in arg_r");
-        freeRequests(headReq);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
         exit(EXIT_FAILURE);
     }
 
@@ -186,20 +173,38 @@ void arg_r(char** arg) {
     newR->option = -1;
     if((newR->arg = tokString(arg, &(newR->dim))) == NULL) {
         perror("tokString");
-        free(newR);
-        freeRequests(headReq);
+        freeRequest(newR);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
         exit(EXIT_FAILURE);
     }
-    newR->next = NULL;
+    
+    if (list_append(&requestLst, newR) == -1) {
+        freeRequest(newR);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+    }
+}
 
-    addTail(newR);
+long arg_R(char* arg) {
+    if (arg[0] != 'n' || arg[1] != '=') {
+        fprintf(stderr, "Formato non valido per il flag -R\n");
+        return -1;
+    }
+
+    long tmp;
+    if (isNumber(arg+2, &tmp) != 0) {
+        fprintf(stderr, "isNumber in case 'R'\n");
+        return -1;
+    }
+
+    return tmp;
+
 }
 
 void arg_c(char** arg) {
     request_t *newR = malloc(sizeof(request_t));
     if (newR == NULL) {
         perror("malloc in arg_c");
-        freeRequests(headReq);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
         exit(EXIT_FAILURE);
     }
 
@@ -208,19 +213,21 @@ void arg_c(char** arg) {
     if((newR->arg = tokString(arg, &(newR->dim))) == NULL) {
         perror("tokString");
         free(newR);
-        freeRequests(headReq);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
         exit(EXIT_FAILURE);
     }
-    newR->next = NULL;
-
-    addTail(newR);
+    
+    if (list_append(&requestLst, newR) == -1) {
+        freeRequest(newR);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+    }
 }
 
 void arg_d(char* arg) {
     request_t *newR = malloc(sizeof(request_t));
     if (newR == NULL) {
         perror("malloc in arg_d");
-        freeRequests(headReq);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
         exit(EXIT_FAILURE);
     }
 
@@ -231,7 +238,7 @@ void arg_d(char* arg) {
     if (newR->arg == NULL) {
         perror("malloc in arg in arg_d");
         free(newR);
-        freeRequests(headReq);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
         exit(EXIT_FAILURE);
     }
     
@@ -240,13 +247,16 @@ void arg_d(char* arg) {
         perror("malloc in arg[0] in arg_d");
         free(newR->arg);
         free(newR);
-        freeRequests(headReq);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
         exit(EXIT_FAILURE);
     }
 
     strncpy(newR->arg[0], arg, strnlen(arg, STRLEN));
 
-    addTail(newR);
+    if (list_append(&requestLst, newR) == -1) {
+        freeRequest(newR);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+    }
 }
 
 void ignoreSigpipe() {
@@ -273,11 +283,11 @@ int main(int argc, char* argv[]) {
     int flagd = 0;
 
     int opt;
-    while((opt = getopt(argc, argv, ":hf:w:W:D:R::d:t:l:u:c:p")) != -1) {
+    while((opt = getopt(argc, argv, ":hf:w:W:D:r:R:d:t:l:u:c:p")) != -1) {
         switch (opt) {
         case 'h': {
             arg_h(argv[0]);
-            freeRequests(headReq);
+            SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
             return 0;
         }
         case 'f': {
@@ -285,7 +295,7 @@ int main(int argc, char* argv[]) {
                 socketName = optarg;
             else {
                 fprintf(stderr, "Il flag -f può essere specificato una sola volta\n");
-                freeRequests(headReq);
+                SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
                 return -1;
             }
             break;
@@ -299,13 +309,11 @@ int main(int argc, char* argv[]) {
             break;
         }
         case 'R': {
-            long tmp;
-            if (isNumber(optarg, &tmp) != 0) {
-                perror("isNumber");
-                freeRequests(headReq);
-                return -1;
+            if ((flagR = arg_R(optarg)) == -1) {
+                fprintf(stderr, "Error in arg_R\n");
+                SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+                exit(EXIT_FAILURE);
             }
-            flagR = tmp;
             break;
         }
         case 'd': { //Aggiungere i controlli che sia usato insieme a -r o -R. Forse non conviene aggiungerlo allo stack delle richieste. Devono essere possibili più -d
@@ -316,7 +324,7 @@ int main(int argc, char* argv[]) {
         case 't': {
             if (isNumber(optarg, &flagT) != 0) {
                 perror("isNumber");
-                freeRequests(headReq);
+                SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
                 return -1;
             }
             break;
@@ -329,19 +337,24 @@ int main(int argc, char* argv[]) {
                 flagP = 1;
             else {
                 fprintf(stderr, "Il flag -p può essere specificato una sola volta\n");
-                freeRequests(headReq);
+                SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
                 return -1;
             }
             break;
         }
         case ':': {
-            printf("L'opzione '-%c' richiede un argomento\n", optopt);
-            freeRequests(headReq);
-            return 0;
+            if (optopt == 'R') {
+                flagR = 0;
+                break;
+            } else {
+                printf("L'opzione '-%c' richiede un argomento\n", optopt);
+                SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+                return 0;
+            }
         }
         case '?': {
             printf("L'opzione '-%c' non è gestita\n", optopt);
-            freeRequests(headReq);
+            SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
             return 0;
         }
         default: break;
@@ -350,13 +363,13 @@ int main(int argc, char* argv[]) {
 
     if (socketName == NULL) {
         fprintf(stderr, "Socket non specificato\n");
-        freeRequests(headReq);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
         return -1;
     }
 
     if (flagd && !(flagR || flagr)) {
         fprintf(stderr, "Flag -d incompatibile senza -R o -r\n");
-        freeRequests(headReq);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
         return -1;
     }
 
@@ -365,27 +378,33 @@ int main(int argc, char* argv[]) {
     struct timespec maxTime; //Provvisorio
     if (clock_gettime(CLOCK_REALTIME, &maxTime) == -1) {
         perror("clock_gettime");
-        freeRequests(headReq);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
         exit(EXIT_FAILURE);
     }
     maxTime.tv_sec += 2;
 
     if (openConnection(socketName, 200, maxTime) == -1) {
         perror("openConnection");
-        freeRequests(headReq);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
         exit(EXIT_FAILURE);
     }
-    // request_t *req = headReq;
-    // while(req != NULL) {
-    //     printf("Flag: -%c, option: %d\n", req->flag, req->option);
 
-    //     for(int i = 0; i < req->dim; i++) {
-    //         printf("%s\n", req->arg[i]);
+    // request_t *req;
+    // while (requestLst.head != NULL) {
+    //     if((req = (request_t*) list_pop(&requestLst)) == NULL) {
+    //         perror("list_pop");
+    //         SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+    //         exit(errno);
     //     }
-    //     printf("dim: %d\n", req->dim);
-    //     req = req->next;
+
+    //     printf("La richiesta è: %c  %d  %d\n", req->flag, req->option, req->dim);
+    //     printf("Gli argomenti sono:\n");
+    //     for(int i = 0; i < req->dim; i++)
+    //         printf("%s\n", req->arg[i]);
+    //     printf("\n\n");
+    //     freeRequest(req);
     // }
 
-    freeRequests(headReq);
+    SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
     return 0;
 }
