@@ -11,6 +11,7 @@
 #include "../includes/util.h"
 #include "../includes/comunication.h"
 #include "../includes/list.h"
+#include "../includes/comunicationOptions.h"
 
 #include "../includes/icl_hash.h"
 
@@ -20,37 +21,32 @@
 #define BUCKETS 250
 
 icl_hash_t *storage;
+long max_space;
+int max_file;
+long actual_space = 0; //Mettere tutto dentro un'unica struct che contiene anche l'hash table
+static pthread_mutex_t mutex_storage = PTHREAD_MUTEX_INITIALIZER;
 
-static pthread_mutex_t connections = PTHREAD_MUTEX_INITIALIZER;
-static pthread_cond_t emptyConnections = PTHREAD_COND_INITIALIZER;
+list_t fileHistory;
+static pthread_mutex_t mutex_filehistory = PTHREAD_MUTEX_INITIALIZER;
+
+typedef struct _file_t {
+    char* path;
+    int byteDim;
+    list_t clients;
+} file_t;
+
+list_t connection;
+static pthread_mutex_t mutex_connections = PTHREAD_MUTEX_INITIALIZER;
+static pthread_cond_t cond_emptyConnections = PTHREAD_COND_INITIALIZER;
 
 int sigCaught = 0;
 int stopRequests = 0;
 int stopConnections = 0;
 
-long max_space;
-int max_file;
-long actual_space = 0;
 char* socketName;
 char* logFile;
 
-// typedef struct _connection {
-//     int fd;
-//     struct _connection *next;
-// } connection_t;
 
-// connection_t *connectionBuffer = NULL;
-// connection_t *tailCBuff = NULL;
-
-list_t connection;
-
-typedef struct _file_t {
-    char* path;
-    int* clients;
-    int byteDim;
-} file_t;
-
-list_t fileHistory;
 
 void freeGlobal(){
     if (socketName != NULL) free(socketName);
@@ -102,7 +98,7 @@ void setHandlers() {
 
 }
 
-int parseFile(const char* filepath, int* numWorkers, long* memorySpace, int* numFile, char** socketName, char** logFile) { //Migliorare il parsing controllando che la stringa sia effettivamente solo quella
+int parseFile(const char* filepath, int* numWorkers, long* memorySpace, int* numFile, char** sockName, char** logFile) { //Migliorare il parsing controllando che la stringa sia effettivamente solo quella
     FILE *fd;
     if((fd = fopen(filepath, "r")) == NULL) {
         perror("fopen");
@@ -136,7 +132,7 @@ int parseFile(const char* filepath, int* numWorkers, long* memorySpace, int* num
             int G = 0;
             int B = 0;
 
-            int len = strnlen(str, STRLEN);
+            int len = strnlen(str, STRLEN) + 1;
             for(int i = 10; i < len; i++) {
                 if (str[i] == 'K' || str[i] == 'k') {
                     K = 1;
@@ -191,19 +187,19 @@ int parseFile(const char* filepath, int* numWorkers, long* memorySpace, int* num
         }
 
         if(strncmp(str, "SOCKET_NAME", 11) == 0) {
-            int len = strnlen(str + 12, STRLEN); //Sfrutto il fatto che conta \n per allocare lo spazio del \0
-            *socketName = calloc(len, sizeof(char));
-            if (*socketName == NULL) {
+            int len = strnlen(str + 12, STRLEN) + 1; //Sfrutto il fatto che conta \n per allocare lo spazio del \0
+            *sockName = calloc(len, sizeof(char));
+            if (*sockName == NULL) {
                 perror("calloc");
                 free(str);
                 return -1;
             }
             
-            strncpy(*socketName, str + 12, len);
+            strncpy(*sockName, str + 12, len);
         }
 
         if(strncmp(str, "LOG_FILE", 8) == 0) {
-            int len = strnlen(str + 9, STRLEN); //Sfrutto il fatto che conta \n per allocare lo spazio del \0
+            int len = strnlen(str + 9, STRLEN) + 1; //Sfrutto il fatto che conta \n per allocare lo spazio del \0
             *logFile = calloc(len, sizeof(char));
             if (*logFile == NULL) {
                 perror("calloc");
@@ -227,7 +223,178 @@ int parseFile(const char* filepath, int* numWorkers, long* memorySpace, int* num
     return 0;
 }
 
-void* workerThread(void* arg) {return NULL;} //Il client invierà il messaggio di termine connessione e il thread chiuderà il FD.
+void createFile(int fd) { //Renderli int?
+    file_t *newFile = malloc(sizeof(file_t));
+
+    if (newFile == NULL) {
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
+
+    SYSCALL_ONE_EXIT(readn(fd, &(newFile->byteDim), sizeof(int)), "readn")
+
+    newFile->path = calloc(newFile->byteDim, sizeof(char));
+    if (newFile->path == NULL) {
+        perror("calloc");
+        exit(EXIT_FAILURE);
+    }
+
+    SYSCALL_ONE_EXIT(readn(fd, newFile->path, newFile->byteDim * sizeof(char)), "readn")
+    
+    list_create(&(newFile->clients));
+    if(list_push(&(newFile->clients), &fd) == -1) {
+        perror("list_push");
+        exit(EXIT_FAILURE);
+    }
+
+    if (actual_space + newFile->byteDim > max_space) {
+        printf("Entra in azione l'argoritmo di sostituzione\n");
+        fflush(stdout);
+    } else {
+        Pthread_mutex_lock(&mutex_storage);
+        if (icl_hash_insert(storage, newFile->path, newFile) == NULL) {
+            fprintf(stderr, "Error in icl_hash_insert\n");
+            int res = 0;
+            SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
+            exit(EXIT_FAILURE);
+        }
+        actual_space += newFile->byteDim;
+        Pthread_mutex_unlock(&mutex_storage);
+
+        Pthread_mutex_lock(&mutex_filehistory);
+        if (list_append(&fileHistory, newFile->path) == -1) {
+            perror("list_append");
+            int res = 0;
+            SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
+            exit(EXIT_FAILURE);
+        }
+        Pthread_mutex_unlock(&mutex_filehistory);
+    }
+
+    int res = 1;
+    SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
+
+}
+
+void findFile(int fd) {
+    int len;
+    SYSCALL_ONE_EXIT(readn(fd, &len, sizeof(int)), "readn")
+
+    char* path = calloc(len, sizeof(char));
+    if (path == NULL) {
+        perror("calloc");
+        //List distroy. Un po' ovunque
+        exit(EXIT_FAILURE);
+    }
+    SYSCALL_ONE_EXIT(readn(fd, path, len * sizeof(char)), "readn")
+
+    int found;
+    if(icl_hash_find(storage, path) == NULL)
+        found = 0;
+    else
+        found = 1;
+
+    SYSCALL_ONE_EXIT(writen(fd, &found, sizeof(int)), "readn")
+}
+
+void openFile(int fd) { //Se il file è già aperto cosa succede?
+    int len;
+    int res;
+    SYSCALL_ONE_EXIT(readn(fd, &len, sizeof(int)), "readn")
+
+    char* path = calloc(len, sizeof(char));
+    if (path == NULL) {
+        perror("calloc in openFile");
+        //List distroy. Un po' ovunque
+        exit(EXIT_FAILURE);
+    }
+    SYSCALL_ONE_EXIT(readn(fd, path, len * sizeof(char)), "readn")
+
+    file_t *f = (file_t*) icl_hash_find(storage, path);
+    if (f == NULL) {
+        fprintf(stderr, "File non presente nello storage\n");
+        res = 0;
+        SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
+        exit(EXIT_FAILURE);
+    }
+
+    if(list_push(&(f->clients), &fd) == -1) {
+        perror("list_push");
+        res = 0;
+        SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
+        exit(EXIT_FAILURE);
+    }
+
+    res = 1;
+    SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
+
+    node_t *tmp = fileHistory.head;
+    while(tmp != NULL) {
+        printf("File: %s\n", (char*) tmp->data);
+        fflush(stdout);
+        tmp = tmp->next;        
+    }
+    printf("\n\n");
+    fflush(stdout);
+    
+}
+
+void* workerThread(void* arg) {
+    int Wendpoint = *(int*) arg;
+    while(!sigCaught) {
+        int fd;
+        Pthread_mutex_lock(&mutex_connections);
+
+        while (connection.head == NULL && !sigCaught)
+            pthread_cond_wait(&cond_emptyConnections, &mutex_connections);
+        
+        if (sigCaught) {
+            Pthread_mutex_unlock(&mutex_connections);
+            return NULL;
+        }
+
+        int *tmp;
+        EQ_NULL_EXIT_F(tmp = (int*) list_pop(&connection), "list_pop", Pthread_mutex_unlock(&mutex_connections))
+        fd = *tmp;
+
+        Pthread_mutex_unlock(&mutex_connections);
+
+        int opt;
+        SYSCALL_ONE_EXIT(readn(fd, &opt, sizeof(int)), "readn")
+
+        printf("Flag letto %d\n", opt);
+        fflush(stdout);
+
+        switch (opt) {
+            case FIND_FILE: findFile(fd); break;
+            case CREATE_FILE: createFile(fd); break;
+            case OPEN_FILE: openFile(fd); break;
+            case END_CONNECTION: {
+                int res = 0;
+                SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
+                int msg = -1;
+                SYSCALL_ONE_EXIT(writen(Wendpoint, &msg, sizeof(int)), "readn")
+                close(fd);
+                continue;
+            }
+        
+            default:
+                fprintf(stderr, "Invalid operation\n");
+                exit(EXIT_FAILURE);
+                break;
+        }
+
+        printf("Sto per fare la scrittura sulla pipe\n");
+        fflush(stdout);
+        if (writen(Wendpoint, &fd, sizeof(int)) == -1) {
+            perror("writen in thread worker");
+            exit(EXIT_FAILURE);
+        }
+
+    }
+
+    return NULL;
+} //Il client invierà il messaggio di termine connessione e il thread chiuderà il FD.
 
 void initializeSocket(int* fd_socket) {
     *fd_socket = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -282,6 +449,8 @@ int main(int argc, char* argv[]) {
 
     //Inizializzazione tabella hash
     EQ_NULL_EXIT(storage = icl_hash_create(BUCKETS, hash_pjw, string_compare), "icl_hash_create")
+    list_create(&fileHistory);
+    list_create(&connection);
     
     int signalPipe[2];
     SYSCALL_ONE_EXIT(pipe(signalPipe), "pipe");
@@ -344,6 +513,8 @@ int main(int argc, char* argv[]) {
                         return errno;
                     }
 
+                    if (c_fd == -1) continue;
+
                     FD_SET(c_fd, &set);
                     if (c_fd > fdMax) fdMax = c_fd;
                     continue;
@@ -375,7 +546,7 @@ int main(int argc, char* argv[]) {
                     // new->next = NULL;
                     *new = fd;
 
-                    Pthread_mutex_lock(&connections);
+                    Pthread_mutex_lock(&mutex_connections);
                     // if (connectionBuffer == NULL) {
                     //     connectionBuffer = new;
                     //     tailCBuff = new;
@@ -386,8 +557,8 @@ int main(int argc, char* argv[]) {
 
                     SYSCALL_ONE_EXIT(list_append(&connection, new), "list_append")
                     
-                    pthread_cond_signal(&emptyConnections);
-                    Pthread_mutex_unlock(&connections);
+                    pthread_cond_signal(&cond_emptyConnections);
+                    Pthread_mutex_unlock(&mutex_connections);
                 }
             }
         }

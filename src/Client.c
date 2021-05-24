@@ -275,6 +275,8 @@ int main(int argc, char* argv[]) {
 
     ignoreSigpipe();    
 
+    list_create(&requestLst);
+
     char* socketName = NULL;
     int flagP = 0;
     long flagT = 0;
@@ -385,6 +387,24 @@ int main(int argc, char* argv[]) {
 
     if (openConnection(socketName, 200, maxTime) == -1) {
         perror("openConnection");
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+        exit(EXIT_FAILURE);
+    }
+
+    // if (openFile("prova.txt", O_CREATE) == -1) {
+    //     perror("openFile");
+    //     SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+    //     exit(EXIT_FAILURE);
+    // }
+
+    // if (openFile("LorenzoDiFabioAleeeOooohhohohhhh.txt", O_CREATE) == -1) {
+    //     perror("openFile");
+    //     SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+    //     exit(EXIT_FAILURE);
+    // }
+
+    if (closeConnection(socketName) == -1) {
+        perror("closeConnection");
         SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
         exit(EXIT_FAILURE);
     }
