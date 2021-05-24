@@ -32,6 +32,13 @@
         exit(errno);        \
     }
 
+#define EQ_NULL_EXIT_F(f, name, fun)    \
+    if ((f) == NULL) {        \
+        perror(name);       \
+        fun;                \
+        exit(errno);        \
+    }
+
 #define EQ_NULL_RETURN(f, name)    \
     if ((f) == NULL) {        \
         perror(name);       \
