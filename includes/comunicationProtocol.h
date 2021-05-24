@@ -1,6 +1,9 @@
 #if !defined(_COMUNICATIONPROTOCOL_H)
 #define _COMUNICATIONPROTOCOL_H
 
+#define O_CREATE 00
+#define O_LOCK 01
+
 #include <stdlib.h>
 
 int openConnection(const char* sockname, int msec, const struct timespec abstime);
@@ -9,14 +12,10 @@ int openConnection(const char* sockname, int msec, const struct timespec abstime
 int closeConnection(const char* sockname);
 
 
+
 int openFile(const char* pathname, int flags);
 
 
-/* Legge tutto il contenuto del file dal server (se esiste) ritornando un puntatore ad un'area allocata sullo heap nel
-* parametro ‘buf’, mentre ‘size’ conterrà la dimensione del buffer dati (ossia la dimensione in bytes del file letto). In
-* caso di errore, ‘buf‘e ‘size’ non sono validi. Ritorna 0 in caso di successo, -1 in caso di fallimento, errno viene
-* settato opportunamente
-*/
 int readFile(const char* pathname, void** buf, size_t* size);
 
 
@@ -77,5 +76,6 @@ int closeFile(const char* pathname);
 * stato locked da parte di un processo client diverso da chi effettua la removeFile
 */
 int removeFile(const char* pathname);
+
 
 #endif
