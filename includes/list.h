@@ -11,6 +11,8 @@ typedef struct _list {
     node_t* tail;
 } list_t;
 
+void list_create(list_t* lst);
+
 int list_push(list_t* head, void* data);
 
 int list_append(list_t* tail, void* data);

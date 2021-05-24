@@ -4,6 +4,15 @@
 
 #include "../includes/list.h"
 
+
+/**
+ * Crea la lista
+**/
+void list_create(list_t* lst) {
+    lst->head = NULL;
+    lst->tail = NULL;
+}
+
 /**
  * Inserisce un elemento in testa alla lista
  * 
