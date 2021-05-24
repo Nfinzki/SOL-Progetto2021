@@ -391,17 +391,17 @@ int main(int argc, char* argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    // if (openFile("prova.txt", O_CREATE) == -1) {
-    //     perror("openFile");
-    //     SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
-    //     exit(EXIT_FAILURE);
-    // }
+    if (openFile("prova.txt", 0) == -1) {
+        perror("openFile");
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+        exit(EXIT_FAILURE);
+    }
 
-    // if (openFile("LorenzoDiFabioAleeeOooohhohohhhh.txt", O_CREATE) == -1) {
-    //     perror("openFile");
-    //     SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
-    //     exit(EXIT_FAILURE);
-    // }
+    if (openFile("sda.txt", O_CREATE) == -1) {
+        perror("openFile");
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+        exit(EXIT_FAILURE);
+    }
 
     if (closeConnection(socketName) == -1) {
         perror("closeConnection");

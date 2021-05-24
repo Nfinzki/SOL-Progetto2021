@@ -359,17 +359,14 @@ void* workerThread(void* arg) {
 
         Pthread_mutex_unlock(&mutex_connections);
 
-        int opt;
+        int opt = -1; //Se dovesse interrompersi la connessione il fd non viene messo nel set
         SYSCALL_ONE_EXIT(readn(fd, &opt, sizeof(int)), "readn")
-
-        printf("Flag letto %d\n", opt);
-        fflush(stdout);
 
         switch (opt) {
             case FIND_FILE: findFile(fd); break;
             case CREATE_FILE: createFile(fd); break;
             case OPEN_FILE: openFile(fd); break;
-            case END_CONNECTION: {
+            case END_CONNECTION: { //Bisognerebbe chiudere tutti i file aperti da quel client. Potrei farlo dall'API
                 int res = 0;
                 SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
                 int msg = -1;
@@ -377,15 +374,13 @@ void* workerThread(void* arg) {
                 close(fd);
                 continue;
             }
-        
-            default:
-                fprintf(stderr, "Invalid operation\n");
-                exit(EXIT_FAILURE);
-                break;
         }
 
-        printf("Sto per fare la scrittura sulla pipe\n");
-        fflush(stdout);
+        //Capire se si può migliorare
+        if (opt == -1) {
+            close(fd);
+            fd = -1;
+        }
         if (writen(Wendpoint, &fd, sizeof(int)) == -1) {
             perror("writen in thread worker");
             exit(EXIT_FAILURE);
