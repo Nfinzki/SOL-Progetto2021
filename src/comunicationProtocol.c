@@ -96,6 +96,7 @@ int closeConnection(const char* sockname) { //I file aperti dovrebbero venire ch
 
     int opt = END_CONNECTION;
     if (writen(fdSocket, &opt, sizeof(int)) == -1) return -1;
+    
     int res;
     if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
 
