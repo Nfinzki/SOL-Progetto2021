@@ -1,22 +1,45 @@
-
 #include <errno.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "../includes/list.h"
 
 
+int string_compare(void* a, void* b) {
+    return (strcmp( (char*)a, (char*)b ) == 0);
+}
+
+int int_compare(void* a, void* b) {
+    return (*(int*)a == *(int*)b);
+}
+
 /**
  * Crea la lista
+ * 
+ * @param lst -- puntatore alla lista
+ * @param compare_fun -- puntatore alla funzione che compara due elementi della lista
+ * 
+ * @return 0 on success, -1 on error (sets errno)
 **/
-void list_create(list_t* lst) {
+int list_create(list_t* lst, int (*compare_fun)(void*, void*)) {
+    if (!*compare_fun) {
+        errno = EINVAL;
+        return -1;
+    }
+
     lst->head = NULL;
     lst->tail = NULL;
+    lst->dim = 0;
+    lst->list_data_compare = compare_fun;
+
+    return 0;
 }
+
 
 /**
  * Inserisce un elemento in testa alla lista
  * 
- * @param head -- puntatore alla testa della lista
+ * @param lst -- puntatore alla lista
  * @param data -- puntatore all'elemento da inserire in testa
  * 
  * @return 0 on success, -1 on failure and errno is set appropriately
@@ -44,13 +67,16 @@ int list_push(list_t* lst, void* data) {
         lst->head = newData;
     }
 
+    lst->dim++;
+
     return 0;
 }
+
 
 /**
  * Inserisce un elemento in coda alla lista
  * 
- * @param tail -- puntatore alla coda della lista
+ * @param lst -- puntatore alla lista
  * @param data -- puntatore all'elemento da inserire in coda
  * 
  * @return 0 on success, -1 on failure and errno is set appropriately
@@ -78,13 +104,16 @@ int list_append(list_t* lst, void* data) {
         lst->tail = newData;
     }
 
+    lst->dim++;
+
     return 0;
 }
+
 
 /**
  * Rimuove l'elemento dalla testa della lista
  * 
- * @param head -- puntatore alla testa della lista
+ * @param lst -- puntatore alla lista
  * 
  * @return il puntatore all'elemento rimosso dalla lista. Altrimenti restituisce NULL
 **/
@@ -99,16 +128,57 @@ void* list_pop(list_t* lst) {
 
     if (lst->head == NULL) lst->tail = NULL;
 
+    lst->dim--;
+
     void* result = oldHead->data;
     free(oldHead);
 
     return result;
 }
 
+
+/**
+ * Cancella un elemento dalla lista
+ * 
+ * @param lst -- puntatore alla lista
+ * @param elem -- puntatore all'elemento da rimuovere
+ * @param free_data -- puntatore alla funzione per liberare un elemento della lista
+ * 
+ * @return 0 on success, -1 on failure and errno is set appropriately 
+**/
+int list_delete(list_t* lst, void* data, void (*free_data)(void*)) {
+    if (lst == NULL || data == NULL) {
+        errno = EINVAL;
+        return -1;
+    }
+
+    node_t *prev = NULL;
+    node_t *curr = lst->head;
+
+    while(curr != NULL) {
+        if (lst->list_data_compare(curr->data, data)) {
+            if (prev == NULL)
+                lst->head = curr->next;
+            else
+                prev->next = curr->next;
+            
+            if (*free_data && curr->data) (*free_data)(curr->data);
+            lst->dim--;
+            free(curr);
+            return 0;
+        }
+        prev = curr;
+        curr = curr->next;
+    }
+
+    return -1;
+}
+
+
 /**
  * Libera la memoria di tutta la lista
  * 
- * @param head -- puntatore alla testa della lista
+ * @param lst -- puntatore alla lista
  * @param free_fun -- puntatore alla funzione per liberare un elemento della lista
  * 
  * @return 0 on success, -1 on failure and errno is set appropriately
@@ -129,6 +199,7 @@ int list_destroy(list_t* lst, void (*free_fun)(void*)) {
         free(curr);
     }
     lst->tail = NULL;
+    lst->dim = 0;
 
     return 0;
 }

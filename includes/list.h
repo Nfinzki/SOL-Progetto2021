@@ -9,9 +9,15 @@ typedef struct _node {
 typedef struct _list {
     node_t* head;
     node_t* tail;
+    int dim;
+    int (*list_data_compare)(void*, void*);
 } list_t;
 
-void list_create(list_t* lst);
+/* compare function */
+int string_compare(void* a, void* b);
+int int_compare(void* a, void* b);
+
+int list_create(list_t* lst, int (*compare_fun)(void*, void*));
 
 int list_push(list_t* head, void* data);
 
