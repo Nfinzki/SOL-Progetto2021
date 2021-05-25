@@ -241,7 +241,11 @@ void createFile(int fd) { //Renderli int?
 
     SYSCALL_ONE_EXIT(readn(fd, newFile->path, newFile->byteDim * sizeof(char)), "readn")
     
-    list_create(&(newFile->clients));
+    if(list_create(&(newFile->clients), string_compare) == -1) {
+        perror("list_create");
+        exit(EXIT_FAILURE);
+    }
+
     if(list_push(&(newFile->clients), &fd) == -1) {
         perror("list_push");
         exit(EXIT_FAILURE);
@@ -310,6 +314,7 @@ void openFile(int fd) { //Se il file è già aperto cosa succede?
     }
     SYSCALL_ONE_EXIT(readn(fd, path, len * sizeof(char)), "readn")
 
+    Pthread_mutex_lock(&mutex_storage);
     file_t *f = (file_t*) icl_hash_find(storage, path);
     if (f == NULL) {
         fprintf(stderr, "File non presente nello storage\n");
@@ -318,16 +323,31 @@ void openFile(int fd) { //Se il file è già aperto cosa succede?
         exit(EXIT_FAILURE);
     }
 
-    if(list_push(&(f->clients), &fd) == -1) {
+    if(list_push(&(f->clients), &fd) == -1) { //Potrebbe non andare bene
         perror("list_push");
         res = 0;
         SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
         exit(EXIT_FAILURE);
     }
 
+    file_t *removedF;
+    if (icl_hash_update_insert(storage, path, f, &removedF) == NULL) {
+        fprintf(stderr, "icl_hash_update_insert\n");
+        res = 0;
+        SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
+        exit(EXIT_FAILURE);
+    }
+    Pthread_mutex_unlock(&mutex_storage);
+    free(removedF->path);
+    free(removedF);
+    
+    free(path);
+
     res = 1;
     SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
 
+
+    //Da rimuovere
     node_t *tmp = fileHistory.head;
     while(tmp != NULL) {
         printf("File: %s\n", (char*) tmp->data);
@@ -337,6 +357,32 @@ void openFile(int fd) { //Se il file è già aperto cosa succede?
     printf("\n\n");
     fflush(stdout);
     
+}
+
+void closeConnection(int fd, int endpoint) {
+    int numFiles;
+    SYSCALL_ONE_EXIT(readn(fd, &numFiles, sizeof(int)), "readn")
+    for(int i = 0; i < numFiles; i++) {
+        int len;
+        SYSCALL_ONE_EXIT(readn(fd, &len, sizeof(int)), "readn")
+        
+        char* path = calloc(len, sizeof(char));
+        EQ_NULL_EXIT(path, "calloc in closeConnection")
+
+        SYSCALL_ONE_EXIT(readn(fd, path, len * sizeof(char)), "readn")
+
+        Pthread_mutex_lock(&mutex_connections);
+        //update_insert
+        //implementare la cancellazione di un elemento della lista
+        Pthread_mutex_unlock(&mutex_connections);
+
+        free(path);
+    }
+    int res = 0;
+    SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
+    int msg = -1;
+    SYSCALL_ONE_EXIT(writen(endpoint, &msg, sizeof(int)), "readn")
+    close(fd);
 }
 
 void* workerThread(void* arg) {
@@ -366,14 +412,7 @@ void* workerThread(void* arg) {
             case FIND_FILE: findFile(fd); break;
             case CREATE_FILE: createFile(fd); break;
             case OPEN_FILE: openFile(fd); break;
-            case END_CONNECTION: { //Bisognerebbe chiudere tutti i file aperti da quel client. Potrei farlo dall'API
-                int res = 0;
-                SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
-                int msg = -1;
-                SYSCALL_ONE_EXIT(writen(Wendpoint, &msg, sizeof(int)), "readn")
-                close(fd);
-                continue;
-            }
+            case END_CONNECTION: closeConnection(fd, Wendpoint); continue;
         }
 
         //Capire se si può migliorare
@@ -444,8 +483,15 @@ int main(int argc, char* argv[]) {
 
     //Inizializzazione tabella hash
     EQ_NULL_EXIT(storage = icl_hash_create(BUCKETS, hash_pjw, string_compare), "icl_hash_create")
-    list_create(&fileHistory);
-    list_create(&connection);
+    if (list_create(&fileHistory, string_compare) == -1) {
+        perror("list_create");
+        exit(EXIT_FAILURE);
+    }
+    if (list_create(&connection, int_compare) == -1) {
+        perror("list_create");
+        list_destroy(&fileHistory, free);
+        exit(EXIT_FAILURE);
+    }
     
     int signalPipe[2];
     SYSCALL_ONE_EXIT(pipe(signalPipe), "pipe");
@@ -500,7 +546,7 @@ int main(int argc, char* argv[]) {
 
                 // if (fd == signalPipe[0]) break; //Questo non ci va perché sennò non gestisce bene il tipo di segnale che gli arriva
 
-                if (fd == fdPipe[0]) { //Bisogna aggiungere che il thread potrebbe rispondere che quella connessione è stata chiusa
+                if (fd == fdPipe[0]) {
                     int c_fd;
 
                     if (readn(fd, &c_fd, sizeof(int)) == -1) {
@@ -515,7 +561,7 @@ int main(int argc, char* argv[]) {
                     continue;
                 }
 
-                if (fd == listenSocket && !stopConnections) { //Dopo la accept bisognerebbe controllare EINTR? No perché non si blocca mai
+                if (fd == listenSocket && !stopConnections) {
                     int newFd = accept(listenSocket, NULL, 0);
                     printf("Client connesso\n");
                     if (newFd == -1) {
@@ -533,22 +579,12 @@ int main(int argc, char* argv[]) {
                     FD_CLR(fd, &set);
                     fdMax = updateSet(&set, fdMax);
 
-                    // connection_t *new = malloc(sizeof(connection_t));
                     int *new = malloc(sizeof(int));
                     EQ_NULL_EXIT(new, "malloc") //Aggiungere freeGlobal. Se si verifica non viene cancellato il socket
 
-                    // new->fd = fd;
-                    // new->next = NULL;
                     *new = fd;
 
                     Pthread_mutex_lock(&mutex_connections);
-                    // if (connectionBuffer == NULL) {
-                    //     connectionBuffer = new;
-                    //     tailCBuff = new;
-                    // } else {
-                    //     tailCBuff->next = new;
-                    //     tailCBuff = new;
-                    // }
 
                     SYSCALL_ONE_EXIT(list_append(&connection, new), "list_append")
                     

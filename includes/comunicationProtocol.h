@@ -12,7 +12,6 @@ int openConnection(const char* sockname, int msec, const struct timespec abstime
 int closeConnection(const char* sockname);
 
 
-
 int openFile(const char* pathname, int flags);
 
 
@@ -25,7 +24,7 @@ int readFile(const char* pathname, void** buf, size_t* size);
 * memorizzati al suo interno. Ritorna un valore maggiore o uguale a 0 in caso di successo (cioè ritorna il n. di file
 * effettivamente letti), -1 in caso di fallimento, errno viene settato opportunamente.
 */
-int readNFiles(int N, const char* dirname);
+int readNFiles(int N, const char* dirname); //Sono N file qualsiasi, a quanto pare. Non devono essere per forza aperti
 
 
 /*

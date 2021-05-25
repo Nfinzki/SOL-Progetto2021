@@ -20,6 +20,16 @@ typedef struct _request {
 
 list_t requestLst;
 
+int compareRequest(void* a, void* b) {
+    request_t *reqA = (request_t*) a;
+    request_t *reqB = (request_t*) b;
+
+    if (reqA->flag != reqB->flag || reqA->option != reqB->option || reqA->dim != reqB->dim) return 0;
+    for(int i = 0; i < reqA->dim; i++)
+        if (strncmp(reqA->arg[i], reqB->arg[i], STRLEN) != 0) return 0;
+    return 1;
+}
+
 void freeRequest(void* r) {
     request_t *req = (request_t*) r;
     for(int i = 0; i < req->dim; i++)
@@ -275,7 +285,10 @@ int main(int argc, char* argv[]) {
 
     ignoreSigpipe();    
 
-    list_create(&requestLst);
+    if (list_create(&requestLst, compareRequest) == -1) {
+        perror("list_create");
+        exit(EXIT_FAILURE);
+    }
 
     char* socketName = NULL;
     int flagP = 0;

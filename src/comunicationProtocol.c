@@ -79,7 +79,7 @@ int openConnection(const char* sockname, int msec, const struct timespec abstime
         }
     }
 
-    list_create(&openedFiles);
+    if(list_create(&openedFiles, int_compare) == -1) return -1;
 
     return 0;
 }
@@ -96,6 +96,18 @@ int closeConnection(const char* sockname) { //I file aperti dovrebbero venire ch
 
     int opt = END_CONNECTION;
     if (writen(fdSocket, &opt, sizeof(int)) == -1) return -1;
+
+    //Invia il numero di file da chiudere al server
+    if (writen(fdSocket, &(openedFiles.dim), sizeof(int)) == -1) return -1;
+    for(int i = 0; i < openedFiles.dim; i++) {
+        char* path = list_pop(&openedFiles);
+        if (path == NULL) return -1;
+
+        int len = strneln(path, STRLEN);
+        if (writen(fdSocket, &len, sizeof(int)) == -1) return -1;
+        if (writen(fdSocket, path, len * sizeof(char)) == -1) return -1;
+        free(path);
+    }
     
     int res;
     if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
