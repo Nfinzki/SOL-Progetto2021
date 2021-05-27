@@ -445,6 +445,32 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    int scelta;
+    printf("Scegliere quale file chiudere 0, 1, 2\n");
+    scanf("%d", &scelta);
+
+    if (scelta == 0) {
+        if (closeFile("prova.txt") == -1) {
+            perror("closeFile");
+            SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+            exit(EXIT_FAILURE);
+        }
+    }
+    if (scelta == 1) {
+        if (closeFile("sda.txt") == -1) {
+            perror("closeFile");
+            SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+            exit(EXIT_FAILURE);
+        }
+    }
+    if (scelta == 2) {
+        if (closeFile("aiuto.txt") == -1) {
+            perror("closeFile");
+            SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+            exit(EXIT_FAILURE);
+        }
+    }
+
     printf("Digita un numero per chiudere la connessione...\n");
     int fuffa;
     scanf("%d", &fuffa);

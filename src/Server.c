@@ -391,6 +391,36 @@ void closeConnection(int fd, int endpoint) {
     close(fd);
 }
 
+void closeFile(int fd) {
+    int len, res;
+    SYSCALL_ONE_EXIT(readn(fd, &len, sizeof(int)), "readn")
+
+    char* path = calloc(len, sizeof(char));
+    EQ_NULL_EXIT(path, "calloc in closeFile")
+
+    SYSCALL_ONE_EXIT(readn(fd, path, len * sizeof(char)), "readn")
+
+    Pthread_mutex_lock(&mutex_storage);
+    file_t *file = (file_t*) icl_hash_find(storage, path);
+    free(path);
+    
+    if (file == NULL) {
+        res = -1;
+        SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen")
+        exit(EXIT_FAILURE);
+    }
+
+    if (list_delete(&(file->clients), &fd, free) == -1) {
+        res = -1;
+        SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen")
+        exit(EXIT_FAILURE);
+    }
+    Pthread_mutex_unlock(&mutex_storage);
+
+    res = 0;
+    SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen")
+}
+
 void* workerThread(void* arg) {
     int Wendpoint = *(int*) arg;
     while(!sigCaught) {
@@ -420,6 +450,7 @@ void* workerThread(void* arg) {
             case CREATE_FILE: createFile(fd); break;
             case OPEN_FILE: openFile(fd); break;
             case END_CONNECTION: closeConnection(fd, Wendpoint); continue;
+            case CLOSE_FILE: closeFile(fd); break;
         }
 
         //Capire se si può migliorare
