@@ -313,6 +313,47 @@ int writeFile(const char* pathname, const char* dirname);
 
 
 /*
+* Richiesta di scrivere in append al file ‘pathname‘ i ‘size‘ bytes contenuti nel buffer ‘buf’. L’operazione di append
+* nel file è garantita essere atomica dal file server. Se ‘dirname’ è diverso da NULL, il file eventualmente spedito
+* dal server perchè espulso dalla cache per far posto ai nuovi dati di ‘pathname’ dovrà essere scritto in ‘dirname’;
+* Ritorna 0 in caso di successo, -1 in caso di fallimento, errno viene settato opportunamente.
+*/
+int appendToFile(const char* pathname, void* buf, size_t size, const char* dirname) {
+    if (pathname == NULL) {
+        errno = EINVAL;
+        return -1;
+    }
+
+    if (socketName == NULL) {
+        errno = ENOTCONN;
+        return -1;
+    }
+
+    //Copia il nome del file
+    int pathlen = strnlen(pathname, STRLEN) + 1;
+    char* tmp = calloc(pathlen, sizeof(char));
+    if (tmp == NULL) return -1;
+    strncpy(tmp, pathname, pathlen);
+
+    if (list_find(&openedFiles, tmp) == NULL) {
+        free(tmp);
+        errno = ENOENT;
+        return -1;
+    }
+
+    int exists;
+    if ((exists = existFile(tmp)) == -1) {
+        free(tmp);
+        return -1;
+    }
+
+    //Da completare
+    
+    return 0;
+}
+
+
+/*
 * Richiesta di chiusura del file puntato da ‘pathname’. Eventuali operazioni sul file dopo la closeFile falliscono.
 * Ritorna 0 in caso di successo, -1 in caso di fallimento, errno viene settato opportunamente.
 */
