@@ -99,11 +99,14 @@ int closeConnection(const char* sockname) { //I file aperti dovrebbero venire ch
 
     //Invia il numero di file da chiudere al server
     if (writen(fdSocket, &(openedFiles.dim), sizeof(int)) == -1) return -1;
-    for(int i = 0; i < openedFiles.dim; i++) {
+
+    int nFiles = openedFiles.dim;
+
+    for(int i = 0; i < nFiles; i++) {
         char* path = list_pop(&openedFiles);
         if (path == NULL) return -1;
 
-        int len = strneln(path, STRLEN);
+        int len = strnlen(path, STRLEN) + 1;
         if (writen(fdSocket, &len, sizeof(int)) == -1) return -1;
         if (writen(fdSocket, path, len * sizeof(char)) == -1) return -1;
         free(path);
@@ -168,7 +171,7 @@ static int existFile(const char* pathname) {
 /** Richiesta di creazione di un file.
  * @param pathname -- file da creare
  * 
- * @return 0 in caso di cuccesso, -1 in caso di fallimento (setta errno)
+ * @return 0 in caso di successo, -1 in caso di fallimento (setta errno)
 **/
 static int createFile(const char* pathname) {
     int pathlen = strnlen(pathname, STRLEN) + 1;
@@ -281,7 +284,7 @@ int openFile(const char* pathname, int flags) {
         free(tmp);
     }
 
-    if (res) {
+    if (res == 0) {
         if(list_append(&openedFiles, tmp) == -1) {
             return -1;
             free(tmp);

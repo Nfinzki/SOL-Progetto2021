@@ -47,6 +47,13 @@ char* socketName;
 char* logFile;
 
 
+void freeFile(void* f) {
+    file_t *file = (file_t*) f;
+    
+    free(file->path);
+    SYSCALL_ONE_EXIT(list_destroy(&(file->clients), free), "list_destroy")
+    free(file);
+}
 
 void freeGlobal(){
     if (socketName != NULL) free(socketName);
@@ -241,13 +248,8 @@ void createFile(int fd) { //Renderli int?
 
     SYSCALL_ONE_EXIT(readn(fd, newFile->path, newFile->byteDim * sizeof(char)), "readn")
     
-    if(list_create(&(newFile->clients), string_compare) == -1) {
+    if(list_create(&(newFile->clients), int_compare) == -1) {
         perror("list_create");
-        exit(EXIT_FAILURE);
-    }
-
-    if(list_push(&(newFile->clients), &fd) == -1) {
-        perror("list_push");
         exit(EXIT_FAILURE);
     }
 
@@ -258,7 +260,7 @@ void createFile(int fd) { //Renderli int?
         Pthread_mutex_lock(&mutex_storage);
         if (icl_hash_insert(storage, newFile->path, newFile) == NULL) {
             fprintf(stderr, "Error in icl_hash_insert\n");
-            int res = 0;
+            int res = -1;
             SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
             exit(EXIT_FAILURE);
         }
@@ -268,14 +270,14 @@ void createFile(int fd) { //Renderli int?
         Pthread_mutex_lock(&mutex_filehistory);
         if (list_append(&fileHistory, newFile->path) == -1) {
             perror("list_append");
-            int res = 0;
+            int res = -1;
             SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
             exit(EXIT_FAILURE);
         }
         Pthread_mutex_unlock(&mutex_filehistory);
     }
 
-    int res = 1;
+    int res = 0;
     SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
 
 }
@@ -292,18 +294,21 @@ void findFile(int fd) {
     }
     SYSCALL_ONE_EXIT(readn(fd, path, len * sizeof(char)), "readn")
 
+    Pthread_mutex_lock(&mutex_storage);
     int found;
     if(icl_hash_find(storage, path) == NULL)
         found = 0;
     else
         found = 1;
+    Pthread_mutex_unlock(&mutex_storage);
+    
+    free(path);
 
-    SYSCALL_ONE_EXIT(writen(fd, &found, sizeof(int)), "readn")
+    SYSCALL_ONE_EXIT(writen(fd, &found, sizeof(int)), "writen")
 }
 
 void openFile(int fd) { //Se il file è già aperto cosa succede?
-    int len;
-    int res;
+    int len, res;
     SYSCALL_ONE_EXIT(readn(fd, &len, sizeof(int)), "readn")
 
     char* path = calloc(len, sizeof(char));
@@ -323,45 +328,35 @@ void openFile(int fd) { //Se il file è già aperto cosa succede?
         exit(EXIT_FAILURE);
     }
 
-    if(list_push(&(f->clients), &fd) == -1) { //Potrebbe non andare bene
-        perror("list_push");
+    int *newClient = malloc(sizeof(int));
+    if (newClient == NULL) {
+        fprintf(stderr, "Malloc error in openFile\n");
         res = 0;
         SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
         exit(EXIT_FAILURE);
     }
 
-    file_t *removedF;
-    if (icl_hash_update_insert(storage, path, f, &removedF) == NULL) {
-        fprintf(stderr, "icl_hash_update_insert\n");
-        res = 0;
+    *newClient = fd;
+
+    if(list_push(&(f->clients), newClient) == -1) {
+        perror("list_push");
+        res = -1;
         SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
         exit(EXIT_FAILURE);
     }
     Pthread_mutex_unlock(&mutex_storage);
-    free(removedF->path);
-    free(removedF);
-    
+
     free(path);
 
-    res = 1;
+    res = 0;
     SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
-
-
-    //Da rimuovere
-    node_t *tmp = fileHistory.head;
-    while(tmp != NULL) {
-        printf("File: %s\n", (char*) tmp->data);
-        fflush(stdout);
-        tmp = tmp->next;        
-    }
-    printf("\n\n");
-    fflush(stdout);
     
 }
 
 void closeConnection(int fd, int endpoint) {
     int numFiles;
     SYSCALL_ONE_EXIT(readn(fd, &numFiles, sizeof(int)), "readn")
+
     for(int i = 0; i < numFiles; i++) {
         int len;
         SYSCALL_ONE_EXIT(readn(fd, &len, sizeof(int)), "readn")
@@ -371,10 +366,21 @@ void closeConnection(int fd, int endpoint) {
 
         SYSCALL_ONE_EXIT(readn(fd, path, len * sizeof(char)), "readn")
 
-        Pthread_mutex_lock(&mutex_connections);
-        //update_insert
-        //implementare la cancellazione di un elemento della lista
-        Pthread_mutex_unlock(&mutex_connections);
+        Pthread_mutex_lock(&mutex_storage);
+        file_t *f = (file_t*) icl_hash_find(storage, path);
+        if (f == NULL) {
+            fprintf(stderr, "File non presente nello storage\n");
+            int res = -1;
+            SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
+            exit(EXIT_FAILURE);
+        }
+        if (list_delete(&(f->clients), &fd, free) == -1) {
+            perror("list_delete in closeConnection");
+            int res = -1;
+            SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
+            exit(EXIT_FAILURE);
+        }
+        Pthread_mutex_unlock(&mutex_storage);
 
         free(path);
     }
@@ -402,6 +408,7 @@ void* workerThread(void* arg) {
         int *tmp;
         EQ_NULL_EXIT_F(tmp = (int*) list_pop(&connection), "list_pop", Pthread_mutex_unlock(&mutex_connections))
         fd = *tmp;
+        free(tmp);
 
         Pthread_mutex_unlock(&mutex_connections);
 
@@ -424,7 +431,6 @@ void* workerThread(void* arg) {
             perror("writen in thread worker");
             exit(EXIT_FAILURE);
         }
-
     }
 
     return NULL;
@@ -442,11 +448,11 @@ void initializeSocket(int* fd_socket) {
     SYSCALL_ONE_EXIT(listen(*fd_socket, MAXCONN), "listen")
 }
 
-void spawnThread(int W, int writeEndpoint) {
+void spawnThread(int W, int *writeEndpoint) {
     for(int i = 0; i < W; i++) {
         int err;
         pthread_t tid;
-        SYSCALL_NOT_ZERO_EXIT(err, pthread_create(&tid, NULL, workerThread, (void*) &writeEndpoint), "pthread_create")
+        SYSCALL_NOT_ZERO_EXIT(err, pthread_create(&tid, NULL, workerThread, (void*) writeEndpoint), "pthread_create")
 
         SYSCALL_NOT_ZERO_EXIT(err, pthread_detach(tid), "pthread_detach")
     }
@@ -483,7 +489,7 @@ int main(int argc, char* argv[]) {
 
     //Inizializzazione tabella hash
     EQ_NULL_EXIT(storage = icl_hash_create(BUCKETS, hash_pjw, string_compare), "icl_hash_create")
-    if (list_create(&fileHistory, string_compare) == -1) {
+    if (list_create(&fileHistory, str_compare) == -1) {
         perror("list_create");
         exit(EXIT_FAILURE);
     }
@@ -510,7 +516,7 @@ int main(int argc, char* argv[]) {
     int fdPipe[2];
     SYSCALL_ONE_EXIT(pipe(fdPipe), "pipe");
 
-    spawnThread(numW, fdPipe[1]); //Aggiungere freeGlobal
+    spawnThread(numW, &fdPipe[1]); //Aggiungere freeGlobal
 
     int listenSocket;
     initializeSocket(&listenSocket); //Aggiungere freeGlobal
@@ -601,6 +607,9 @@ int main(int argc, char* argv[]) {
 
     SYSCALL_NOT_ZERO_EXIT(err, pthread_join(sighandler_thread, NULL), "pthread_join")
 
+    // SYSCALL_ONE_EXIT(list_destroy(&fileHistory, free), "list_destroy") //Non serve perché fileHistory e la tabella hash hanno come chiave la stessa variabile allocata sullo heap
+    SYSCALL_ONE_EXIT(list_destroy(&connection, free), "list_destroy")
+    SYSCALL_ONE_EXIT(icl_hash_destroy(storage, NULL, freeFile), "icl_hash_destrory")
     close(listenSocket);
     close(fdPipe[0]);
     close(fdPipe[1]);

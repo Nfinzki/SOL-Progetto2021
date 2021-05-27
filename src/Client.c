@@ -404,17 +404,50 @@ int main(int argc, char* argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    if (openFile("prova.txt", 0) == -1) {
-        perror("openFile");
-        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
-        exit(EXIT_FAILURE);
+    printf("Digita 1 per non creare i file...\n");
+    int fff;
+    scanf("%d", &fff);
+    if (fff == 0) {
+        if (openFile("prova.txt", O_CREATE) == -1) {
+            perror("openFile");
+            SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+            exit(EXIT_FAILURE);
+        }
+
+        if (openFile("sda.txt", O_CREATE) == -1) {
+            perror("openFile");
+            SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+            exit(EXIT_FAILURE);
+        }
+
+        if (openFile("aiuto.txt", O_CREATE) == -1) {
+            perror("openFile");
+            SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+            exit(EXIT_FAILURE);
+        }
+    } else {
+        if (openFile("prova.txt", 0) == -1) {
+            perror("openFile");
+            SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+            exit(EXIT_FAILURE);
+        }
+
+        if (openFile("sda.txt", 0) == -1) {
+            perror("openFile");
+            SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+            exit(EXIT_FAILURE);
+        }
+
+        if (openFile("aiuto.txt", 0) == -1) {
+            perror("openFile");
+            SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+            exit(EXIT_FAILURE);
+        }
     }
 
-    if (openFile("sda.txt", O_CREATE) == -1) {
-        perror("openFile");
-        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
-        exit(EXIT_FAILURE);
-    }
+    printf("Digita un numero per chiudere la connessione...\n");
+    int fuffa;
+    scanf("%d", &fuffa);
 
     if (closeConnection(socketName) == -1) {
         perror("closeConnection");
