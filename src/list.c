@@ -5,7 +5,7 @@
 #include "../includes/list.h"
 
 
-int string_compare(void* a, void* b) {
+int str_compare(void* a, void* b) {
     return (strcmp( (char*)a, (char*)b ) == 0);
 }
 
