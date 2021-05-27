@@ -137,6 +137,28 @@ void* list_pop(list_t* lst) {
 }
 
 
+/** 
+ * Cerca l'elemento all'interno della lista
+ * 
+ * @param lst -- puntatore alla lista
+ * @param data -- puntatore all'elemento da cercare
+ * 
+ * @return puntatore all'elemento che corrisponde a data. Se l'elemento non è stato trovato restituisce NULL
+**/
+void* list_find(list_t* lst, void* data) {
+    if (lst == NULL || data == NULL) return NULL;
+
+    node_t *curr = lst->head;
+
+    while(curr != NULL) {
+        if (lst->list_data_compare(curr->data, data)) return curr;
+        curr = curr->next;
+    }
+
+    return NULL;
+}
+
+
 /**
  * Cancella un elemento dalla lista
  * 
