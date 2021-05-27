@@ -24,6 +24,7 @@ icl_hash_t *storage;
 long max_space;
 int max_file;
 long actual_space = 0; //Mettere tutto dentro un'unica struct che contiene anche l'hash table
+int actual_numFile = 0;
 static pthread_mutex_t mutex_storage = PTHREAD_MUTEX_INITIALIZER;
 
 list_t fileHistory;
@@ -32,6 +33,7 @@ static pthread_mutex_t mutex_filehistory = PTHREAD_MUTEX_INITIALIZER;
 typedef struct _file_t {
     char* path;
     int byteDim;
+    void* data;
     list_t clients;
 } file_t;
 
@@ -46,6 +48,7 @@ int stopConnections = 0;
 char* socketName;
 char* logFile;
 
+//Scrivere nella relazione che fileHistory e i file in storage hanno lo stesso path allocato quindi basta liberare uno dei due per liberare entrambi
 
 void freeFile(void* f) {
     file_t *file = (file_t*) f;
@@ -53,6 +56,58 @@ void freeFile(void* f) {
     free(file->path);
     SYSCALL_ONE_EXIT(list_destroy(&(file->clients), free), "list_destroy")
     free(file);
+}
+
+int FIFO_ReplacementPolicy(long space, int numFiles, int fd) { //Deve inviare all'API NO_ACTION perché non è entrato in funzione l'algoritmo di sostituzione (questo è per chi può chiamare l'algoritmo di sostituzione)
+    printf("Esecuzione dell'algoritmo di sostituzione\n");
+    fflush(stdout);
+
+    Pthread_mutex_lock(&mutex_storage);
+    while(space > max_space || numFiles > max_file) {
+        Pthread_mutex_unlock(&mutex_storage);
+
+        Pthread_mutex_lock(&mutex_filehistory);
+        char* oldFile_name = (char*) list_pop(&fileHistory);
+        Pthread_mutex_unlock(&mutex_filehistory);
+
+        if (oldFile_name == NULL) {
+            Pthread_mutex_lock(&mutex_storage);
+            continue;
+        }
+
+        Pthread_mutex_lock(&mutex_storage);
+        file_t* oldFile = (file_t*) icl_hash_find(storage, oldFile_name);
+        if (oldFile == NULL) { //Se c'è un'inconsistenza il file server non è più affidabile
+            fprintf(stderr, "Inconsistenza tra lo storage e la cronologia dei file\n");
+            exit(EXIT_FAILURE);
+        }
+
+        if (fd != -1) {
+            int opt = SEND_FILE;
+            if (writen(fd, &opt, sizeof(int)) == -1) {
+                Pthread_mutex_unlock(&mutex_storage);
+                return -1;
+            }
+            if (writen(fd, &(oldFile->byteDim), sizeof(int)) == -1) {
+                Pthread_mutex_unlock(&mutex_storage);
+                return -1;
+            }
+            if (writen(fd, oldFile->data, oldFile->byteDim * sizeof(void)) == -1) {
+                Pthread_mutex_unlock(&mutex_storage);
+                return -1;
+            }
+        }
+
+        space -= oldFile->byteDim;
+        numFiles--;
+
+        if (icl_hash_delete(storage, oldFile_name, NULL, freeFile) == -1) exit(EXIT_FAILURE);
+
+        //Non eseguo la unlock perché la guardia del while valuterà le variabili condivise dello storage
+    }
+    Pthread_mutex_unlock(&mutex_storage);
+
+    return 0;
 }
 
 void freeGlobal(){
@@ -238,48 +293,56 @@ void createFile(int fd) { //Renderli int?
         exit(EXIT_FAILURE);
     }
 
-    SYSCALL_ONE_EXIT(readn(fd, &(newFile->byteDim), sizeof(int)), "readn")
+    newFile->byteDim = 0;
+    int len;
+    // SYSCALL_ONE_EXIT(readn(fd, &(newFile->byteDim), sizeof(int)), "readn")
+    SYSCALL_ONE_EXIT(readn(fd, &len, sizeof(int)), "readn")
 
-    newFile->path = calloc(newFile->byteDim, sizeof(char));
+    // newFile->path = calloc(newFile->byteDim, sizeof(char));
+    newFile->path = calloc(len, sizeof(char));
     if (newFile->path == NULL) {
         perror("calloc");
         exit(EXIT_FAILURE);
     }
 
-    SYSCALL_ONE_EXIT(readn(fd, newFile->path, newFile->byteDim * sizeof(char)), "readn")
-    
+    // SYSCALL_ONE_EXIT(readn(fd, newFile->path, newFile->byteDim * sizeof(char)), "readn")
+    SYSCALL_ONE_EXIT(readn(fd, newFile->path, len * sizeof(char)), "readn")
+
     if(list_create(&(newFile->clients), int_compare) == -1) {
         perror("list_create");
         exit(EXIT_FAILURE);
     }
 
-    if (actual_space + newFile->byteDim > max_space) {
-        printf("Entra in azione l'argoritmo di sostituzione\n");
-        fflush(stdout);
-    } else {
-        Pthread_mutex_lock(&mutex_storage);
-        if (icl_hash_insert(storage, newFile->path, newFile) == NULL) {
-            fprintf(stderr, "Error in icl_hash_insert\n");
+    if (actual_space + newFile->byteDim > max_space || actual_numFile + 1 > max_file) { //Forse il controllo di actual_space non è necessario qui
+        if (FIFO_ReplacementPolicy(actual_space + newFile->byteDim, actual_numFile + 1, -1) == -1) {
+            fprintf(stderr, "Errore nell'algoritmo di esecuzione\n");
             int res = -1;
             SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
-            exit(EXIT_FAILURE);
         }
-        actual_space += newFile->byteDim;
-        Pthread_mutex_unlock(&mutex_storage);
-
-        Pthread_mutex_lock(&mutex_filehistory);
-        if (list_append(&fileHistory, newFile->path) == -1) {
-            perror("list_append");
-            int res = -1;
-            SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
-            exit(EXIT_FAILURE);
-        }
-        Pthread_mutex_unlock(&mutex_filehistory);
     }
+
+    Pthread_mutex_lock(&mutex_storage);
+    if (icl_hash_insert(storage, newFile->path, newFile) == NULL) {
+        fprintf(stderr, "Error in icl_hash_insert\n");
+        int res = -1;
+        SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
+        exit(EXIT_FAILURE);
+    }
+    actual_space += newFile->byteDim;
+    actual_numFile++;
+    Pthread_mutex_unlock(&mutex_storage);
+
+    Pthread_mutex_lock(&mutex_filehistory);
+    if (list_append(&fileHistory, newFile->path) == -1) {
+        perror("list_append");
+        int res = -1;
+        SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
+        exit(EXIT_FAILURE);
+    }
+    Pthread_mutex_unlock(&mutex_filehistory);
 
     int res = 0;
     SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
-
 }
 
 void findFile(int fd) {
@@ -403,7 +466,7 @@ void closeFile(int fd) {
     Pthread_mutex_lock(&mutex_storage);
     file_t *file = (file_t*) icl_hash_find(storage, path);
     free(path);
-    
+
     if (file == NULL) {
         res = -1;
         SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen")
@@ -415,6 +478,30 @@ void closeFile(int fd) {
         SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen")
         exit(EXIT_FAILURE);
     }
+
+    node_t *tmp = fileHistory.head;
+    while(tmp != NULL) {
+        printf("File: %s\n", (char*) tmp->data);
+        fflush(stdout);
+        file_t *faf = icl_hash_find(storage, tmp->data);
+        if (faf == NULL) {
+            perror("Errore in icl_hash_find");
+            return;
+        }
+        printf("I client connessi sono: \n");
+        fflush(stdout);
+        node_t *tt = faf->clients.head;
+        for(int i = 0; i < faf->clients.dim; i++) {
+            printf("%d\n", *(int*) tt->data);
+            fflush(stdout);
+            tt = tt->next;
+        }
+        tmp = tmp->next;
+        printf("\n");
+        fflush(stdout);
+    }
+
+
     Pthread_mutex_unlock(&mutex_storage);
 
     res = 0;
@@ -458,6 +545,7 @@ void* workerThread(void* arg) {
             close(fd);
             fd = -1;
         }
+
         if (writen(Wendpoint, &fd, sizeof(int)) == -1) {
             perror("writen in thread worker");
             exit(EXIT_FAILURE);
