@@ -6,5 +6,6 @@
 #define CREATE_FILE 02
 #define FIND_FILE 03
 #define END_CONNECTION 04
+#define CLOSE_FILE 05
 
 #endif

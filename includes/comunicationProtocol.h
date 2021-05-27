@@ -27,12 +27,6 @@ int readFile(const char* pathname, void** buf, size_t* size);
 int readNFiles(int N, const char* dirname); //Sono N file qualsiasi, a quanto pare. Non devono essere per forza aperti
 
 
-/*
-* Scrive tutto il file puntato da pathname nel file server. Ritorna successo solo se la precedente operazione,
-* terminata con successo, è stata openFile(pathname, O_CREATE| O_LOCK). Se ‘dirname’ è diverso da NULL, il
-* file eventualmente spedito dal server perchè espulso dalla cache per far posto al file ‘pathname’ dovrà essere
-* scritto in ‘dirname’; Ritorna 0 in caso di successo, -1 in caso di fallimento, errno viene settato opportunamente.
-*/
 int writeFile(const char* pathname, const char* dirname);
 
 
@@ -63,10 +57,6 @@ int lockFile(const char* pathname);
 int unlockFile(const char* pathname);
 
 
-/*
-* Richiesta di chiusura del file puntato da ‘pathname’. Eventuali operazioni sul file dopo la closeFile falliscono.
-* Ritorna 0 in caso di successo, -1 in caso di fallimento, errno viene settato opportunamente.
-*/
 int closeFile(const char* pathname);
 
 

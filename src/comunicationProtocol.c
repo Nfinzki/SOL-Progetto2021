@@ -19,7 +19,7 @@
 #define STRLEN 256
 #endif
 
-static char* socketName;
+static char* socketName = NULL;
 static int fdSocket;
 
 static list_t openedFiles;
@@ -301,3 +301,82 @@ int openFile(const char* pathname, int flags) {
 * settato opportunamente
 */
 int readFile(const char* pathname, void** buf, size_t* size);
+
+
+/*
+* Scrive tutto il file puntato da pathname nel file server. Ritorna successo solo se la precedente operazione,
+* terminata con successo, è stata openFile(pathname, O_CREATE| O_LOCK). Se ‘dirname’ è diverso da NULL, il
+* file eventualmente spedito dal server perchè espulso dalla cache per far posto al file ‘pathname’ dovrà essere
+* scritto in ‘dirname’; Ritorna 0 in caso di successo, -1 in caso di fallimento, errno viene settato opportunamente.
+*/
+int writeFile(const char* pathname, const char* dirname);
+
+
+/*
+* Richiesta di chiusura del file puntato da ‘pathname’. Eventuali operazioni sul file dopo la closeFile falliscono.
+* Ritorna 0 in caso di successo, -1 in caso di fallimento, errno viene settato opportunamente.
+*/
+int closeFile(const char* pathname) {
+    if (pathname == NULL) {
+        errno = EINVAL;
+        return -1;
+    }
+
+    if (socketName == NULL) {
+        errno = ENOTCONN;
+        return -1;
+    }
+
+    //Copia il nome del file
+    int pathlen = strnlen(pathname, STRLEN) + 1;
+    char* tmp = calloc(pathlen, sizeof(char));
+    if (tmp == NULL) return -1;
+    strncpy(tmp, pathname, pathlen);
+
+    if (list_find(&openedFiles, tmp) == NULL) {
+        free(tmp);
+        errno = ENOENT;
+        return -1;
+    }
+
+    if (list_delete(&openedFiles, tmp, free) == -1) {
+        free(tmp);
+        return -1;
+    }
+
+    int exists;
+    if ((exists = existFile(tmp)) == -1) {
+        free(tmp);
+        return -1;
+    }
+
+    if (!exists) {
+        free(tmp);
+        errno = ENOENT;
+        return -1;
+    }
+
+    int opt = CLOSE_FILE;
+
+    if(writen(fdSocket, &opt, sizeof(int)) == -1) {
+        free(tmp);
+        return -1;
+    }
+
+    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {
+        free(tmp);
+        return -1;
+    }
+    if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {
+        free(tmp);
+        return -1;
+    }
+    free(tmp);
+
+    //Attende la risposta del server
+    int res;
+    if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
+    
+    if (res == -1) errno = ENOENT;
+    return res;
+}
