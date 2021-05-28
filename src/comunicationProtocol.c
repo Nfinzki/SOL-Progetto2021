@@ -304,7 +304,19 @@ int openFile(const char* pathname, int flags) {
 * caso di errore, ‘buf‘e ‘size’ non sono validi. Ritorna 0 in caso di successo, -1 in caso di fallimento, errno viene
 * settato opportunamente
 */
-int readFile(const char* pathname, void** buf, size_t* size);
+int readFile(const char* pathname, void** buf, size_t* size) {
+    if (pathname == NULL) {
+        errno = EINVAL;
+        return -1;
+    }
+
+    if (socketName == NULL) {
+        errno = ENOTCONN;
+        return -1;
+    }
+
+    return 0;
+}
 
 
 /*
@@ -363,9 +375,9 @@ int appendToFile(const char* pathname, void* buf, size_t size, const char* dirna
     int opt = APPEND_FILE;
     if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(tmp); return -1;}
     if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {free(tmp); return -1;}
-    if (writen(fdSocket, &tmp, pathlen * sizeof(char)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {free(tmp); return -1;}
     if (writen(fdSocket, &size, sizeof(size_t)) == -1) {free(tmp); return -1;}
-    if (writen(fdSocket, buf, size * sizeof(void)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, buf, size * sizeof(char)) == -1) {free(tmp); return -1;}
 
     free(tmp);
 
@@ -400,11 +412,11 @@ int appendToFile(const char* pathname, void* buf, size_t size, const char* dirna
         size_t dim;
         if (readn(fdSocket, &dim, sizeof(size_t)) == -1) {free(path); return -1;}
 
-        void* data = malloc(dim * sizeof(void));
+        char* data = malloc(dim * sizeof(char));
         if (data == NULL) {free(path); return -1;} //Settare errno
 
         //Lettura del file
-        if (readn(fdSocket, data, dim * sizeof(void)) == -1) {free(path); return -1;}
+        if (readn(fdSocket, data, dim * sizeof(char)) == -1) {free(path); return -1;}
 
         if (dirname == NULL) { //Se non è stata specificata la directory, i file vengono scartati
             free(path);
@@ -495,7 +507,7 @@ int appendToFile(const char* pathname, void* buf, size_t size, const char* dirna
         }
 
         //Scrittura nel file
-        if (writen(createdFile, data, dim * sizeof(void)) == -1) {
+        if (writen(createdFile, data, dim * sizeof(char)) == -1) {
             free(path);
             free(data);
             if (fullstop != -1) free(extension);

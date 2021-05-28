@@ -101,7 +101,7 @@ int FIFO_ReplacementPolicy(long space, int numFiles, int fd) { //Deve inviare al
                 Pthread_mutex_unlock(&mutex_storage);
                 return -1;
             }
-            if (writen(fd, oldFile->data, oldFile->byteDim * sizeof(void)) == -1) {
+            if (writen(fd, oldFile->data, oldFile->byteDim * sizeof(char)) == -1) {
                 Pthread_mutex_unlock(&mutex_storage);
                 return -1;
             }
@@ -487,10 +487,10 @@ void appendFile(int fd) {
     size_t fileDim;
     SYSCALL_ONE_EXIT(readn(fd, &fileDim, sizeof(size_t)), "readn")
 
-    void* newData = malloc(fileDim * sizeof(void));
+    char* newData = malloc(fileDim * sizeof(char));
     EQ_NULL_EXIT(newData, "malloc")
 
-    SYSCALL_ONE_EXIT(readn(fd, newData, fileDim * sizeof(void)), "readn")
+    SYSCALL_ONE_EXIT(readn(fd, newData, fileDim * sizeof(char)), "readn")
     if (actual_space + fileDim > max_space) {
         Pthread_mutex_unlock(&mutex_storage);
         if (FIFO_ReplacementPolicy(actual_space + fileDim, actual_numFile, fd) == -1) {
@@ -501,11 +501,18 @@ void appendFile(int fd) {
         Pthread_mutex_lock(&mutex_storage);
     }
 
+    printf("I byte letti sono %s\n", newData);
+    fflush(stdout);
+
     if (f->data == NULL)
         f->data = newData;
     else
-        memcpy(f->data + f->byteDim, newData, fileDim);
+        memcpy((char*)f->data + f->byteDim, newData, fileDim);
     f->byteDim += fileDim;
+
+
+    printf("Il contenuto del file è: %s\n", (char*)f->data);
+    fflush(stdout);
     Pthread_mutex_unlock(&mutex_storage);
 
     int res = 0;

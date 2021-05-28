@@ -390,6 +390,8 @@ int main(int argc, char* argv[]) {
 
     printf("Socket %s\n", socketName);
 
+
+
     struct timespec maxTime; //Provvisorio
     if (clock_gettime(CLOCK_REALTIME, &maxTime) == -1) {
         perror("clock_gettime");
@@ -444,6 +446,25 @@ int main(int argc, char* argv[]) {
             exit(EXIT_FAILURE);
         }
     }
+
+    int len = strnlen("Questo file riuscirà ad arrivare sano e salvo a destinazione?", STRLEN);
+    char* dati = calloc(len, sizeof(char));
+    strncpy(dati, "Questo file riuscirà ad arrivare sano e salvo a destinazione?", len);
+
+    if (appendToFile("prova.txt", dati, len, NULL) == -1) {
+        perror("appendToFile");
+        return -1;
+    }
+
+    int len2 = strnlen("Spero proprio di si", STRLEN);
+    char* dati2 = calloc(len, sizeof(char));
+    strncpy(dati2, "Spero proprio di si", len);
+
+    if (appendToFile("prova.txt", dati2, len2, NULL) == -1) {
+        perror("appendToFile");
+        return -1;
+    }
+
 
     int scelta;
     printf("Scegliere quale file chiudere 0, 1, 2\n");
