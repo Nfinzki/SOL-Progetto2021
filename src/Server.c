@@ -464,6 +464,54 @@ void closeConnection(int fd, int endpoint) {
     close(fd);
 }
 
+void appendFile(int fd) {
+    int len;
+    SYSCALL_ONE_EXIT(readn(fd, &len, sizeof(int)), "readn")
+
+    char* path = calloc(len, sizeof(char));
+    EQ_NULL_EXIT(path, "calloc in appendFile")
+
+    SYSCALL_ONE_EXIT(readn(fd, path, len * sizeof(char)), "readn")
+
+    Pthread_mutex_lock(&mutex_storage);
+    file_t *f = (file_t*) icl_hash_find(storage, path);
+        if (f == NULL) {
+            fprintf(stderr, "File non presente nello storage\n");
+            int res = -1;
+            SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
+            exit(EXIT_FAILURE);
+        }
+    
+    //Controllare che il fd sia presente nella lista dei fd che hanno aperto quel file?
+    
+    size_t fileDim;
+    SYSCALL_ONE_EXIT(readn(fd, &fileDim, sizeof(size_t)), "readn")
+
+    void* newData = malloc(fileDim * sizeof(void));
+    EQ_NULL_EXIT(newData, "malloc")
+
+    SYSCALL_ONE_EXIT(readn(fd, newData, fileDim * sizeof(void)), "readn")
+    if (actual_space + fileDim > max_space) {
+        Pthread_mutex_unlock(&mutex_storage);
+        if (FIFO_ReplacementPolicy(actual_space + fileDim, actual_numFile, fd) == -1) {
+            fprintf(stderr, "Errore nell'esecuzione dell'algoritmo di sostituzione\n");
+            int res = -1;
+            SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen")
+        }
+        Pthread_mutex_lock(&mutex_storage);
+    }
+
+    if (f->data == NULL)
+        f->data = newData;
+    else
+        memcpy(f->data + f->byteDim, newData, fileDim);
+    f->byteDim += fileDim;
+    Pthread_mutex_unlock(&mutex_storage);
+
+    int res = 0;
+    SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen")
+}
+
 void closeFile(int fd) {
     int len, res;
     SYSCALL_ONE_EXIT(readn(fd, &len, sizeof(int)), "readn")
@@ -547,6 +595,7 @@ void* workerThread(void* arg) {
             case CREATE_FILE: createFile(fd); break;
             case OPEN_FILE: openFile(fd); break;
             case END_CONNECTION: closeConnection(fd, Wendpoint); continue;
+            case APPEND_FILE: appendFile(fd); break;
             case CLOSE_FILE: closeFile(fd); break;
         }
 
