@@ -32,7 +32,7 @@ static pthread_mutex_t mutex_filehistory = PTHREAD_MUTEX_INITIALIZER;
 
 typedef struct _file_t {
     char* path;
-    int byteDim;
+    size_t byteDim;
     void* data;
     list_t clients;
 } file_t;
@@ -88,7 +88,16 @@ int FIFO_ReplacementPolicy(long space, int numFiles, int fd) { //Deve inviare al
                 Pthread_mutex_unlock(&mutex_storage);
                 return -1;
             }
-            if (writen(fd, &(oldFile->byteDim), sizeof(int)) == -1) {
+            int len = strnlen(oldFile->path, STRLEN);
+            if (writen(fd, &len, sizeof(int)) == -1) {
+                Pthread_mutex_unlock(&mutex_storage);
+                return -1;
+            }
+            if (writen(fd, oldFile->path, len * sizeof(char)) == -1) {
+                Pthread_mutex_unlock(&mutex_storage);
+                return -1;
+            }
+            if (writen(fd, &(oldFile->byteDim), sizeof(size_t)) == -1) {
                 Pthread_mutex_unlock(&mutex_storage);
                 return -1;
             }
@@ -294,6 +303,7 @@ void createFile(int fd) { //Renderli int?
     }
 
     newFile->byteDim = 0;
+    newFile->data = NULL;
     int len;
     // SYSCALL_ONE_EXIT(readn(fd, &(newFile->byteDim), sizeof(int)), "readn")
     SYSCALL_ONE_EXIT(readn(fd, &len, sizeof(int)), "readn")
