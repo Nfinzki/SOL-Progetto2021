@@ -525,7 +525,7 @@ int appendToFile(const char* pathname, void* buf, size_t size, const char* dirna
         if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
     }
 
-    return 0;
+    return res;
 }
 
 
