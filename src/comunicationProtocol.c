@@ -5,6 +5,10 @@
 #include <sys/un.h>
 #include <time.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 
 #include "../includes/comunication.h"
 #include "../includes/comunicationOptions.h"
@@ -347,8 +351,180 @@ int appendToFile(const char* pathname, void* buf, size_t size, const char* dirna
         return -1;
     }
 
-    //Da completare
+    if (!exists) {
+        //Il file non è più presente nel server. Viene rimosso dalla lista dei file aperti e viene restituito un errore
+        if (list_delete(&openedFiles, tmp, free) == -1) {free(tmp); return -1;}
+        free(tmp); 
+        errno = ENOENT;
+        return -1;
+    }
+
+    //Richiesta al server
+    int opt = APPEND_FILE;
+    if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, &tmp, pathlen * sizeof(char)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, &size, sizeof(size_t)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, buf, size * sizeof(void)) == -1) {free(tmp); return -1;}
+
+    free(tmp);
+
+    //Lettura risposta
+    int res;
+    if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
+
+    if (res != SEND_FILE) return res; //Bisogna settare errno
     
+    if (dirname != NULL) {
+        //Verifica che il dirname sia una directory
+        struct stat info;
+        if (stat(dirname, &info) == -1) return -1;
+        if (!S_ISDIR(info.st_mode)) {
+            errno = ENOTDIR;
+            return -1;
+        }
+    }
+    
+    while(res == SEND_FILE) {
+        //Lettura della lunghezza del path
+        int len;
+        if (readn(fdSocket, &len, sizeof(int)) == -1) return -1;
+
+        char* path = calloc(len, sizeof(char));
+        if (path == NULL) return -1; //Settare errno
+
+        //Lettura del path
+        if (readn(fdSocket, path, len * sizeof(char)) == -1) {free(path); return -1;}
+
+        //Lettura della dimensione del file
+        size_t dim;
+        if (readn(fdSocket, &dim, sizeof(size_t)) == -1) {free(path); return -1;}
+
+        void* data = malloc(dim * sizeof(void));
+        if (data == NULL) {free(path); return -1;} //Settare errno
+
+        //Lettura del file
+        if (readn(fdSocket, data, dim * sizeof(void)) == -1) {free(path); return -1;}
+
+        if (dirname == NULL) { //Se non è stata specificata la directory, i file vengono scartati
+            free(path);
+            free(data);
+            if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
+            continue;
+        }
+
+        //Manipolazione delle stringhe per estrapolare dal path il nome e l'eventuale estensione del file
+        int startName;
+        int fullstop = -1;
+        for(startName = len - 1; startName >= 0; startName--) {
+            if (path[startName] == '/') break;
+            if (path[startName] == '.') fullstop = fullstop == -1 ? startName : fullstop;
+        }
+        startName++;
+
+        char* extension;
+        if (fullstop != -1) {
+            extension = calloc(len - fullstop, sizeof(char));
+            if (extension == NULL) {
+                free(path);
+                free(data);
+                return -1;
+            }
+
+            strncpy(extension, path + fullstop, len - fullstop);
+        }
+
+        //Salvataggio e cambio della CWD per poter salvare i file
+        char* cwd = calloc(512, sizeof(char));
+        if (cwd == NULL) {
+            free(path);
+            free(data);
+            if (fullstop != -1) free(extension);
+            return -1;
+        }
+
+        if ((cwd = getcwd(cwd, 512)) == NULL) {
+            free(path);
+            free(data);
+            if (fullstop != -1) free(extension);
+            free(cwd);
+            return -1; //Bisogna controllare se errno == ERANGE e fare una realloc e riprovare
+        }
+
+        if (chdir(dirname) == -1) {
+            free(path);
+            free(data);
+            if (fullstop != -1) free(extension);
+            free(cwd);
+            return -1;
+        }
+
+        //Creazione del file. Se esiste un file con lo stesso nome verrà modificato il nome del file da creare
+        int createdFile, oldCifre;
+        int try = 1;
+        while((createdFile = open(path + startName, O_WRONLY | O_CREAT | O_EXCL)) == -1) {
+            if (errno != EEXIST) return -1;
+
+            if (try == 1) {
+                char* tmp = realloc(path, (len + 3) * sizeof(char));
+                if (tmp == NULL) return -1;
+                path = tmp;
+                len += 3;
+            }
+
+            int tmp_try = try;
+            int nCifre = 0;
+            while (tmp_try != 0) {
+                tmp_try /= 10;
+                nCifre++;
+            }
+
+            if (nCifre > oldCifre) {
+                char* tmp = realloc(path, (len + 1) * sizeof(char));
+                if (tmp == NULL) return -1;
+                path = tmp;
+                len++;
+            }
+
+            oldCifre = nCifre;
+
+            snprintf(path + fullstop, sizeof(int) + 2 * sizeof(char), "(%d)", try);
+            if (fullstop != -1) strncpy(path + fullstop + nCifre + 2, extension, len - fullstop);
+            
+            try++;
+        }
+
+        //Scrittura nel file
+        if (writen(createdFile, data, dim * sizeof(void)) == -1) {
+            free(path);
+            free(data);
+            if (fullstop != -1) free(extension);
+            free(cwd);
+            return -1;
+        }
+
+        //Chiusura del file
+        close(createdFile);
+
+        //Ripristino della precedente CWD
+        if (chdir(cwd) == -1) {
+            free(path);
+            free(data);
+            if (fullstop != -1) free(extension);
+            free(cwd);
+            return -1;
+        }
+
+        //Libera la memoria
+        if (fullstop != -1) free(extension);
+        free(cwd);
+        free(path);
+        free(data);
+
+        //Lettura del prossimo potenziale file inviato dal server
+        if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
+    }
+
     return 0;
 }
 
