@@ -457,14 +457,14 @@ int main(int argc, char* argv[]) {
             exit(EXIT_FAILURE);
         }
 
-        int lend = strnlen("Questo file riuscirà ad arrivare sano e salvo a destinazione?Spero proprio di siMiao", STRLEN);
-        char* datid = calloc(lend, sizeof(char));
-        strncpy(datid, "Questo file riuscirà ad arrivare sano e salvo a destinazione?Spero proprio di siMiao", lend);
+        // int lend = strnlen("Questo file riuscirà ad arrivare sano e salvo a destinazione?Spero proprio di siMiao", STRLEN);
+        // char* datid = calloc(lend, sizeof(char));
+        // strncpy(datid, "Questo file riuscirà ad arrivare sano e salvo a destinazione?Spero proprio di siMiao", lend);
 
-        if (appendToFile("aiuto.txt", datid, lend, ".") == -1) {
-            perror("appendToFile");
-            return -1;
-        }
+        // if (appendToFile("aiuto.txt", datid, lend, ".") == -1) {
+        //     perror("appendToFile");
+        //     return -1;
+        // }
     } else {
         if (openFile("prova.txt", 0) == -1) {
             perror("openFile");
@@ -485,7 +485,13 @@ int main(int argc, char* argv[]) {
         }
     }
 
-
+    char* fileLetto;
+    size_t size;
+    if (readFile("prova.txt", &fileLetto, &size) == -1) {
+        perror("readFile");
+        return -1;
+    }
+    printf("Questo è il contenuto del file prova.txt:\n%s\n", fileLetto);
 
     int scelta;
     printf("Scegliere quale file chiudere 0, 1, 2\n");
