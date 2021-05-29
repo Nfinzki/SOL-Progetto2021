@@ -54,6 +54,7 @@ void freeFile(void* f) {
     file_t *file = (file_t*) f;
     
     free(file->path);
+    free(file->data);
     SYSCALL_ONE_EXIT(list_destroy(&(file->clients), free), "list_destroy")
     free(file);
 }
@@ -476,6 +477,7 @@ void appendFile(int fd) {
     Pthread_mutex_lock(&mutex_storage);
     file_t *f = (file_t*) icl_hash_find(storage, path);
         if (f == NULL) {
+            Pthread_mutex_unlock(&mutex_storage);
             fprintf(stderr, "File non presente nello storage\n");
             int res = -1;
             SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
@@ -485,12 +487,13 @@ void appendFile(int fd) {
     //Controllare che il fd sia presente nella lista dei fd che hanno aperto quel file?
     
     size_t fileDim;
-    SYSCALL_ONE_EXIT(readn(fd, &fileDim, sizeof(size_t)), "readn")
+    SYSCALL_ONE_EXIT_F(readn(fd, &fileDim, sizeof(size_t)), "readn", Pthread_mutex_unlock(&mutex_storage))
 
-    char* newData = malloc(fileDim * sizeof(char));
-    EQ_NULL_EXIT(newData, "malloc")
+    // char* newData = malloc(fileDim * sizeof(char));
+    char* newData = calloc(fileDim, sizeof(char));
+    EQ_NULL_EXIT_F(newData, "malloc", Pthread_mutex_unlock(&mutex_storage))
 
-    SYSCALL_ONE_EXIT(readn(fd, newData, fileDim * sizeof(char)), "readn")
+    SYSCALL_ONE_EXIT_F(readn(fd, newData, fileDim * sizeof(char)), "readn", Pthread_mutex_unlock(&mutex_storage))
     if (actual_space + fileDim > max_space) {
         Pthread_mutex_unlock(&mutex_storage);
         if (FIFO_ReplacementPolicy(actual_space + fileDim, actual_numFile, fd) == -1) {
@@ -501,18 +504,19 @@ void appendFile(int fd) {
         Pthread_mutex_lock(&mutex_storage);
     }
 
-    printf("I byte letti sono %s\n", newData);
-    fflush(stdout);
-
     if (f->data == NULL)
         f->data = newData;
-    else
+    else {
+        char* tmp = realloc(f->data, (f->byteDim + fileDim) * sizeof(char));
+        if (tmp == NULL) {
+            Pthread_mutex_unlock(&mutex_storage);
+            int res = -1;
+            SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen")
+        }
+        f->data = tmp;
         memcpy((char*)f->data + f->byteDim, newData, fileDim);
+    }
     f->byteDim += fileDim;
-
-
-    printf("Il contenuto del file è: %s\n", (char*)f->data);
-    fflush(stdout);
     Pthread_mutex_unlock(&mutex_storage);
 
     int res = 0;
