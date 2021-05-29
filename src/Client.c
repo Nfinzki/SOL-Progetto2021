@@ -416,16 +416,54 @@ int main(int argc, char* argv[]) {
             exit(EXIT_FAILURE);
         }
 
+        
+        int len = strnlen("Questo file riuscirà ad arrivare sano e salvo a destinazione?", STRLEN);
+        char* dati = calloc(len, sizeof(char));
+        strncpy(dati, "Questo file riuscirà ad arrivare sano e salvo a destinazione?", len);
+
+        if (appendToFile("prova.txt", dati, len, ".") == -1) {
+            perror("appendToFile");
+            return -1;
+        }
+
+        int len2 = strnlen("Spero proprio di si", STRLEN);
+        char* dati2 = calloc(len, sizeof(char));
+        strncpy(dati2, "Spero proprio di si", len);
+
+        if (appendToFile("prova.txt", dati2, len2, ".") == -1) {
+            perror("appendToFile");
+            return -1;
+        }
+
+
         if (openFile("sda.txt", O_CREATE) == -1) {
             perror("openFile");
             SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
             exit(EXIT_FAILURE);
         }
 
+        int lenp = strnlen("Miao", STRLEN);
+        char* datip = calloc(len, sizeof(char));
+        strncpy(datip, "Miao", lenp);
+
+        if (appendToFile("sda.txt", datip, lenp, ".") == -1) {
+            perror("appendToFile");
+            return -1;
+        }
+
         if (openFile("aiuto.txt", O_CREATE) == -1) {
             perror("openFile");
             SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
             exit(EXIT_FAILURE);
+        }
+
+        int lend = strnlen("Questo file riuscirà ad arrivare sano e salvo a destinazione?Spero proprio di siMiao", STRLEN);
+        char* datid = calloc(lend, sizeof(char));
+        strncpy(datid, "Questo file riuscirà ad arrivare sano e salvo a destinazione?Spero proprio di siMiao", lend);
+
+        if (appendToFile("aiuto.txt", datid, lend, ".") == -1) {
+            perror("appendToFile");
+            return -1;
         }
     } else {
         if (openFile("prova.txt", 0) == -1) {
@@ -447,23 +485,6 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    int len = strnlen("Questo file riuscirà ad arrivare sano e salvo a destinazione?", STRLEN);
-    char* dati = calloc(len, sizeof(char));
-    strncpy(dati, "Questo file riuscirà ad arrivare sano e salvo a destinazione?", len);
-
-    if (appendToFile("prova.txt", dati, len, NULL) == -1) {
-        perror("appendToFile");
-        return -1;
-    }
-
-    int len2 = strnlen("Spero proprio di si", STRLEN);
-    char* dati2 = calloc(len, sizeof(char));
-    strncpy(dati2, "Spero proprio di si", len);
-
-    if (appendToFile("prova.txt", dati2, len2, NULL) == -1) {
-        perror("appendToFile");
-        return -1;
-    }
 
 
     int scelta;
