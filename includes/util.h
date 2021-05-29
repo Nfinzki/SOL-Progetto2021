@@ -26,6 +26,15 @@
         exit(errno);                \
     }
 
+#define SYSCALL_ONE_EXIT_F(f, name, cleanup)   \
+    if ((f) == -1) {                  \
+        int err = errno;            \
+        perror(name);               \
+        cleanup;                        \
+        errno = err;                \
+        exit(errno);                \
+    }
+
 #define EQ_NULL_EXIT(f, name)    \
     if ((f) == NULL) {        \
         perror(name);       \
