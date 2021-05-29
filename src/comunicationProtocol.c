@@ -474,7 +474,7 @@ int appendToFile(const char* pathname, void* buf, size_t size, const char* dirna
         //Creazione del file. Se esiste un file con lo stesso nome verrà modificato il nome del file da creare
         int createdFile, oldCifre;
         int try = 1;
-        while((createdFile = open(path + startName, O_WRONLY | O_CREAT | O_EXCL)) == -1) {
+        while((createdFile = open(path + startName, O_WRONLY | O_CREAT | O_EXCL, 0666)) == -1) {
             if (errno != EEXIST) return -1;
 
             if (try == 1) {

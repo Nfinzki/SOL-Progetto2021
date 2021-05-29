@@ -494,6 +494,10 @@ void appendFile(int fd) {
     EQ_NULL_EXIT_F(newData, "malloc", Pthread_mutex_unlock(&mutex_storage))
 
     SYSCALL_ONE_EXIT_F(readn(fd, newData, fileDim * sizeof(char)), "readn", Pthread_mutex_unlock(&mutex_storage))
+
+    printf("Lo storage attualmente in uso è di %ld e il massimo è di %ld\n", actual_space, max_space);
+    fflush(stdout);
+
     if (actual_space + fileDim > max_space) {
         Pthread_mutex_unlock(&mutex_storage);
         if (FIFO_ReplacementPolicy(actual_space + fileDim, actual_numFile, fd) == -1) {
@@ -517,6 +521,7 @@ void appendFile(int fd) {
         memcpy((char*)f->data + f->byteDim, newData, fileDim);
     }
     f->byteDim += fileDim;
+    actual_space += fileDim;
     Pthread_mutex_unlock(&mutex_storage);
 
     int res = 0;
