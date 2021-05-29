@@ -301,7 +301,7 @@ int openFile(const char* pathname, int flags) {
 
 /* Legge tutto il contenuto del file dal server (se esiste) ritornando un puntatore ad un'area allocata sullo heap nel
 * parametro ‘buf’, mentre ‘size’ conterrà la dimensione del buffer dati (ossia la dimensione in bytes del file letto). In
-* caso di errore, ‘buf‘e ‘size’ non sono validi. Ritorna 0 in caso di successo, -1 in caso di fallimento, errno viene
+* caso di errore, ‘buf‘ e ‘size’ non sono validi. Ritorna 0 in caso di successo, -1 in caso di fallimento, errno viene
 * settato opportunamente
 */
 int readFile(const char* pathname, void** buf, size_t* size) {
@@ -314,6 +314,54 @@ int readFile(const char* pathname, void** buf, size_t* size) {
         errno = ENOTCONN;
         return -1;
     }
+
+    //Copia il nome del file
+    int pathlen = strnlen(pathname, STRLEN) + 1;
+    char* tmp = calloc(pathlen, sizeof(char));
+    if (tmp == NULL) return -1;
+    strncpy(tmp, pathname, pathlen);
+
+    if (list_find(&openedFiles, tmp) == NULL) {
+        free(tmp);
+        errno = ENOENT;
+        return -1;
+    }
+
+    int exists;
+    if ((exists = existFile(tmp)) == -1) {
+        free(tmp);
+        return -1;
+    }
+
+    if (!exists) {
+        //Il file non è più presente nel server. Viene rimosso dalla lista dei file aperti e viene restituito un errore
+        if (list_delete(&openedFiles, tmp, free) == -1) {free(tmp); return -1;}
+        free(tmp); 
+        errno = ENOENT;
+        return -1;
+    }
+
+    //Richiesta al server
+    int opt = READ_FILE;
+    if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {free(tmp); return -1;}
+    
+    free(tmp);
+
+    //Attesa risposta del server
+    int res;
+    if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
+    if (res == -1) {errno = EIDRM; return -1;}
+
+    //Lettura della dimensione del file
+    if (readn(fdSocket, size, sizeof(size_t)) == -1) return -1;
+
+    //Alloca la dimensione per il buffer
+    if((*buf = calloc(*size, sizeof(char))) == NULL) {errno = ENOMEM; return -1;}
+
+    //Lettura del contenuto del file
+    if (readn(fdSocket, *buf, *size * sizeof(char)) == -1) return -1;
 
     return 0;
 }

@@ -465,6 +465,38 @@ void closeConnection(int fd, int endpoint) {
     close(fd);
 }
 
+void readFile(int fd) {
+    int len;
+    SYSCALL_ONE_EXIT(readn(fd, &len, sizeof(int)), "readn")
+
+    char* path = calloc(len, sizeof(char));
+    EQ_NULL_EXIT(path, "calloc in readFile")
+
+    SYSCALL_ONE_EXIT(readn(fd, path, len * sizeof(char)), "readn")
+
+    Pthread_mutex_lock(&mutex_storage);
+    file_t *f = (file_t*) icl_hash_find(storage, path);
+        if (f == NULL) {
+            Pthread_mutex_unlock(&mutex_storage);
+            fprintf(stderr, "File non presente nello storage\n");
+            int res = -1;
+            SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
+            exit(EXIT_FAILURE);
+        }
+    
+    //Controllare che il fd sia presente nella lista dei fd che hanno aperto quel file?
+    free(path);
+
+    //Comunica al Client che non ci sono stati errori a recuperare il file
+    int res = 0;
+    SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
+
+    //Invia al client la dimensione e il contenuto del file
+    SYSCALL_ONE_EXIT(writen(fd, &(f->byteDim), sizeof(size_t)), "writen")
+    SYSCALL_ONE_EXIT(writen(fd, f->data, f->byteDim * sizeof(char)), "writen")
+    Pthread_mutex_unlock(&mutex_storage);
+}
+
 void appendFile(int fd) {
     int len;
     SYSCALL_ONE_EXIT(readn(fd, &len, sizeof(int)), "readn")
@@ -494,9 +526,6 @@ void appendFile(int fd) {
     EQ_NULL_EXIT_F(newData, "malloc", Pthread_mutex_unlock(&mutex_storage))
 
     SYSCALL_ONE_EXIT_F(readn(fd, newData, fileDim * sizeof(char)), "readn", Pthread_mutex_unlock(&mutex_storage))
-
-    printf("Lo storage attualmente in uso è di %ld e il massimo è di %ld\n", actual_space, max_space);
-    fflush(stdout);
 
     if (actual_space + fileDim > max_space) {
         Pthread_mutex_unlock(&mutex_storage);
@@ -553,27 +582,27 @@ void closeFile(int fd) {
         exit(EXIT_FAILURE);
     }
 
-    node_t *tmp = fileHistory.head;
-    while(tmp != NULL) {
-        printf("File: %s\n", (char*) tmp->data);
-        fflush(stdout);
-        file_t *faf = icl_hash_find(storage, tmp->data);
-        if (faf == NULL) {
-            perror("Errore in icl_hash_find");
-            return;
-        }
-        printf("I client connessi sono: \n");
-        fflush(stdout);
-        node_t *tt = faf->clients.head;
-        for(int i = 0; i < faf->clients.dim; i++) {
-            printf("%d\n", *(int*) tt->data);
-            fflush(stdout);
-            tt = tt->next;
-        }
-        tmp = tmp->next;
-        printf("\n");
-        fflush(stdout);
-    }
+    // node_t *tmp = fileHistory.head;
+    // while(tmp != NULL) {
+    //     printf("File: %s\n", (char*) tmp->data);
+    //     fflush(stdout);
+    //     file_t *faf = icl_hash_find(storage, tmp->data);
+    //     if (faf == NULL) {
+    //         perror("Errore in icl_hash_find");
+    //         return;
+    //     }
+    //     printf("I client connessi sono: \n");
+    //     fflush(stdout);
+    //     node_t *tt = faf->clients.head;
+    //     for(int i = 0; i < faf->clients.dim; i++) {
+    //         printf("%d\n", *(int*) tt->data);
+    //         fflush(stdout);
+    //         tt = tt->next;
+    //     }
+    //     tmp = tmp->next;
+    //     printf("\n");
+    //     fflush(stdout);
+    // }
 
 
     Pthread_mutex_unlock(&mutex_storage);
@@ -611,6 +640,7 @@ void* workerThread(void* arg) {
             case CREATE_FILE: createFile(fd); break;
             case OPEN_FILE: openFile(fd); break;
             case END_CONNECTION: closeConnection(fd, Wendpoint); continue;
+            case READ_FILE: readFile(fd); break;
             case APPEND_FILE: appendFile(fd); break;
             case CLOSE_FILE: closeFile(fd); break;
         }
