@@ -147,24 +147,24 @@ static int existFile(const char* pathname) {
     // Invia il messaggio
     int opt = FIND_FILE;
     if (writen(fdSocket, &opt, sizeof(int)) == -1) {
-        return -1;
         free(tmp);
+        return -1;
     }
     // int len_msg = strnlen(pathname, STRLEN);
     if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {
-        return -1;
         free(tmp);
+        return -1;
     }
     if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {
-        return -1;
         free(tmp);
+        return -1;
     }
 
     //Lettura risposta dal server
     int exists;
     if (readn(fdSocket, &exists, sizeof(int)) == -1) {
-        return -1;
         free(tmp);
+        return -1;
     }
 
     free(tmp);

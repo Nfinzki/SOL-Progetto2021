@@ -424,7 +424,7 @@ int openFile(int fd) {
     return 0;
 }
 
-int closeConnection(int fd, int endpoint) {
+int closeConnection(int fd) {
     int numFiles;
     int res = -1;
     SYSCALL_ONE_RETURN(readn(fd, &numFiles, sizeof(int)), "readn")
@@ -455,9 +455,10 @@ int closeConnection(int fd, int endpoint) {
     res = 0;
     SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "readn")
 
-    int msg = -1;
-    SYSCALL_ONE_RETURN(writen(endpoint, &msg, sizeof(int)), "readn")
+    // int msg = -1;
+    // SYSCALL_ONE_RETURN(writen(endpoint, &msg, sizeof(int)), "readn")
     // close(fd);
+    return 0;
 }
 
 int readFile(int fd) {
@@ -635,14 +636,15 @@ int closeFile(int fd) {
 
 void* workerThread(void* arg) {
     int Wendpoint = *(int*) arg;
-    while(!sigCaught) {
+    // while(!sigCaught) {
+    while(1) {
         int fd;
         Pthread_mutex_lock(&mutex_connections);
 
         while (connection.head == NULL && !sigCaught)
             pthread_cond_wait(&cond_emptyConnections, &mutex_connections);
         
-        if (sigCaught) {
+        if (sigCaught) { //Forse il problema sta in questi due sigCaught
             Pthread_mutex_unlock(&mutex_connections);
             return NULL;
         }
@@ -669,7 +671,7 @@ void* workerThread(void* arg) {
             case FIND_FILE: if (findFile(fd) != 0) {closeFd = 1; break;}
             case CREATE_FILE: if (createFile(fd) != 0) { closeFd = 1; break;}
             case OPEN_FILE: if (openFile(fd) != 0) {closeFd = 1; break;}
-            case END_CONNECTION: closeConnection(fd, Wendpoint); closeFd = 1; break;
+            case END_CONNECTION: closeConnection(fd); closeFd = 1; break; //Ricontrollare questo
             case READ_FILE: if (readFile(fd) != 0) {closeFd = 1; break;}
             case READN_FILE: if (readnFile(fd) != 0) {closeFd = 1; break;}
             case APPEND_FILE: if (appendFile(fd) != 0) {closeFd = 1; break;}
@@ -677,7 +679,7 @@ void* workerThread(void* arg) {
             default: {closeFd = 1; break;}
         }
 
-        if (opt == -1 || closeFd) {
+        if (opt == -1 || closeFd) { //Anche qui opt == -1, ricontrollare
             close(fd);
             fd *= -1;
         }
@@ -720,15 +722,15 @@ int updateSet(fd_set *set, int fdMax) {
     return 0;
 }
 
-void closeConnections(fd_set *set, int max, int fd1, int fd2, int fd3) {
+void closeConnections(fd_set *set, int max) {
     for(int i = 0; i < max + 1; i++) {
-        if (FD_ISSET(i, set) && i != fd1 && i != fd2 && i != fd3) close(i);
+        if (FD_ISSET(i, set)) close(i);
     }
 }
 
-int checkConnections(fd_set *set, int max, int fd1, int fd2, int fd3) {
-    for(int i = 0; i < max; i++) {
-        if (FD_ISSET(i, set) && i != fd1 && i != fd2 && i != fd3) return 1;
+int checkConnections(fd_set *set, int max) {
+    for(int i = 0; i < max + 1; i++) {
+        if (FD_ISSET(i, set)) return 1;
     }
 
     return 0;
@@ -786,6 +788,9 @@ int main(int argc, char* argv[]) {
     FD_SET(fdPipe[0], &set);
     FD_SET(signalPipe[0], &set);
 
+    int connectedMax = 0;
+    fd_set setConnected;
+
     int stillConnected = 1;
     
     while(stillConnected) { //Bisogna aggiungere che se non ci sono più client connessi e stopConnections è attivo, termina tutto.
@@ -801,7 +806,7 @@ int main(int argc, char* argv[]) {
         for(int fd = 0; fd < fdMax + 1; fd++) {
             if (FD_ISSET(fd, &rdset)) {
                 if (stopRequests) { //Chiude tutte le connessioni attive
-                    closeConnections(&set, fdMax, listenSocket, fdPipe[0], signalPipe[0]);
+                    closeConnections(&setConnected, fdMax);
                     break;
                 }
 
@@ -815,7 +820,11 @@ int main(int argc, char* argv[]) {
                         return errno;
                     }
 
-                    if (c_fd == -1) continue;
+                    if (c_fd < 0) {
+                        c_fd *= -1;
+                        FD_CLR(c_fd, &setConnected);
+                        continue;
+                    }
 
                     FD_SET(c_fd, &set);
                     if (c_fd > fdMax) fdMax = c_fd;
@@ -832,7 +841,10 @@ int main(int argc, char* argv[]) {
 
                     FD_SET(newFd, &set);
                     if (newFd > fdMax) fdMax = newFd;
-
+                    FD_SET(newFd, &setConnected);
+                    if (newFd > connectedMax) connectedMax = newFd;
+                    printf("Client connesso\n");
+                    fflush(stdout);
                     continue;
                 }
 
@@ -855,7 +867,7 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        if (stopConnections) stillConnected = checkConnections(&set, fdMax, listenSocket, fdPipe[0], signalPipe[0]); //Ricontrollare
+        if (stopConnections) stillConnected = checkConnections(&setConnected, connectedMax);
 
     }
 
