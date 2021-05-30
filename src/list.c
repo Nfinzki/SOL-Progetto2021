@@ -160,6 +160,32 @@ void* list_find(list_t* lst, void* data) {
 
 
 /**
+ * Restituisce il puntatore al prossimo elemento della lista. In chiamate successive non va passato
+ * il puntatore alla lista ma solo lo stato
+ * 
+ * @param lst -- puntatore all lista
+ * @param state -- stato della getNext
+ * 
+ * @return puntatore al prossimo elemento della lista. Altrimenti restituisce NULL
+*/
+void* list_getNext(list_t* lst, node_t** state) {
+    if (lst == NULL && *state == NULL) return NULL;
+
+    if (lst != NULL) {
+        *state = lst->head;
+        return lst->head->data;
+    }
+
+    if (state != NULL) {
+        *state = (*state)->next;
+        if (*state != NULL) return (*state)->data;
+    }
+    
+    return NULL;
+}
+
+
+/**
  * Cancella un elemento dalla lista
  * 
  * @param lst -- puntatore alla lista

@@ -27,6 +27,8 @@ void* list_pop(list_t* head);
 
 void* list_find(list_t* lst, void* data);
 
+void* list_getNext(list_t* lst, node_t** state);
+
 int list_delete(list_t* lst, void* data, void (*free_data)(void*));
 
 int list_destroy(list_t* head, void (*free_fun)(void*));
