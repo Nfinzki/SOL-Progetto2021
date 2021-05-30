@@ -323,6 +323,7 @@ int createFile(int fd) {
         if (FIFO_ReplacementPolicy(actual_space + newFile->byteDim, actual_numFile + 1, -1) == -1) {
             fprintf(stderr, "Errore nell'algoritmo di esecuzione\n");
             SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "readn")
+            return -1;
         }
         Pthread_mutex_lock(&mutex_storage);
     }
@@ -354,18 +355,15 @@ int createFile(int fd) {
 
 int findFile(int fd) {
     int len;
+    int found;
     SYSCALL_ONE_RETURN(readn(fd, &len, sizeof(int)), "readn")
 
     char* path = calloc(len, sizeof(char));
-    if (path == NULL) {
-        perror("calloc");
-        //List distroy. Un po' ovunque
-        exit(EXIT_FAILURE);
-    }
+    EQ_NULL_EXIT(path, "calloc in findFile")
+
     SYSCALL_ONE_RETURN_F(readn(fd, path, len * sizeof(char)), "readn", free(path))
 
     Pthread_mutex_lock(&mutex_storage);
-    int found;
     if(icl_hash_find(storage, path) == NULL)
         found = 0;
     else
@@ -379,47 +377,42 @@ int findFile(int fd) {
     return 0;
 }
 
-int openFile(int fd) { //Se il file è già aperto restituisce esito positivo al client. Non effettua cambiamenti
-    int len, res;
+int openFile(int fd) {
+    int len;
+    int res = -1;
     SYSCALL_ONE_RETURN(readn(fd, &len, sizeof(int)), "readn")
 
     char* path = calloc(len, sizeof(char));
-    if (path == NULL) {
-        perror("calloc in openFile");
-        //List distroy. Un po' ovunque
-        exit(EXIT_FAILURE);
-    }
+    EQ_NULL_EXIT_F(path, "calloc in openFile", SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "readn"))
+
     SYSCALL_ONE_RETURN_F(readn(fd, path, len * sizeof(char)), "readn", free(path))
 
     Pthread_mutex_lock(&mutex_storage);
     file_t *f = (file_t*) icl_hash_find(storage, path);
+    free(path);
     if (f == NULL) {
         fprintf(stderr, "File non presente nello storage\n");
-        res = -1;
-        SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "readn", free(path))
+        Pthread_mutex_unlock(&mutex_storage);
+        SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "readn")
         return -1;
     }
-    free(path);
 
+    //Se il file è già aperto restituisce esito positivo al client. Non effettua cambiamenti
     if (list_find(&(f->clients), &fd) == NULL) {
+        Pthread_mutex_unlock(&mutex_storage);
         res = 0;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "readn")
         return 0;
     }
 
     int *newClient = malloc(sizeof(int));
-    if (newClient == NULL) {
-        fprintf(stderr, "Malloc error in openFile\n");
-        res = -1;
-        SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
-        exit(EXIT_FAILURE);
-    }
+    EQ_NULL_EXIT_F(newClient, "malloc error in openFile", SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn"))
 
     *newClient = fd;
 
     if(list_push(&(f->clients), newClient) == -1) {
         perror("list_push");
-        res = -1;
+        Pthread_mutex_unlock(&mutex_storage);
         SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "readn", free(newClient))
         return -1;
     }
@@ -433,6 +426,7 @@ int openFile(int fd) { //Se il file è già aperto restituisce esito positivo al
 
 int closeConnection(int fd, int endpoint) {
     int numFiles;
+    int res = -1;
     SYSCALL_ONE_RETURN(readn(fd, &numFiles, sizeof(int)), "readn")
 
     for(int i = 0; i < numFiles; i++) {
@@ -440,85 +434,79 @@ int closeConnection(int fd, int endpoint) {
         SYSCALL_ONE_RETURN(readn(fd, &len, sizeof(int)), "readn")
         
         char* path = calloc(len, sizeof(char));
-        EQ_NULL_EXIT(path, "calloc in closeConnection")
+        EQ_NULL_EXIT_F(path, "calloc in closeConnection", SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn"))
 
-        SYSCALL_ONE_EXIT(readn(fd, path, len * sizeof(char)), "readn")
+        SYSCALL_ONE_RETURN_F(readn(fd, path, len * sizeof(char)), "readn", free(path))
 
         Pthread_mutex_lock(&mutex_storage);
         file_t *f = (file_t*) icl_hash_find(storage, path);
         if (f == NULL) {
             fprintf(stderr, "File non presente nello storage\n");
-            int res = -1;
-            SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
-            exit(EXIT_FAILURE);
+            Pthread_mutex_unlock(&mutex_storage);
+            SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "readn", free(path))
         }
-        if (list_delete(&(f->clients), &fd, free) == -1) {
-            perror("list_delete in closeConnection");
-            int res = -1;
-            SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
-            exit(EXIT_FAILURE);
-        }
-        Pthread_mutex_unlock(&mutex_storage);
 
         free(path);
+
+        SYSCALL_ONE_RETURN_F(list_delete(&(f->clients), &fd, free), "list_delete in closeConnection", SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "readn"))
+        Pthread_mutex_unlock(&mutex_storage);
     }
-    int res = 0;
-    SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
+
+    res = 0;
+    SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "readn")
+
     int msg = -1;
-    SYSCALL_ONE_EXIT(writen(endpoint, &msg, sizeof(int)), "readn")
-    close(fd);
+    SYSCALL_ONE_RETURN(writen(endpoint, &msg, sizeof(int)), "readn")
+    // close(fd);
 }
 
-void readFile(int fd) {
+int readFile(int fd) {
     int len;
-    SYSCALL_ONE_EXIT(readn(fd, &len, sizeof(int)), "readn")
+    int res = -1;
+    SYSCALL_ONE_RETURN(readn(fd, &len, sizeof(int)), "readn")
 
     char* path = calloc(len, sizeof(char));
-    EQ_NULL_EXIT(path, "calloc in readFile")
+    EQ_NULL_EXIT_F(path, "calloc in readFile", SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn"))
 
-    SYSCALL_ONE_EXIT(readn(fd, path, len * sizeof(char)), "readn")
+    SYSCALL_ONE_RETURN_F(readn(fd, path, len * sizeof(char)), "readn", free(path);)
 
     Pthread_mutex_lock(&mutex_storage);
     file_t *f = (file_t*) icl_hash_find(storage, path);
         if (f == NULL) {
             Pthread_mutex_unlock(&mutex_storage);
             fprintf(stderr, "File non presente nello storage\n");
-            int res = -1;
-            SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
-            exit(EXIT_FAILURE);
+            SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "readn", free(path))
         }
     
+    free(path);
+
     //Controlla che il client abbia aperto quel file
     if (list_find(&(f->clients), &fd) == NULL) {
         Pthread_mutex_unlock(&mutex_storage);
-            fprintf(stderr, "File non aperto dal client\n");
-            int res = -1;
-            SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
-            exit(EXIT_FAILURE);
+        fprintf(stderr, "File non aperto dal client\n");
+        SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "readn")
     }
 
-    free(path);
-
     //Comunica al Client che non ci sono stati errori a recuperare il file
-    int res = 0;
-    SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
+    res = 0;
+    SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "readn", Pthread_mutex_unlock(&mutex_storage))
 
     //Invia al client la dimensione e il contenuto del file
-    SYSCALL_ONE_EXIT(writen(fd, &(f->byteDim), sizeof(size_t)), "writen")
-    SYSCALL_ONE_EXIT(writen(fd, f->data, f->byteDim * sizeof(char)), "writen")
+    SYSCALL_ONE_RETURN_F(writen(fd, &(f->byteDim), sizeof(size_t)), "writen", Pthread_mutex_unlock(&mutex_storage))
+    SYSCALL_ONE_RETURN_F(writen(fd, f->data, f->byteDim * sizeof(char)), "writen", Pthread_mutex_unlock(&mutex_storage))
     Pthread_mutex_unlock(&mutex_storage);
+
+    return 0;
 }
 
-void readnFile(int fd) {
+int readnFile(int fd) {
     int N;
-    SYSCALL_ONE_EXIT(readn(fd, &N, sizeof(int)), "readn")
+    SYSCALL_ONE_RETURN(readn(fd, &N, sizeof(int)), "readn")
 
     Pthread_mutex_lock(&mutex_storage);
     if (N <= 0 || N > actual_numFile) N = actual_numFile;
-    Pthread_mutex_unlock(&mutex_storage);
-
+    
     Pthread_mutex_lock(&mutex_filehistory);
-    Pthread_mutex_lock(&mutex_storage);
     node_t* state = NULL;
     char* path = (char*) list_getNext(&fileHistory, &state);
     int i = 0;
@@ -530,65 +518,66 @@ void readnFile(int fd) {
         }
 
         int opt = SEND_FILE;
-        SYSCALL_ONE_EXIT_F(writen(fd, &opt, sizeof(int)), "writen", Pthread_mutex_unlock(&mutex_storage); Pthread_mutex_unlock(&mutex_filehistory))
+        SYSCALL_ONE_RETURN_F(writen(fd, &opt, sizeof(int)), "writen", Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
         int len = strnlen(path, STRLEN) + 1;
-        SYSCALL_ONE_EXIT_F(writen(fd, &len, sizeof(int)), "writen", Pthread_mutex_unlock(&mutex_storage); Pthread_mutex_unlock(&mutex_filehistory))
-        SYSCALL_ONE_EXIT_F(writen(fd, path, len * sizeof(char)), "writen", Pthread_mutex_unlock(&mutex_storage); Pthread_mutex_unlock(&mutex_filehistory))
-        SYSCALL_ONE_EXIT_F(writen(fd, &(f->byteDim), sizeof(size_t)), "writen", Pthread_mutex_unlock(&mutex_storage); Pthread_mutex_unlock(&mutex_filehistory))
-        SYSCALL_ONE_EXIT_F(writen(fd, f->data, f->byteDim * sizeof(char)), "writen", Pthread_mutex_unlock(&mutex_storage); Pthread_mutex_unlock(&mutex_filehistory))
+        SYSCALL_ONE_RETURN_F(writen(fd, &len, sizeof(int)), "writen", Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
+        SYSCALL_ONE_RETURN_F(writen(fd, path, len * sizeof(char)), "writen", Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
+        SYSCALL_ONE_RETURN_F(writen(fd, &(f->byteDim), sizeof(size_t)), "writen", Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
+        SYSCALL_ONE_RETURN_F(writen(fd, f->data, f->byteDim * sizeof(char)), "writen", Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
         i++;
 
         path = (char*) list_getNext(NULL, &state);
     } 
-    Pthread_mutex_unlock(&mutex_storage);
     Pthread_mutex_unlock(&mutex_filehistory);
+    Pthread_mutex_unlock(&mutex_storage);
 
     int res = 0;
-    SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen")
+    SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
+
+    return 0;
 }
 
-void appendFile(int fd) {
+int appendFile(int fd) {
     int len;
-    SYSCALL_ONE_EXIT(readn(fd, &len, sizeof(int)), "readn")
+    int res = -1;
+    SYSCALL_ONE_RETURN(readn(fd, &len, sizeof(int)), "readn")
 
     char* path = calloc(len, sizeof(char));
-    EQ_NULL_EXIT(path, "calloc in appendFile")
+    EQ_NULL_EXIT_F(path, "calloc in appendFile", SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn"))
 
-    SYSCALL_ONE_EXIT(readn(fd, path, len * sizeof(char)), "readn")
+    SYSCALL_ONE_RETURN_F(readn(fd, path, len * sizeof(char)), "readn", free(path))
 
     Pthread_mutex_lock(&mutex_storage);
     file_t *f = (file_t*) icl_hash_find(storage, path);
         if (f == NULL) {
             Pthread_mutex_unlock(&mutex_storage);
             fprintf(stderr, "File non presente nello storage\n");
-            int res = -1;
-            SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
-            exit(EXIT_FAILURE);
+            SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "readn", free(path))
         }
     
+    free(path);
+
     //Controlla che il client abbia aperto quel file
     if (list_find(&(f->clients), &fd) == NULL) {
         Pthread_mutex_unlock(&mutex_storage);
-            fprintf(stderr, "File non aperto dal client\n");
-            int res = -1;
-            SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
-            exit(EXIT_FAILURE);
+        fprintf(stderr, "File non aperto dal client\n");
+        SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "readn")
     }
     
     size_t fileDim;
-    SYSCALL_ONE_EXIT_F(readn(fd, &fileDim, sizeof(size_t)), "readn", Pthread_mutex_unlock(&mutex_storage))
+    SYSCALL_ONE_RETURN_F(readn(fd, &fileDim, sizeof(size_t)), "readn", Pthread_mutex_unlock(&mutex_storage))
 
     char* newData = calloc(fileDim, sizeof(char));
-    EQ_NULL_EXIT_F(newData, "malloc", Pthread_mutex_unlock(&mutex_storage))
+    EQ_NULL_EXIT_F(newData, "malloc", SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn"))
 
-    SYSCALL_ONE_EXIT_F(readn(fd, newData, fileDim * sizeof(char)), "readn", Pthread_mutex_unlock(&mutex_storage))
+    SYSCALL_ONE_RETURN_F(readn(fd, newData, fileDim * sizeof(char)), "readn", free(newData); Pthread_mutex_unlock(&mutex_storage))
 
     if (actual_space + fileDim > max_space) {
         Pthread_mutex_unlock(&mutex_storage);
         if (FIFO_ReplacementPolicy(actual_space + fileDim, actual_numFile, fd) == -1) {
             fprintf(stderr, "Errore nell'esecuzione dell'algoritmo di sostituzione\n");
-            int res = -1;
-            SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen")
+            SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
+            return -1;
         }
         Pthread_mutex_lock(&mutex_storage);
     }
@@ -597,11 +586,8 @@ void appendFile(int fd) {
         f->data = newData;
     else {
         char* tmp = realloc(f->data, (f->byteDim + fileDim) * sizeof(char));
-        if (tmp == NULL) {
-            Pthread_mutex_unlock(&mutex_storage);
-            int res = -1;
-            SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen")
-        }
+        EQ_NULL_EXIT_F(tmp, "realloc in appendFile", SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen"))
+        
         f->data = tmp;
         memcpy((char*)f->data + f->byteDim, newData, fileDim);
     }
@@ -609,62 +595,42 @@ void appendFile(int fd) {
     actual_space += fileDim;
     Pthread_mutex_unlock(&mutex_storage);
 
-    int res = 0;
-    SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen")
+    res = 0;
+    SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
+
+    return 0;
 }
 
-void closeFile(int fd) {
-    int len, res;
-    SYSCALL_ONE_EXIT(readn(fd, &len, sizeof(int)), "readn")
+int closeFile(int fd) {
+    int len;
+    int res = -1;
+    SYSCALL_ONE_RETURN(readn(fd, &len, sizeof(int)), "readn")
 
     char* path = calloc(len, sizeof(char));
-    EQ_NULL_EXIT(path, "calloc in closeFile")
+    EQ_NULL_EXIT_F(path, "calloc in closeFile", SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen"))
 
-    SYSCALL_ONE_EXIT(readn(fd, path, len * sizeof(char)), "readn")
+    SYSCALL_ONE_RETURN_F(readn(fd, path, len * sizeof(char)), "readn", free(path))
 
     Pthread_mutex_lock(&mutex_storage);
     file_t *file = (file_t*) icl_hash_find(storage, path);
     free(path);
 
     if (file == NULL) {
-        res = -1;
-        SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen")
-        exit(EXIT_FAILURE);
+        fprintf(stderr, "File non presente nello storage\n");
+        SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "writen", Pthread_mutex_unlock(&mutex_storage))
+        return -1;
     }
 
     if (list_delete(&(file->clients), &fd, free) == -1) {
-        res = -1;
-        SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen")
-        exit(EXIT_FAILURE);
+        SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "writen", Pthread_mutex_unlock(&mutex_storage))
+        return -1;
     }
-
-    // node_t *tmp = fileHistory.head;
-    // while(tmp != NULL) {
-    //     printf("File: %s\n", (char*) tmp->data);
-    //     fflush(stdout);
-    //     file_t *faf = icl_hash_find(storage, tmp->data);
-    //     if (faf == NULL) {
-    //         perror("Errore in icl_hash_find");
-    //         return;
-    //     }
-    //     printf("I client connessi sono: \n");
-    //     fflush(stdout);
-    //     node_t *tt = faf->clients.head;
-    //     for(int i = 0; i < faf->clients.dim; i++) {
-    //         printf("%d\n", *(int*) tt->data);
-    //         fflush(stdout);
-    //         tt = tt->next;
-    //     }
-    //     tmp = tmp->next;
-    //     printf("\n");
-    //     fflush(stdout);
-    // }
-
-
     Pthread_mutex_unlock(&mutex_storage);
 
     res = 0;
-    SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen")
+    SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
+
+    return 0;
 }
 
 void* workerThread(void* arg) {
@@ -689,26 +655,31 @@ void* workerThread(void* arg) {
         Pthread_mutex_unlock(&mutex_connections);
 
         int opt = -1; //Se dovesse interrompersi la connessione il fd non viene messo nel set
-        SYSCALL_ONE_EXIT(readn(fd, &opt, sizeof(int)), "readn")
-
-        switch (opt) {
-            case FIND_FILE: findFile(fd); break;
-            case CREATE_FILE: {
-                if (createFile(fd) != 0) close(fd); //Bisogna riscrivere sul Wendpoint anche qui credo. Valutare il fatto di inviare il -fd
-                break;
+        if(readn(fd, &opt, sizeof(int)) == -1) {
+            if (writen(Wendpoint, &fd, sizeof(int)) == -1) {
+                perror("writen in thread worker");
+                close(fd);
             }
-            case OPEN_FILE: openFile(fd); break;
-            case END_CONNECTION: closeConnection(fd, Wendpoint); continue;
-            case READ_FILE: readFile(fd); break;
-            case READN_FILE: readnFile(fd); break;
-            case APPEND_FILE: appendFile(fd); break;
-            case CLOSE_FILE: closeFile(fd); break;
+            continue;
         }
 
-        //Capire se si può migliorare
-        if (opt == -1) {
+        int closeFd = 0;
+
+        switch (opt) {
+            case FIND_FILE: if (findFile(fd) != 0) {closeFd = 1; break;}
+            case CREATE_FILE: if (createFile(fd) != 0) { closeFd = 1; break;}
+            case OPEN_FILE: if (openFile(fd) != 0) {closeFd = 1; break;}
+            case END_CONNECTION: closeConnection(fd, Wendpoint); closeFd = 1; break;
+            case READ_FILE: if (readFile(fd) != 0) {closeFd = 1; break;}
+            case READN_FILE: if (readnFile(fd) != 0) {closeFd = 1; break;}
+            case APPEND_FILE: if (appendFile(fd) != 0) {closeFd = 1; break;}
+            case CLOSE_FILE: if (closeFile(fd) != 0) {closeFd = 1; break;}
+            default: {closeFd = 1; break;}
+        }
+
+        if (opt == -1 || closeFd) {
             close(fd);
-            fd = -1;
+            fd *= -1;
         }
 
         if (writen(Wendpoint, &fd, sizeof(int)) == -1) {
