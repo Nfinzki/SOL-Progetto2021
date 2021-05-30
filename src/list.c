@@ -118,6 +118,7 @@ int list_append(list_t* lst, void* data) {
  * @return il puntatore all'elemento rimosso dalla lista. Altrimenti restituisce NULL
 **/
 void* list_pop(list_t* lst) {
+    errno = 0;
     if (lst->head == NULL) {
         errno = EINVAL;
         return NULL;
