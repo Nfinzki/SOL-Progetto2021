@@ -6,11 +6,14 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 #include <unistd.h>
+#include <dirent.h>
 
 #include "../includes/util.h"
 #include "../includes/comunicationProtocol.h"
 #include "../includes/list.h"
+#include "../includes/comunication.h"
 
 #define STRLEN 256
 
@@ -22,6 +25,7 @@ typedef struct _request {
 } request_t;
 
 list_t requestLst;
+list_t dirLst;
 
 int compareRequest(void* a, void* b) {
     request_t *reqA = (request_t*) a;
@@ -197,20 +201,36 @@ void arg_r(char** arg) {
     }
 }
 
-long arg_R(char* arg) {
+int arg_R(char* arg) {
     if (arg[0] != 'n' || arg[1] != '=') {
         fprintf(stderr, "Formato non valido per il flag -R\n");
         return -1;
     }
 
+    request_t *newR = malloc(sizeof(request_t));
+    if (newR == NULL) {
+        perror("malloc in arg_R");
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy")
+        exit(EXIT_FAILURE);
+    }
+    newR->flag = 'R';
+    newR->dim = 0;
+    newR->arg = NULL;
+
     long tmp;
     if (isNumber(arg+2, &tmp) != 0) {
         fprintf(stderr, "isNumber in case 'R'\n");
+        free(newR);
         return -1;
     }
+    newR->option = tmp;
 
-    return tmp;
+    if (list_append(&requestLst, newR) == -1) {
+        freeRequest(newR);
+        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+    }
 
+    return 1;
 }
 
 void arg_c(char** arg) {
@@ -236,39 +256,23 @@ void arg_c(char** arg) {
     }
 }
 
-void arg_d(char* arg) {
-    request_t *newR = malloc(sizeof(request_t));
-    if (newR == NULL) {
-        perror("malloc in arg_d");
+void arg_d(char* arg) {    
+    int len = strnlen(arg, STRLEN) + 1;
+    char* newD = calloc(len, sizeof(char));
+    if(newD == NULL) {
+        perror("calloc in arg_d");
+        free(newD);
         SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+        SYSCALL_ONE_EXIT(list_destroy(&dirLst, free), "list_destroy");
         exit(EXIT_FAILURE);
     }
 
-    newR->flag = 'd';
-    newR->option = -1;
-    newR->dim = 1;
-    newR->arg = malloc(sizeof(char*));
-    if (newR->arg == NULL) {
-        perror("malloc in arg in arg_d");
-        free(newR);
-        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
-        exit(EXIT_FAILURE);
-    }
-    
-    newR->arg[0] = calloc(STRLEN, sizeof(char));
-    if(newR->arg[0] == NULL) {
-        perror("malloc in arg[0] in arg_d");
-        free(newR->arg);
-        free(newR);
-        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
-        exit(EXIT_FAILURE);
-    }
+    strncpy(newD, arg, len);
 
-    strncpy(newR->arg[0], arg, strnlen(arg, STRLEN));
-
-    if (list_append(&requestLst, newR) == -1) {
-        freeRequest(newR);
+    if (list_append(&dirLst, newD) == -1) {
+        free(newD);
         SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+        SYSCALL_ONE_EXIT(list_destroy(&dirLst, free), "list_destroy");
     }
 }
 
@@ -278,6 +282,75 @@ void ignoreSigpipe() {
     memset(&s, 0, sizeof(s));
     s.sa_handler = SIG_IGN;
     SYSCALL_ONE_EXIT(sigaction(SIGPIPE, &s, NULL), "sigaction");
+}
+
+int inspectDir(const char* dir) {
+    DIR *d;
+    struct dirent* currentFile;
+
+    if ((d = opendir(dir)) == NULL) {
+        perror("Opening directory");
+        return -1;
+    }
+
+    while ((errno = 0, currentFile = readdir(d)) != NULL) {
+
+        if (strncmp(".", currentFile->d_name, 2) != 0 && strncmp("..", currentFile->d_name, 3) != 0) {
+            if (chdir(dir) == -1) {perror("chdir"); return -1;}
+
+            //Bisogna salvare prima il cwd e poi ripristinarlo
+
+            char* filepath = calloc(STRLEN, sizeof(char));
+            if (filepath == NULL) {perror("calloc in inspectDir"); return -1;}
+
+            int len = STRLEN;
+            if((filepath = getcwd(filepath, len)) == NULL) {
+                if (errno != ERANGE) {perror("getcwd"); return -1;}
+                do {
+                    len *= 2;
+                    char* tmp = realloc(filepath, len);
+                    if (tmp == NULL) {perror("realloc in req_W"); return -1;}
+                    filepath = tmp;
+                } while((filepath = getcwd(filepath, len)) == NULL);
+            }
+
+            struct stat statFile;
+            if (stat(filepath, &statFile) == -1) {
+                perror("During stat");
+                return -1;
+            }
+
+            if (S_ISDIR(statFile.st_mode)) {
+                inspectDir(filepath);
+            } else {
+                int fd;
+                if ((fd = open(filepath, O_RDONLY)) == -1) {perror("open"); return -1;}
+                if (openFile(filepath, O_CREATE) == -1) {perror("openFile"); return -1;}
+
+                char* tmp = calloc(STRLEN, sizeof(char));
+                if (tmp == NULL) {perror("calloc"); return -1;}   
+                int res;
+                do {
+                    int len;
+                    if ((res = readn(fd, tmp, STRLEN)) == -1) {perror("readn"); return -1;}
+                    if (res == 0) len = strnlen(tmp, STRLEN);
+                    else len = res;
+                    if (appendToFile(filepath, tmp, len, NULL) == -1) {perror("appendToFile"); return -1;} //Qui modificare il NULL se implemento il -D
+                    memset(tmp, 0, STRLEN);
+                } while(res == 0);
+                free(tmp);
+            }
+            free(filepath);
+        }
+    }
+    if (errno != 0) {
+        perror("Error reading directory");
+        return -1;
+    }
+
+    if (closedir(d) == -1) {perror("Closing directory"); return -1;}
+
+    return 0;
 }
 
 int req_w(const char* dirname, int n) {
@@ -291,7 +364,26 @@ int req_w(const char* dirname, int n) {
         return -1;
     }
 
+    char* cwd = calloc(STRLEN, sizeof(char));
+    if (cwd == NULL) {
+        perror("calloc in req_W");
+        return -1;
+    }
 
+    int len = STRLEN;
+    if((cwd = getcwd(cwd, len)) == NULL) {
+        if (errno != ERANGE) {perror("getcwd"); return -1;}
+        do {
+            len *= 2;
+            char* tmp = realloc(cwd, len);
+            if (tmp == NULL) {perror("realloc in req_W"); return -1;}
+            cwd = tmp;
+        } while((cwd = getcwd(cwd, len)) == NULL);
+    }
+
+    //Completare
+
+    return 0;
 }
 
 int main(int argc, char* argv[]) {
@@ -302,10 +394,8 @@ int main(int argc, char* argv[]) {
 
     ignoreSigpipe();    
 
-    if (list_create(&requestLst, compareRequest) == -1) {
-        perror("list_create");
-        exit(EXIT_FAILURE);
-    }
+    SYSCALL_ONE_EXIT(list_create(&requestLst, compareRequest), "list_create")
+    SYSCALL_ONE_EXIT(list_create(&dirLst, str_compare), "list_create")
 
     char* socketName = NULL;
     int flagP = 0;
@@ -348,9 +438,10 @@ int main(int argc, char* argv[]) {
             }
             break;
         }
-        case 'd': { //Aggiungere i controlli che sia usato insieme a -r o -R. Forse non conviene aggiungerlo allo stack delle richieste. Devono essere possibili più -d
-            arg_d(optarg);
-            flagd = 1;
+        case 'd': {
+            if (flagR || flagr) arg_d(optarg);
+            flagR = 0;
+            flagr = 0;
             break;
         }
         case 't': {
@@ -463,9 +554,10 @@ int main(int argc, char* argv[]) {
                 break;
             }
             case 'R': {
-                if (flagP && flagR != 0) printf("Lettura di %d file dal server\n", flagR);
-                if (flagP && flagR == 0) printf("Lettura di tutti i file dal server\n");
-                if (readNFiles(flagR, ".") == -1) {perror("readNFile"); return -1;}
+                char* dir = (char*) list_pop(&dirLst);
+                if (flagP && req->option != 0) printf("Lettura di %d file dal server\n", flagR);
+                if (flagP && req->option == 0) printf("Lettura di tutti i file dal server\n");
+                if (readNFiles(req->option, dir) == -1) {perror("readNFile"); return -1;}
                 if (flagP) printf("Lettura dei file dal server completata correttamente\n");
                 break;
             }
