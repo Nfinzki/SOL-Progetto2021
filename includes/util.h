@@ -26,6 +26,12 @@
         exit(errno);                \
     }
 
+#define SYSCALL_ONE_RETURN(f, name)   \
+    if ((f) == -1) {                  \
+        perror(name);               \
+        return errno;                \
+    }
+
 #define SYSCALL_ONE_EXIT_F(f, name, cleanup)   \
     if ((f) == -1) {                  \
         int err = errno;            \
@@ -33,6 +39,15 @@
         cleanup;                        \
         errno = err;                \
         exit(errno);                \
+    }
+
+#define SYSCALL_ONE_RETURN_F(f, name, cleanup)   \
+    if ((f) == -1) {                  \
+        int err = errno;            \
+        perror(name);               \
+        cleanup;                        \
+        errno = err;                \
+        return errno;                \
     }
 
 #define EQ_NULL_EXIT(f, name)    \
