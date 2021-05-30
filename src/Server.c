@@ -21,10 +21,13 @@
 #define BUCKETS 250
 
 icl_hash_t *storage;
-long max_space;
-int max_file;
+long max_space = 0;
+int max_file = 0;
 long actual_space = 0; //Mettere tutto dentro un'unica struct che contiene anche l'hash table
 int actual_numFile = 0;
+int max_file_reached = 0;
+long max_space_reached = 0;
+int replacementPolicy = 0;
 static pthread_mutex_t mutex_storage = PTHREAD_MUTEX_INITIALIZER;
 
 list_t fileHistory;
@@ -64,6 +67,7 @@ int FIFO_ReplacementPolicy(long space, int numFiles, int fd) { //Deve inviare al
     fflush(stdout);
 
     Pthread_mutex_lock(&mutex_storage);
+    replacementPolicy++;
     while(space > max_space || numFiles > max_file) {
         Pthread_mutex_unlock(&mutex_storage);
 
@@ -145,7 +149,7 @@ void* sighandler(void* arg){ //Da scrivere nella relazione: Si suppone che se fa
         case SIGHUP: stopConnections = 1; break;
         }
 
-        sigCaught = 1; //Probabilmente va tolto
+        sigCaught = 1;
 
         close(sigPipe);
     }
@@ -341,6 +345,8 @@ void createFile(int fd) { //Renderli int?
     }
     actual_space += newFile->byteDim;
     actual_numFile++;
+    if (actual_space > max_space_reached) max_space_reached = actual_space;
+    if (actual_numFile > max_file_reached) max_file_reached = actual_numFile;
     Pthread_mutex_unlock(&mutex_storage);
 
     Pthread_mutex_lock(&mutex_filehistory);
@@ -484,7 +490,15 @@ void readFile(int fd) {
             exit(EXIT_FAILURE);
         }
     
-    //Controllare che il fd sia presente nella lista dei fd che hanno aperto quel file?
+    //Controlla che il client abbia aperto quel file
+    if (list_find(&(f->clients), &fd) == NULL) {
+        Pthread_mutex_unlock(&mutex_storage);
+            fprintf(stderr, "File non aperto dal client\n");
+            int res = -1;
+            SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
+            exit(EXIT_FAILURE);
+    }
+
     free(path);
 
     //Comunica al Client che non ci sono stati errori a recuperare il file
@@ -554,12 +568,18 @@ void appendFile(int fd) {
             exit(EXIT_FAILURE);
         }
     
-    //Controllare che il fd sia presente nella lista dei fd che hanno aperto quel file?
+    //Controlla che il client abbia aperto quel file
+    if (list_find(&(f->clients), &fd) == NULL) {
+        Pthread_mutex_unlock(&mutex_storage);
+            fprintf(stderr, "File non aperto dal client\n");
+            int res = -1;
+            SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
+            exit(EXIT_FAILURE);
+    }
     
     size_t fileDim;
     SYSCALL_ONE_EXIT_F(readn(fd, &fileDim, sizeof(size_t)), "readn", Pthread_mutex_unlock(&mutex_storage))
 
-    // char* newData = malloc(fileDim * sizeof(char));
     char* newData = calloc(fileDim, sizeof(char));
     EQ_NULL_EXIT_F(newData, "malloc", Pthread_mutex_unlock(&mutex_storage))
 
@@ -697,7 +717,7 @@ void* workerThread(void* arg) {
     }
 
     return NULL;
-} //Il client invierà il messaggio di termine connessione e il thread chiuderà il FD.
+}
 
 void initializeSocket(int* fd_socket) {
     *fd_socket = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -815,7 +835,7 @@ int main(int argc, char* argv[]) {
 
                 // if (fd == signalPipe[0]) break; //Questo non ci va perché sennò non gestisce bene il tipo di segnale che gli arriva
 
-                if (fd == fdPipe[0]) {
+                if (fd == fdPipe[0]) { //Invece che mandare -1 potrei mandare -fd che vorrebbe dire "Elimina questo fd dal set"
                     int c_fd;
 
                     if (readn(fd, &c_fd, sizeof(int)) == -1) {
@@ -832,7 +852,7 @@ int main(int argc, char* argv[]) {
 
                 if (fd == listenSocket && !stopConnections) {
                     int newFd = accept(listenSocket, NULL, 0);
-                    printf("Client connesso\n");
+
                     if (newFd == -1) {
                         fprintf(stderr, "An error has occurred accepting connection\n");
                         continue;
@@ -870,7 +890,13 @@ int main(int argc, char* argv[]) {
 
     SYSCALL_NOT_ZERO_EXIT(err, pthread_join(sighandler_thread, NULL), "pthread_join")
 
-    // SYSCALL_ONE_EXIT(list_destroy(&fileHistory, free), "list_destroy") //Non serve perché fileHistory e la tabella hash hanno come chiave la stessa variabile allocata sullo heap
+    printf("Numero di file massimo memorizzato nel server: %d\nDimensione massima in MBytes raggiunta dal file storage: %f\nNumero di volte in cui l'algoritmo di rimpiazzamento della cache è stato eseguito per selezionare uno o più file vittima: %d\n", max_file_reached, (double)max_space_reached/(1024*1024), replacementPolicy);
+    printf("Lista dei file contenuti nello storage al momento della chiusura del server:\n");
+    Pthread_mutex_lock(&mutex_connections); //Forse non è necessario
+    char* file;
+    while((file = list_pop(&fileHistory)) != NULL) printf("%s\n", file); //Non esegue la free perché l'elemento nella lista è lo stesso che è presente nella chiave della hashtable quindi va liberato una volta sola
+    Pthread_mutex_unlock(&mutex_connections);
+
     SYSCALL_ONE_EXIT(list_destroy(&connection, free), "list_destroy")
     SYSCALL_ONE_EXIT(icl_hash_destroy(storage, NULL, freeFile), "icl_hash_destrory")
     close(listenSocket);
