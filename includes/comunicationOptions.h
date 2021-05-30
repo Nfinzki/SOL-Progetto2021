@@ -8,9 +8,8 @@
 #define END_CONNECTION 4
 #define CLOSE_FILE 5
 #define SEND_FILE 6
-#define NO_ACTION 7 //Probabilmente va tolto
-#define APPEND_FILE 8
-#define READ_FILE 9
-#define READN_FILE 10
+#define APPEND_FILE 7
+#define READ_FILE 8
+#define READN_FILE 9
 
 #endif
