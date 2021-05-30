@@ -372,9 +372,18 @@ int readFile(const char* pathname, void** buf, size_t* size) {
  * Restituisce il numero dei file letti in caso di successo, -1 in caso di fallimento e setta errno
 **/
 static int writeRemoteFiles(int res, const char* dirname) {
-    if (dirname == NULL) {
-        errno = EINVAL;
-        return -1;
+    // if (dirname == NULL) {
+    //     errno = EINVAL;
+    //     return -1;
+    // }
+    if (dirname != NULL) {
+    //Verifica che dirname sia una directory
+        struct stat info;
+        if (stat(dirname, &info) == -1) return -1;
+        if (!S_ISDIR(info.st_mode)) {
+            errno = ENOTDIR;
+            return -1;
+        }
     }
 
     int nWrote = 0;
@@ -624,17 +633,6 @@ int appendToFile(const char* pathname, void* buf, size_t size, const char* dirna
     if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
 
     if (res != SEND_FILE) return res; //Bisogna settare errno
-    
-    if (dirname != NULL) {
-        //Verifica che il dirname sia una directory
-        struct stat info;
-        if (stat(dirname, &info) == -1) return -1;
-        if (!S_ISDIR(info.st_mode)) {
-            errno = ENOTDIR;
-            return -1;
-        }
-    }
-
 
     if(writeRemoteFiles(res, dirname) == -1) return -1;
     return 0;
