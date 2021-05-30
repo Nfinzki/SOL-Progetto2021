@@ -4,6 +4,9 @@
 #include <string.h>
 #include <signal.h>
 #include <time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include "../includes/util.h"
 #include "../includes/comunicationProtocol.h"
@@ -277,6 +280,20 @@ void ignoreSigpipe() {
     SYSCALL_ONE_EXIT(sigaction(SIGPIPE, &s, NULL), "sigaction");
 }
 
+int req_w(const char* dirname, int n) {
+    if (dirname == NULL) return -1;
+
+    //Verifica che dirname sia una directory
+    struct stat info;
+    if (stat(dirname, &info) == -1) return -1;
+    if (!S_ISDIR(info.st_mode)) {
+        errno = ENOTDIR;
+        return -1;
+    }
+
+
+}
+
 int main(int argc, char* argv[]) {
     if (argc == 1) {
         fprintf(stderr, "Il numero degli argomenti non è valido\n");
@@ -388,159 +405,88 @@ int main(int argc, char* argv[]) {
         return -1;
     }
 
-    printf("Socket %s\n", socketName);
 
-
-
-    struct timespec maxTime; //Provvisorio
+    //Provvisorio
+    struct timespec maxTime;
     if (clock_gettime(CLOCK_REALTIME, &maxTime) == -1) {
         perror("clock_gettime");
         SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
         exit(EXIT_FAILURE);
     }
-    maxTime.tv_sec += 2;
+    maxTime.tv_sec += 10;
 
+    //Connessione al server
     if (openConnection(socketName, 200, maxTime) == -1) {
         perror("openConnection");
         SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
         exit(EXIT_FAILURE);
     }
 
-    printf("Digita 1 per non creare i file...\n");
-    int fff;
-    scanf("%d", &fff);
-    if (fff == 0) {
-        if (openFile("prova.txt", O_CREATE) == -1) {
-            perror("openFile");
-            SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
-            exit(EXIT_FAILURE);
-        }
-
+    while(requestLst.head != NULL) {
+        request_t *req = list_pop(&requestLst);
         
-        int len = strnlen("Questo file riuscirà ad arrivare sano e salvo a destinazione?", STRLEN);
-        char* dati = calloc(len, sizeof(char));
-        strncpy(dati, "Questo file riuscirà ad arrivare sano e salvo a destinazione?", len);
-
-        if (appendToFile("prova.txt", dati, len, ".") == -1) {
-            perror("appendToFile");
-            return -1;
-        }
-
-        int len2 = strnlen("Spero proprio di si", STRLEN);
-        char* dati2 = calloc(len, sizeof(char));
-        strncpy(dati2, "Spero proprio di si", len);
-
-        if (appendToFile("prova.txt", dati2, len2, ".") == -1) {
-            perror("appendToFile");
-            return -1;
-        }
-
-
-        if (openFile("sda.txt", O_CREATE) == -1) {
-            perror("openFile");
-            SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
+        if (req == NULL && errno == EINVAL) {
+            perror("list_pop");
             exit(EXIT_FAILURE);
         }
 
-        int lenp = strnlen("Miao", STRLEN);
-        char* datip = calloc(len, sizeof(char));
-        strncpy(datip, "Miao", lenp);
+        switch (req->flag) {
+            case 'w': {
+                if (req_w(req->arg[0], req->option) == -1) {perror("flag -w"); exit(EXIT_FAILURE);}
+                break;
+            }
+            case 'W': {
+                
+                // for(int i = 0; i < req->dim; i++) {
+                //     if (writeFile(req->arg[i], NULL) == -1) {perror("writeFile"); return -1;}
+                // }
+                break;
+            }
+            case 'r': {
+                for(int i = 0; i < req->dim; i++) {
+                    if (flagP) printf("Apertura file %s\n", req->arg[i]);
+                    if (openFile(req->arg[i], 0) == -1) {perror("openFile"); return -1;}
+                    if (flagP) printf("File %s aperto correttamente\n", req->arg[i]);
+                    
+                    void* buffer;
+                    size_t size;
 
-        if (appendToFile("sda.txt", datip, lenp, ".") == -1) {
-            perror("appendToFile");
-            return -1;
+                    if (flagP) printf("Lettura del file %s\n", req->arg[i]);
+                    if (readFile(req->arg[i], &buffer, &size) == -1) {perror("writeFile"); return -1;}
+                    if (flagP) printf("File %s letto correttamente:\n%s\n", req->arg[i], (char*)buffer);
+                    free(buffer);
+
+                    if (flagP) printf("Chiusura file %s\n", req->arg[i]);
+                    if (closeFile(req->arg[i]) == -1) {perror("closeFile"); return -1;}
+                    if (flagP) printf("File %s chiuso correttamente\n", req->arg[i]);
+                }
+                break;
+            }
+            case 'R': {
+                if (flagP && flagR != 0) printf("Lettura di %d file dal server\n", flagR);
+                if (flagP && flagR == 0) printf("Lettura di tutti i file dal server\n");
+                if (readNFiles(flagR, ".") == -1) {perror("readNFile"); return -1;}
+                if (flagP) printf("Lettura dei file dal server completata correttamente\n");
+                break;
+            }
+            case 'd':
+            case 'c': break;
         }
 
-        if (openFile("aiuto.txt", O_CREATE) == -1) {
-            perror("openFile");
-            SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
-            exit(EXIT_FAILURE);
+        if(flagT != 0) {
+            struct timespec nextReq;
+            nextReq.tv_sec = flagT / 1000;
+            nextReq.tv_nsec = (flagT % 1000) * 1000000;
+            int res;
+            do {
+                res = nanosleep(&nextReq, &nextReq);
+            } while(res && errno == EINTR);
         }
 
-        int lend = strnlen("Aiuto, questa è una richiesta d'aiuto", STRLEN);
-        char* datid = calloc(lend, sizeof(char));
-        strncpy(datid, "Aiuto, questa è una richiesta d'aiuto", lend);
-
-        if (appendToFile("aiuto.txt", datid, lend, ".") == -1) {
-            perror("appendToFile");
-            return -1;
-        }
-    } else {
-        if (openFile("prova.txt", 0) == -1) {
-            perror("openFile");
-            SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
-            exit(EXIT_FAILURE);
-        }
-
-        if (openFile("sda.txt", 0) == -1) {
-            perror("openFile");
-            SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
-            exit(EXIT_FAILURE);
-        }
-
-        if (openFile("aiuto.txt", 0) == -1) {
-            perror("openFile");
-            SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
-            exit(EXIT_FAILURE);
-        }
+        freeRequest(req);
     }
 
-    if (readNFiles(100, ".") == -1) {
-        perror("readNFiles");
-        return -1;
-    }
-
-    int scelta;
-    printf("Scegliere quale file chiudere 0, 1, 2\n");
-    scanf("%d", &scelta);
-
-    if (scelta == 0) {
-        if (closeFile("prova.txt") == -1) {
-            perror("closeFile");
-            SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
-            exit(EXIT_FAILURE);
-        }
-    }
-    if (scelta == 1) {
-        if (closeFile("sda.txt") == -1) {
-            perror("closeFile");
-            SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
-            exit(EXIT_FAILURE);
-        }
-    }
-    if (scelta == 2) {
-        if (closeFile("aiuto.txt") == -1) {
-            perror("closeFile");
-            SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
-            exit(EXIT_FAILURE);
-        }
-    }
-
-    printf("Digita un numero per chiudere la connessione...\n");
-    int fuffa;
-    scanf("%d", &fuffa);
-
-    if (closeConnection(socketName) == -1) {
-        perror("closeConnection");
-        SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
-        exit(EXIT_FAILURE);
-    }
-
-    // request_t *req;
-    // while (requestLst.head != NULL) {
-    //     if((req = (request_t*) list_pop(&requestLst)) == NULL) {
-    //         perror("list_pop");
-    //         SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
-    //         exit(errno);
-    //     }
-
-    //     printf("La richiesta è: %c  %d  %d\n", req->flag, req->option, req->dim);
-    //     printf("Gli argomenti sono:\n");
-    //     for(int i = 0; i < req->dim; i++)
-    //         printf("%s\n", req->arg[i]);
-    //     printf("\n\n");
-    //     freeRequest(req);
-    // }
+    if (closeConnection(socketName) == -1) {perror("closeConnection"); exit(EXIT_FAILURE);}
 
     SYSCALL_ONE_EXIT(list_destroy(&requestLst, freeRequest), "list_destroy");
     return 0;
