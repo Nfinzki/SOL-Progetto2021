@@ -367,84 +367,17 @@ int readFile(const char* pathname, void** buf, size_t* size) {
 }
 
 
-/*
-* Scrive tutto il file puntato da pathname nel file server. Ritorna successo solo se la precedente operazione,
-* terminata con successo, è stata openFile(pathname, O_CREATE| O_LOCK). Se ‘dirname’ è diverso da NULL, il
-* file eventualmente spedito dal server perchè espulso dalla cache per far posto al file ‘pathname’ dovrà essere
-* scritto in ‘dirname’; Ritorna 0 in caso di successo, -1 in caso di fallimento, errno viene settato opportunamente.
-*/
-int writeFile(const char* pathname, const char* dirname);
-
-
-/*
-* Richiesta di scrivere in append al file ‘pathname‘ i ‘size‘ bytes contenuti nel buffer ‘buf’. L’operazione di append
-* nel file è garantita essere atomica dal file server. Se ‘dirname’ è diverso da NULL, il file eventualmente spedito
-* dal server perchè espulso dalla cache per far posto ai nuovi dati di ‘pathname’ dovrà essere scritto in ‘dirname’;
-* Ritorna 0 in caso di successo, -1 in caso di fallimento, errno viene settato opportunamente.
-*/
-int appendToFile(const char* pathname, void* buf, size_t size, const char* dirname) {
-    if (pathname == NULL) {
+/**
+ * Memorizza tutti i file inviati dal server nella directory dirname.
+ * Restituisce il numero dei file letti in caso di successo, -1 in caso di fallimento e setta errno
+**/
+static int writeRemoteFiles(int res, const char* dirname) {
+    if (dirname == NULL) {
         errno = EINVAL;
         return -1;
     }
 
-    if (socketName == NULL) {
-        errno = ENOTCONN;
-        return -1;
-    }
-
-    //Copia il nome del file
-    int pathlen = strnlen(pathname, STRLEN) + 1;
-    char* tmp = calloc(pathlen, sizeof(char));
-    if (tmp == NULL) return -1;
-    strncpy(tmp, pathname, pathlen);
-
-    if (list_find(&openedFiles, tmp) == NULL) {
-        free(tmp);
-        errno = ENOENT;
-        return -1;
-    }
-
-    int exists;
-    if ((exists = existFile(tmp)) == -1) {
-        free(tmp);
-        return -1;
-    }
-
-    if (!exists) {
-        //Il file non è più presente nel server. Viene rimosso dalla lista dei file aperti e viene restituito un errore
-        if (list_delete(&openedFiles, tmp, free) == -1) {free(tmp); return -1;}
-        free(tmp); 
-        errno = ENOENT;
-        return -1;
-    }
-
-    //Richiesta al server
-    int opt = APPEND_FILE;
-    if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(tmp); return -1;}
-    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {free(tmp); return -1;}
-    if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {free(tmp); return -1;}
-    if (writen(fdSocket, &size, sizeof(size_t)) == -1) {free(tmp); return -1;}
-    if (writen(fdSocket, buf, size * sizeof(char)) == -1) {free(tmp); return -1;}
-
-    free(tmp);
-
-    //Lettura risposta
-    int res;
-    if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
-
-    if (res != SEND_FILE) return res; //Bisogna settare errno
-    
-    if (dirname != NULL) {
-        //Verifica che il dirname sia una directory
-        struct stat info;
-        if (stat(dirname, &info) == -1) return -1;
-        if (!S_ISDIR(info.st_mode)) {
-            errno = ENOTDIR;
-            return -1;
-        }
-    }
-    
+    int nWrote = 0;
     while(res == SEND_FILE) {
         //Lettura della lunghezza del path
         int len;
@@ -583,9 +516,128 @@ int appendToFile(const char* pathname, void* buf, size_t size, const char* dirna
 
         //Lettura del prossimo potenziale file inviato dal server
         if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
+
+        nWrote++;
     }
 
-    return res;
+    // if (res != 0) {errno = ; return -1;} //Per ora non ci sono resposte di errore
+
+    return nWrote;
+}
+
+
+/*
+* Richiede al server la lettura di ‘N’ files qualsiasi da memorizzare nella directory ‘dirname’ lato client. Se il server
+* ha meno di ‘N’ file disponibili, li invia tutti. Se N<=0 la richiesta al server è quella di leggere tutti i file
+* memorizzati al suo interno. Ritorna un valore maggiore o uguale a 0 in caso di successo (cioè ritorna il n. di file
+* effettivamente letti), -1 in caso di fallimento, errno viene settato opportunamente.
+*/
+int readNFiles(int N, const char* dirname) {
+    if (dirname == NULL) {
+        errno = EINVAL;
+        return -1;
+    }
+
+    if (socketName == NULL) {
+        errno = ENOTCONN;
+        return -1;
+    }
+
+    int opt = READN_FILE;
+
+    //Richiesta al server
+    if (writen(fdSocket, &opt, sizeof(int)) == -1) return -1;
+    if (writen(fdSocket, &N, sizeof(int)) == -1) return -1;
+
+    //Lettura della risposta dal server
+    int res;
+    if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
+
+    return writeRemoteFiles(res, dirname); //Probabilmente bisogna controllare qualche altro caso di errore
+}
+
+
+/*
+* Scrive tutto il file puntato da pathname nel file server. Ritorna successo solo se la precedente operazione,
+* terminata con successo, è stata openFile(pathname, O_CREATE| O_LOCK). Se ‘dirname’ è diverso da NULL, il
+* file eventualmente spedito dal server perchè espulso dalla cache per far posto al file ‘pathname’ dovrà essere
+* scritto in ‘dirname’; Ritorna 0 in caso di successo, -1 in caso di fallimento, errno viene settato opportunamente.
+*/
+int writeFile(const char* pathname, const char* dirname);
+
+
+/*
+* Richiesta di scrivere in append al file ‘pathname‘ i ‘size‘ bytes contenuti nel buffer ‘buf’. L’operazione di append
+* nel file è garantita essere atomica dal file server. Se ‘dirname’ è diverso da NULL, il file eventualmente spedito
+* dal server perchè espulso dalla cache per far posto ai nuovi dati di ‘pathname’ dovrà essere scritto in ‘dirname’;
+* Ritorna 0 in caso di successo, -1 in caso di fallimento, errno viene settato opportunamente.
+*/
+int appendToFile(const char* pathname, void* buf, size_t size, const char* dirname) {
+    if (pathname == NULL) {
+        errno = EINVAL;
+        return -1;
+    }
+
+    if (socketName == NULL) {
+        errno = ENOTCONN;
+        return -1;
+    }
+
+    //Copia il nome del file
+    int pathlen = strnlen(pathname, STRLEN) + 1;
+    char* tmp = calloc(pathlen, sizeof(char));
+    if (tmp == NULL) return -1;
+    strncpy(tmp, pathname, pathlen);
+
+    if (list_find(&openedFiles, tmp) == NULL) {
+        free(tmp);
+        errno = ENOENT;
+        return -1;
+    }
+
+    int exists;
+    if ((exists = existFile(tmp)) == -1) {
+        free(tmp);
+        return -1;
+    }
+
+    if (!exists) {
+        //Il file non è più presente nel server. Viene rimosso dalla lista dei file aperti e viene restituito un errore
+        if (list_delete(&openedFiles, tmp, free) == -1) {free(tmp); return -1;}
+        free(tmp); 
+        errno = ENOENT;
+        return -1;
+    }
+
+    //Richiesta al server
+    int opt = APPEND_FILE;
+    if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, &size, sizeof(size_t)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, buf, size * sizeof(char)) == -1) {free(tmp); return -1;}
+
+    free(tmp);
+
+    //Lettura risposta
+    int res;
+    if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
+
+    if (res != SEND_FILE) return res; //Bisogna settare errno
+    
+    if (dirname != NULL) {
+        //Verifica che il dirname sia una directory
+        struct stat info;
+        if (stat(dirname, &info) == -1) return -1;
+        if (!S_ISDIR(info.st_mode)) {
+            errno = ENOTDIR;
+            return -1;
+        }
+    }
+
+
+    if(writeRemoteFiles(res, dirname) == -1) return -1;
+    return 0;
 }
 
 

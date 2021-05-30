@@ -497,6 +497,44 @@ void readFile(int fd) {
     Pthread_mutex_unlock(&mutex_storage);
 }
 
+void readnFile(int fd) {
+    int N;
+    SYSCALL_ONE_EXIT(readn(fd, &N, sizeof(int)), "readn")
+
+    Pthread_mutex_lock(&mutex_storage);
+    if (N <= 0 || N > actual_numFile) N = actual_numFile;
+    Pthread_mutex_unlock(&mutex_storage);
+
+    Pthread_mutex_lock(&mutex_filehistory);
+    Pthread_mutex_lock(&mutex_storage);
+    node_t* state = NULL;
+    char* path = (char*) list_getNext(&fileHistory, &state);
+    int i = 0;
+    while(i < N && path != NULL) {
+        file_t *f = icl_hash_find(storage, path);
+        if (f == NULL) {
+            fprintf(stderr, "Errore critico: Inconsistenza tra storage e fileHistory\n");
+            exit(EXIT_FAILURE);
+        }
+
+        int opt = SEND_FILE;
+        SYSCALL_ONE_EXIT_F(writen(fd, &opt, sizeof(int)), "writen", Pthread_mutex_unlock(&mutex_storage); Pthread_mutex_unlock(&mutex_filehistory))
+        int len = strnlen(path, STRLEN) + 1;
+        SYSCALL_ONE_EXIT_F(writen(fd, &len, sizeof(int)), "writen", Pthread_mutex_unlock(&mutex_storage); Pthread_mutex_unlock(&mutex_filehistory))
+        SYSCALL_ONE_EXIT_F(writen(fd, path, len * sizeof(char)), "writen", Pthread_mutex_unlock(&mutex_storage); Pthread_mutex_unlock(&mutex_filehistory))
+        SYSCALL_ONE_EXIT_F(writen(fd, &(f->byteDim), sizeof(size_t)), "writen", Pthread_mutex_unlock(&mutex_storage); Pthread_mutex_unlock(&mutex_filehistory))
+        SYSCALL_ONE_EXIT_F(writen(fd, f->data, f->byteDim * sizeof(char)), "writen", Pthread_mutex_unlock(&mutex_storage); Pthread_mutex_unlock(&mutex_filehistory))
+        i++;
+
+        path = (char*) list_getNext(NULL, &state);
+    } 
+    Pthread_mutex_unlock(&mutex_storage);
+    Pthread_mutex_unlock(&mutex_filehistory);
+
+    int res = 0;
+    SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen")
+}
+
 void appendFile(int fd) {
     int len;
     SYSCALL_ONE_EXIT(readn(fd, &len, sizeof(int)), "readn")
@@ -641,6 +679,7 @@ void* workerThread(void* arg) {
             case OPEN_FILE: openFile(fd); break;
             case END_CONNECTION: closeConnection(fd, Wendpoint); continue;
             case READ_FILE: readFile(fd); break;
+            case READN_FILE: readnFile(fd); break;
             case APPEND_FILE: appendFile(fd); break;
             case CLOSE_FILE: closeFile(fd); break;
         }

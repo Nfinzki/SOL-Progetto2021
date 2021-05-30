@@ -11,5 +11,6 @@
 #define NO_ACTION 7 //Probabilmente va tolto
 #define APPEND_FILE 8
 #define READ_FILE 9
+#define READN_FILE 10
 
 #endif
