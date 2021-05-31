@@ -48,10 +48,6 @@ int unlockFile(const char* pathname);
 int closeFile(const char* pathname);
 
 
-/*
-* Rimuove il file cancellandolo dal file storage server. L’operazione fallisce se il file non è in stato locked, o è in
-* stato locked da parte di un processo client diverso da chi effettua la removeFile
-*/
 int removeFile(const char* pathname);
 
 
