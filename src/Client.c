@@ -27,6 +27,8 @@ typedef struct _request {
 list_t requestLst;
 list_t dirLst;
 
+int flagP = 0;
+
 int compareRequest(void* a, void* b) {
     request_t *reqA = (request_t*) a;
     request_t *reqB = (request_t*) b;
@@ -284,7 +286,9 @@ void ignoreSigpipe() {
     SYSCALL_ONE_EXIT(sigaction(SIGPIPE, &s, NULL), "sigaction");
 }
 
-int inspectDir(const char* dir) {
+int inspectDir(const char* dir, int* n) {
+    if (*n == 0) return 0;
+
     DIR *d;
     struct dirent* currentFile;
 
@@ -293,12 +297,31 @@ int inspectDir(const char* dir) {
         return -1;
     }
 
+    //Salva il cwd
+    char* cwd = calloc(STRLEN, sizeof(char));
+    if (cwd == NULL) {
+        perror("calloc in req_W");
+        return -1;
+    }
+
+    //Nell'evenutlità che non ci sia abbastanza memoria allocata, la rialloca
+    int len = STRLEN;
+    if((cwd = getcwd(cwd, len)) == NULL) {
+        if (errno != ERANGE) {perror("getcwd"); return -1;}
+        do {
+            len *= 2;
+            char* tmp = realloc(cwd, len);
+            if (tmp == NULL) {perror("realloc in req_W"); return -1;}
+            cwd = tmp;
+        } while((cwd = getcwd(cwd, len)) == NULL);
+    }
+
+    //Sposta la cwd in quella della cartella in analisi
+    if (chdir(dir) == -1) {perror("chdir"); return -1;}
+
     while ((errno = 0, currentFile = readdir(d)) != NULL) {
 
-        if (strncmp(".", currentFile->d_name, 2) != 0 && strncmp("..", currentFile->d_name, 3) != 0) {
-            if (chdir(dir) == -1) {perror("chdir"); return -1;}
-
-            //Bisogna salvare prima il cwd e poi ripristinarlo
+        if (strncmp(".", currentFile->d_name, 2) != 0 && strncmp("..", currentFile->d_name, 3) != 0 && *n != 0) {
 
             char* filepath = calloc(STRLEN, sizeof(char));
             if (filepath == NULL) {perror("calloc in inspectDir"); return -1;}
@@ -314,6 +337,16 @@ int inspectDir(const char* dir) {
                 } while((filepath = getcwd(filepath, len)) == NULL);
             }
 
+            if (strnlen(filepath, len) + strnlen(currentFile->d_name, STRLEN) > len) {
+                len += strnlen(currentFile->d_name, STRLEN);
+                char* tmp = realloc(filepath, len);
+                if (tmp == NULL) {perror("realloc in req_W"); return -1;}
+                filepath = tmp;
+            }
+
+            strncat(filepath, "/", len);
+            strncat(filepath, currentFile->d_name, len);
+
             struct stat statFile;
             if (stat(filepath, &statFile) == -1) {
                 perror("During stat");
@@ -321,15 +354,23 @@ int inspectDir(const char* dir) {
             }
 
             if (S_ISDIR(statFile.st_mode)) {
-                inspectDir(filepath);
+                inspectDir(filepath, n);
             } else {
                 int fd;
+                //Apre il file e lo crea sul server
+                if (flagP) printf("Apertura del file %s in lettura... ", filepath);
                 if ((fd = open(filepath, O_RDONLY)) == -1) {perror("open"); return -1;}
+                if (flagP) printf("Successo\n");
+
+                if (flagP) printf("Apertura del file nel server... ");
                 if (openFile(filepath, O_CREATE) == -1) {perror("openFile"); return -1;}
+                if (flagP) printf("Successo\n");
 
                 char* tmp = calloc(STRLEN, sizeof(char));
                 if (tmp == NULL) {perror("calloc"); return -1;}   
                 int res;
+                //Scrive il file sul server STRLEN byte alla volta
+                if (flagP) printf("Scrittura del file %s nel server\n", filepath);
                 do {
                     int len;
                     if ((res = readn(fd, tmp, STRLEN)) == -1) {perror("readn"); return -1;}
@@ -338,7 +379,10 @@ int inspectDir(const char* dir) {
                     if (appendToFile(filepath, tmp, len, NULL) == -1) {perror("appendToFile"); return -1;} //Qui modificare il NULL se implemento il -D
                     memset(tmp, 0, STRLEN);
                 } while(res == 0);
+                if (flagP) printf("Scrittura del file %s avvenuta con successo\n", filepath);
                 free(tmp);
+
+                (*n)--;
             }
             free(filepath);
         }
@@ -347,6 +391,9 @@ int inspectDir(const char* dir) {
         perror("Error reading directory");
         return -1;
     }
+
+    if (chdir(cwd) == -1) {perror("chdir"); return -1;}
+    free(cwd);
 
     if (closedir(d) == -1) {perror("Closing directory"); return -1;}
 
@@ -364,15 +411,54 @@ int req_w(const char* dirname, int n) {
         return -1;
     }
 
+    if (n == 0) {
+        if (flagP) printf("Scrittura di tutti i file nella directory %s nel server\n", dirname);
+        n = -1;
+    } else {
+        if (flagP) printf("Scrittura di %d file dalla directory %s nel server\n", n, dirname);
+    }
+    if (inspectDir(dirname, &n) == -1) {perror("inspectDir"); return -1;}
+    if (flagP) printf("Scritture completate con successo\n");
+
+    return 0;
+}
+
+int createLocalFile(char* dirname, char* path) {
+    int len = strnlen(path, STRLEN) + 1;
+    //Manipolazione delle stringhe per estrapolare dal path il nome e l'eventuale estensione del file
+    int startName;
+    int fullstop = -1;
+    for(startName = len - 1; startName >= 0; startName--) {
+        if (path[startName] == '/') break;
+        if (path[startName] == '.') fullstop = fullstop == -1 ? startName : fullstop;
+    }
+    startName++;
+
+    char* extension;
+    if (fullstop != -1) {
+        extension = calloc(len - fullstop, sizeof(char));
+        if (extension == NULL) return -1;
+
+        strncpy(extension, path + fullstop, len - fullstop);
+    }
+
+    //Salvataggio e cambio della CWD per poter salvare i file
     char* cwd = calloc(STRLEN, sizeof(char));
     if (cwd == NULL) {
-        perror("calloc in req_W");
+        fprintf(stderr, "Errore critico in memoria\n");
+        if (fullstop != -1) free(extension);
         return -1;
     }
 
+    //Nell'evenutlità che non ci sia abbastanza memoria allocata, la rialloca
     int len = STRLEN;
     if((cwd = getcwd(cwd, len)) == NULL) {
-        if (errno != ERANGE) {perror("getcwd"); return -1;}
+        if (errno != ERANGE) {
+            perror("getcwd"); 
+            if (fullstop != -1) free(extension);
+            free(cwd);
+            return -1;
+        }
         do {
             len *= 2;
             char* tmp = realloc(cwd, len);
@@ -381,9 +467,49 @@ int req_w(const char* dirname, int n) {
         } while((cwd = getcwd(cwd, len)) == NULL);
     }
 
-    //Completare
+    //Cambio della CWD
+    if (chdir(dirname) == -1) {
+        if (fullstop != -1) free(extension);
+        free(cwd);
+        return -1;
+    }
 
-    return 0;
+    //Creazione del file. Se esiste un file con lo stesso nome verrà modificato il nome del file da creare
+    int createdFile, oldCifre;
+    int try = 1;
+    while((createdFile = open(path + startName, O_WRONLY | O_CREAT | O_EXCL, 0666)) == -1) {
+        if (errno != EEXIST) return -1;
+
+        if (try == 1) {
+            char* tmp = realloc(path, (len + 3) * sizeof(char));
+            if (tmp == NULL) return -1;
+            path = tmp;
+            len += 3;
+        }
+
+        int tmp_try = try;
+        int nCifre = 0;
+        while (tmp_try != 0) {
+            tmp_try /= 10;
+            nCifre++;
+        }
+
+        if (nCifre > oldCifre) {
+            char* tmp = realloc(path, (len + 1) * sizeof(char));
+            if (tmp == NULL) return -1;
+            path = tmp;
+            len++;
+        }
+
+        oldCifre = nCifre;
+
+        snprintf(path + fullstop, sizeof(int) + 2 * sizeof(char), "(%d)", try);
+        if (fullstop != -1) strncpy(path + fullstop + nCifre + 2, extension, len - fullstop);
+        
+        try++;
+    }
+
+    return createdFile;
 }
 
 int main(int argc, char* argv[]) {
@@ -398,7 +524,6 @@ int main(int argc, char* argv[]) {
     SYSCALL_ONE_EXIT(list_create(&dirLst, str_compare), "list_create")
 
     char* socketName = NULL;
-    int flagP = 0;
     long flagT = 0;
     int flagR = 0;
     int flagr = 0;
@@ -534,6 +659,17 @@ int main(int argc, char* argv[]) {
                 break;
             }
             case 'r': {
+                char* dir = (char*) list_pop(&dirLst);
+                if (dir != NULL) {
+                //Verifica che dir sia una directory
+                    struct stat info;
+                    if (stat(dir, &info) == -1) return -1; //Forse conviene spostare questi controlli nella fase di parsing
+                    if (!S_ISDIR(info.st_mode)) {
+                        errno = ENOTDIR;
+                        return -1;
+                    }
+                }
+
                 for(int i = 0; i < req->dim; i++) {
                     if (flagP) printf("Apertura file %s\n", req->arg[i]);
                     if (openFile(req->arg[i], 0) == -1) {perror("openFile"); return -1;}
@@ -544,13 +680,30 @@ int main(int argc, char* argv[]) {
 
                     if (flagP) printf("Lettura del file %s\n", req->arg[i]);
                     if (readFile(req->arg[i], &buffer, &size) == -1) {perror("writeFile"); return -1;}
-                    if (flagP) printf("File %s letto correttamente:\n%s\n", req->arg[i], (char*)buffer);
+                    if (flagP) printf("File %s letto correttamente. Letti %d byte\n", req->arg[i], size);
+                    
+                    if(dir != NULL) {
+                        //Creazione del file nella directory specificata
+                        int fd;
+                        if (flagP) printf("Creazione del file nella directory %s ... ", dir);
+                        if ((fd = createLocalFile(dir, req->arg[i])) == -1) {perror("createLocalFile"); return -1;}
+                        if (flagP) printf("File creato correttamente\n");
+
+                        //Scrittura nel file
+                        if (flagP) printf("Scrittura nel file\n");
+                        if (writen(fd, buffer, size) == -1) {perror("writen"); return -1;}
+                        if (flagP) printf("Scrittura completata con successo. Scritti %ld byte\n", size);
+                        
+                        //Chiusura del file
+                        close(fd);
+                    }
                     free(buffer);
 
                     if (flagP) printf("Chiusura file %s\n", req->arg[i]);
                     if (closeFile(req->arg[i]) == -1) {perror("closeFile"); return -1;}
                     if (flagP) printf("File %s chiuso correttamente\n", req->arg[i]);
                 }
+                free(dir);
                 break;
             }
             case 'R': {
@@ -559,9 +712,9 @@ int main(int argc, char* argv[]) {
                 if (flagP && req->option == 0) printf("Lettura di tutti i file dal server\n");
                 if (readNFiles(req->option, dir) == -1) {perror("readNFile"); return -1;}
                 if (flagP) printf("Lettura dei file dal server completata correttamente\n");
+                free(dir);
                 break;
             }
-            case 'd':
             case 'c': break;
         }
 
