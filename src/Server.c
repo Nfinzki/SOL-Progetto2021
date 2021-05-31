@@ -538,6 +538,76 @@ int readnFile(int fd) {
     return 0;
 }
 
+int writeFile(int fd) {
+    int len;
+    int res = -1;
+
+    SYSCALL_ONE_RETURN(readn(fd, &len, sizeof(int)), "readn")
+
+    char* path = calloc(len, sizeof(char));
+    EQ_NULL_EXIT_F(path, "calloc in appendFile", SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn"))
+
+    SYSCALL_ONE_RETURN_F(readn(fd, path, len * sizeof(char)), "readn", free(path))
+
+    Pthread_mutex_lock(&mutex_storage);
+    file_t *f = (file_t*) icl_hash_find(storage, path);
+        if (f == NULL) {
+            Pthread_mutex_unlock(&mutex_storage);
+            fprintf(stderr, "File non presente nello storage\n");
+            SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "readn", free(path))
+        }
+    
+    free(path);
+
+    //Controlla che il client abbia aperto quel file
+    if (list_find(&(f->clients), &fd) == NULL) {
+        Pthread_mutex_unlock(&mutex_storage);
+        fprintf(stderr, "File non aperto dal client\n");
+        SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "readn")
+    }
+
+    size_t dim;
+    SYSCALL_ONE_RETURN_F(readn(fd, &dim, sizeof(size_t)), "readn", Pthread_mutex_unlock(&mutex_storage))
+
+    while(dim != 0) {
+        char* buf = calloc(dim, sizeof(char));
+        EQ_NULL_EXIT_F(buf, "calloc in writeFile", Pthread_mutex_unlock(&mutex_storage); SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen"))
+
+        if (actual_space + dim > max_space) {
+            Pthread_mutex_unlock(&mutex_storage);
+            if (FIFO_ReplacementPolicy(actual_space + dim, actual_numFile, fd) == -1) {
+                fprintf(stderr, "Errore nell'esecuzione dell'algoritmo di sostituzione\n");
+                SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
+                return -1;
+            }
+            Pthread_mutex_lock(&mutex_storage);
+        }
+
+        if (f->data == NULL) {
+            f->data = buf;
+        } else {
+            char* tmp = realloc(f->data, (f->byteDim + dim) * sizeof(char));
+            EQ_NULL_EXIT_F(tmp, "realloc in appendFile", SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen"))
+        
+            f->data = tmp;
+            memcpy((char*)f->data + f->byteDim, buf, dim);
+        }
+        f->byteDim += dim;
+        actual_space += dim;
+        if (actual_space > max_space_reached) max_space_reached = actual_space;
+
+        free(buf);
+
+        SYSCALL_ONE_RETURN_F(readn(fd, &dim, sizeof(size_t)), "readn", Pthread_mutex_unlock(&mutex_storage))
+    }
+    Pthread_mutex_unlock(&mutex_storage);
+
+    res = 0;
+    SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
+
+    return 0;
+}
+
 int appendFile(int fd) {
     int len;
     int res = -1;
@@ -594,7 +664,9 @@ int appendFile(int fd) {
     }
     f->byteDim += fileDim;
     actual_space += fileDim;
+    if (actual_space > max_space_reached) max_space_reached = actual_space;
     Pthread_mutex_unlock(&mutex_storage);
+    free(newData);
 
     res = 0;
     SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
@@ -703,6 +775,7 @@ void* workerThread(void* arg) {
             case END_CONNECTION: closeConnection(fd); closeFd = 1; break; //Ricontrollare questo
             case READ_FILE: if (readFile(fd) != 0) {closeFd = 1; break;}
             case READN_FILE: if (readnFile(fd) != 0) {closeFd = 1; break;}
+            case WRITE_FILE: if (writeFile(fd) != 0) {closeFd = 1; break;}
             case APPEND_FILE: if (appendFile(fd) != 0) {closeFd = 1; break;}
             case CLOSE_FILE: if (closeFile(fd) != 0) {closeFd = 1; break;}
             case REMOVE_FILE: if (removeFile(fd) != 0) {closeFd = 1; break;}
