@@ -28,15 +28,35 @@ static int fdSocket;
 
 static list_t openedFiles;
 
+static openFile_compare(void* a, void* b) {
+    oFile *aa = (oFile*) a;
+    oFile *bb = (oFile*) b;
+
+    return str_compare(aa->path, bb->path);
+}
+
+static freeOFile(void* a) {
+    oFile *aa = (oFile*) a;
+
+    free(aa->path);
+    free(aa);
+}
+
 /* Viene aperta una connessione AF_UNIX al socket file sockname. Se il server non accetta immediatamente la
 * richiesta di connessione, la connessione da parte del client viene ripetuta dopo ‘msec’ millisecondi e fino allo
 * scadere del tempo assoluto ‘abstime’ specificato come terzo argomento. Ritorna 0 in caso di successo, -1 in caso
 * di fallimento, errno viene settato opportunamente.
 */
-int openConnection(const char* sockname, int msec, const struct timespec abstime) { //Cosa succede se si fa una seconda openConnection senza aver chiuso quella precedente?
+int openConnection(const char* sockname, int msec, const struct timespec abstime) {
     if (sockname == NULL) {
         errno = ENOTSOCK;
         return -1;
+    }
+
+    //Se è stata già instaurata una connessione viene chiusa quella precedente e ne viene instaurata una nuova
+    if (socketName != NULL) {
+        if (closeConnection(socketName) == -1) return -1;
+        socketName = NULL;
     }
 
     int socklen = strnlen(sockname, STRLEN);
@@ -83,7 +103,7 @@ int openConnection(const char* sockname, int msec, const struct timespec abstime
         }
     }
 
-    if(list_create(&openedFiles, int_compare) == -1) return -1;
+    if(list_create(&openedFiles, openFile_compare) == -1) return -1;
 
     return 0;
 }
@@ -92,7 +112,7 @@ int openConnection(const char* sockname, int msec, const struct timespec abstime
 /* Chiude la connessione AF_UNIX associata al socket file sockname. Ritorna 0 in caso di successo, -1 in caso di
 * fallimento, errno viene settato opportunamente.
 */
-int closeConnection(const char* sockname) { //I file aperti dovrebbero venire chiusi
+int closeConnection(const char* sockname) {
     if(strncmp(socketName, sockname, strnlen(socketName, STRLEN))) {
         errno = EINVAL;
         return -1;
@@ -107,7 +127,9 @@ int closeConnection(const char* sockname) { //I file aperti dovrebbero venire ch
     int nFiles = openedFiles.dim;
 
     for(int i = 0; i < nFiles; i++) {
-        char* path = list_pop(&openedFiles);
+        oFile* file = (oFile*) list_pop(&openedFiles);
+        char* path = file->path;
+        free(file);
         if (path == NULL) {errno = ECANCELED; return -1;}
 
         int len = strnlen(path, STRLEN) + 1;
@@ -237,6 +259,15 @@ int openFile(const char* pathname, int flags) {
         return -1;
     }
 
+    //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
+    oFile *file = malloc(sizeof(oFile));
+    if (file == NULL) {errno = ENOMEM; return -1;}
+    file->path = pathname;
+
+    //Se il file è stato già aperto ritorna subito
+    if (list_find(&openedFiles, file) != NULL) {free(file); return 0;}
+    free(file);
+
     int exists;
     if((exists = existFile(pathname)) == -1) return -1;
 
@@ -286,8 +317,13 @@ int openFile(const char* pathname, int flags) {
         free(tmp);
     }
 
+    oFile *newof = malloc(sizeof(oFile));
+    if (newof == NULL) {errno = ENOMEM; return -1;}
+    newof->path = tmp;
+    newof->op = 0;
+
     if (res == 0) {
-        if(list_append(&openedFiles, tmp) == -1) {
+        if(list_append(&openedFiles, newof) == -1) {
             free(tmp);
             return -1;
         }
@@ -321,25 +357,38 @@ int readFile(const char* pathname, void** buf, size_t* size) {
     if (tmp == NULL) {errno = ENOMEM; return -1;}
     strncpy(tmp, pathname, pathlen);
 
-    if (list_find(&openedFiles, tmp) == NULL) {
+    //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
+    oFile *file = malloc(sizeof(oFile));
+    if (file == NULL) {errno = ENOMEM; return -1;}
+    file->path = tmp;
+    oFile *f;
+
+    //Cerca il file nella lista dei file aperti. Se il file viene trovato viene impostato il bit operazione ad 1
+    if ((f = list_find(&openedFiles, file)) == NULL) {
         free(tmp);
+        free(file);
         errno = ENOENT;
         return -1;
     }
 
+    f->op = 1;
+
     int exists;
     if ((exists = existFile(tmp)) == -1) {
         free(tmp);
+        free(file);
         return -1;
     }
 
     if (!exists) {
         //Il file non è più presente nel server. Viene rimosso dalla lista dei file aperti e viene restituito un errore
-        if (list_delete(&openedFiles, tmp, free) == -1) {free(tmp); return -1;}
+        if (list_delete(&openedFiles, file, freeOFile) == -1) {free(tmp); free(file); return -1;}
         free(tmp); 
+        free(file);
         errno = ENOENT;
         return -1;
     }
+    free(file);
 
     //Richiesta al server
     int opt = READ_FILE;
@@ -444,8 +493,8 @@ static int writeRemoteFiles(int res, const char* dirname) {
         }
 
         //Nell'evenutlità che non ci sia abbastanza memoria allocata, la rialloca
-        int len = STRLEN;
-        if((cwd = getcwd(cwd, len)) == NULL) {
+        int len_cwd = STRLEN;
+        if((cwd = getcwd(cwd, len_cwd)) == NULL) {
             if (errno != ERANGE) {
                 perror("getcwd"); 
                 free(path);
@@ -455,11 +504,11 @@ static int writeRemoteFiles(int res, const char* dirname) {
                 return -1;
             }
             do {
-                len *= 2;
-                char* tmp = realloc(cwd, len);
+                len_cwd *= 2;
+                char* tmp = realloc(cwd, len_cwd);
                 if (tmp == NULL) {perror("realloc in req_W"); return -1;}
                 cwd = tmp;
-            } while((cwd = getcwd(cwd, len)) == NULL);
+            } while((cwd = getcwd(cwd, len_cwd)) == NULL);
         }
 
         if (chdir(dirname) == -1) {
@@ -579,7 +628,104 @@ int readNFiles(int N, const char* dirname) {
 * file eventualmente spedito dal server perchè espulso dalla cache per far posto al file ‘pathname’ dovrà essere
 * scritto in ‘dirname’; Ritorna 0 in caso di successo, -1 in caso di fallimento, errno viene settato opportunamente.
 */
-int writeFile(const char* pathname, const char* dirname);
+int writeFile(const char* pathname, const char* dirname) {
+    if (pathname == NULL) {
+        errno = EINVAL;
+        return -1;
+    }
+
+    if (socketName == NULL) {
+        errno = ENOTCONN;
+        return -1;
+    }
+
+    //Copia il nome del file
+    int pathlen = strnlen(pathname, STRLEN) + 1;
+    char* path = calloc(pathlen, sizeof(char));
+    if (path == NULL) {errno = ENOMEM; return -1;}
+    strncpy(path, pathname, pathlen);
+
+    //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
+    oFile *file = malloc(sizeof(oFile));
+    if (file == NULL) {errno = ENOMEM; return -1;}
+    file->path = path;
+    oFile *f;
+
+    if ((f = list_find(&openedFiles, file)) == NULL) {
+        free(path);
+        free(file);
+        errno = ENOENT;
+        return -1;
+    }
+
+    int exists;
+    if ((exists = existFile(path)) == -1) {
+        free(path);
+        free(file);
+        return -1;
+    }
+
+    if (!exists) {
+        //Il file non è più presente nel server. Viene rimosso dalla lista dei file aperti e viene restituito un errore
+        if (list_delete(&openedFiles, file, freeOFile) == -1) {free(path); return -1;}
+        free(path); 
+        errno = ENOENT;
+        return -1;
+    }
+    free(file);
+
+    //Effettua il controllo che non siano state fatte già altre operazioni sul file
+    if (f->op == 1) {
+        free(path);
+        free(file);
+        errno = EPERM;
+        return -1;
+    } else {
+        f->op = 1;
+    }
+
+    int fd;
+    //Apre il file
+    if ((fd = open(path, O_RDONLY)) == -1) return -1;
+
+    char* tmp = calloc(STRLEN, sizeof(char));
+    if (tmp == NULL) {errno = ENOMEM; return -1;}   
+
+    int opt = WRITE_FILE;
+    if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(path); free(tmp); return -1;}
+    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {free(path); free(tmp); return -1;}
+    if (writen(fdSocket, path, pathlen * sizeof(char)) == -1) {free(path); free(tmp); return -1;}
+    free(path);
+
+    size_t res;
+    //Scrive il file sul server STRLEN byte alla volta
+    do {
+        size_t len;
+        if ((res = readn(fd, tmp, STRLEN)) == -1) return -1;
+        if (res == 0) len = strnlen(tmp, STRLEN) + 1;
+        else len = res;
+        
+        if (writen(fdSocket, &len, sizeof(size_t)) == -1) {free(tmp); return -1;}
+        if (writen(fdSocket, tmp, len * sizeof(char)) == -1) {free(tmp); return -1;}
+        memset(tmp, 0, STRLEN);
+    } while(res == 0);
+    free(tmp);
+    close(fd);
+    
+    res = 0;
+    if (writen(fdSocket, &res, sizeof(size_t)) == -1) return -1;
+
+    int result;
+    if (readn(fdSocket, &result, sizeof(int)) == -1) return -1;
+
+    if (result != SEND_FILE) {
+        if (result == -1) errno = ECANCELED;
+        return result;
+    }
+    
+    if(writeRemoteFiles(res, dirname) == -1) return -1;
+    return 0;
+}
 
 
 /*
@@ -605,25 +751,38 @@ int appendToFile(const char* pathname, void* buf, size_t size, const char* dirna
     if (tmp == NULL) {errno = ENOMEM; return -1;}
     strncpy(tmp, pathname, pathlen);
 
-    if (list_find(&openedFiles, tmp) == NULL) {
+    //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
+    oFile *file = malloc(sizeof(oFile));
+    if (file == NULL) {errno = ENOMEM; return -1;}
+    file->path = tmp;
+    oFile *f;
+
+    if ((f = list_find(&openedFiles, file)) == NULL) {
         free(tmp);
+        free(file);
         errno = ENOENT;
         return -1;
     }
 
+    f->op = 1;
+
     int exists;
     if ((exists = existFile(tmp)) == -1) {
         free(tmp);
+        free(file);
         return -1;
     }
 
     if (!exists) {
         //Il file non è più presente nel server. Viene rimosso dalla lista dei file aperti e viene restituito un errore
-        if (list_delete(&openedFiles, tmp, free) == -1) {free(tmp); return -1;}
+        if (list_delete(&openedFiles, file, freeOFile) == -1) {free(tmp); free(file); return -1;}
         free(tmp); 
+        free(file);
         errno = ENOENT;
         return -1;
     }
+
+    free(file);
 
     //Richiesta al server
     int opt = APPEND_FILE;
@@ -670,16 +829,27 @@ int closeFile(const char* pathname) {
     if (tmp == NULL) {errno = ENOMEM; return -1;}
     strncpy(tmp, pathname, pathlen);
 
-    if (list_find(&openedFiles, tmp) == NULL) {
+    //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
+    oFile *file = malloc(sizeof(oFile));
+    if (file == NULL) {errno = ENOMEM; return -1;}
+    file->path = tmp;
+    oFile *f;
+
+    if ((f = list_find(&openedFiles, file)) == NULL) {
         free(tmp);
+        free(file);
         errno = ENOENT;
         return -1;
     }
 
-    if (list_delete(&openedFiles, tmp, free) == -1) {
+    f->op = 1;
+
+    if (list_delete(&openedFiles, file, freeOFile) == -1) {
         free(tmp);
+        free(file);
         return -1;
     }
+    free(file);
 
     int exists;
     if ((exists = existFile(tmp)) == -1) {
@@ -740,16 +910,26 @@ int removeFile(const char* pathname) {
     if (tmp == NULL) {errno = ENOMEM; return -1;}
     strncpy(tmp, pathname, pathlen);
 
-    if (list_find(&openedFiles, tmp) == NULL) {
+    //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
+    oFile *file = malloc(sizeof(oFile));
+    if (file == NULL) {errno = ENOMEM; return -1;}
+    file->path = tmp;
+    oFile *f;
+
+    if ((f = list_find(&openedFiles, file)) == NULL) {
         free(tmp);
+        free(file);
         errno = ENOENT;
         return -1;
     }
 
-    if (list_delete(&openedFiles, tmp, free) == -1) {
+    if (list_delete(&openedFiles, file, freeOFile) == -1) {
         free(tmp);
         return -1;
     }
+    free(file);
+
+    f->op = 1;
 
     int exists;
     if ((exists = existFile(tmp)) == -1) {

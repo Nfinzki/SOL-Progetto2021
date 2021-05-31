@@ -6,6 +6,11 @@
 
 #include <stdlib.h>
 
+typedef struct _openFile {
+    char* path;
+    int op;
+} oFile;
+
 int openConnection(const char* sockname, int msec, const struct timespec abstime);
 
 

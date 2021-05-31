@@ -12,5 +12,6 @@
 #define READ_FILE 8
 #define READN_FILE 9
 #define REMOVE_FILE 10
+#define WRITE_FILE 11
 
 #endif
