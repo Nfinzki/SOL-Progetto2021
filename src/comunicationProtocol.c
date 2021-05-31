@@ -108,7 +108,7 @@ int closeConnection(const char* sockname) { //I file aperti dovrebbero venire ch
 
     for(int i = 0; i < nFiles; i++) {
         char* path = list_pop(&openedFiles);
-        if (path == NULL) return -1;
+        if (path == NULL) {errno = ECANCELED; return -1;}
 
         int len = strnlen(path, STRLEN) + 1;
         if (writen(fdSocket, &len, sizeof(int)) == -1) return -1;
@@ -123,6 +123,7 @@ int closeConnection(const char* sockname) { //I file aperti dovrebbero venire ch
         errno = ECONNABORTED;
         close(fdSocket);
         free(socketName);
+        return -1;
     }
 
     close(fdSocket);
@@ -139,7 +140,7 @@ int closeConnection(const char* sockname) { //I file aperti dovrebbero venire ch
 static int existFile(const char* pathname) {
     int pathlen = strnlen(pathname, STRLEN) + 1;
     char* tmp = calloc(pathlen, sizeof(char));
-    if (tmp == NULL) return -1;
+    if (tmp == NULL) {errno = ENOMEM; return -1;}
     strncpy(tmp, pathname, pathlen);
 
     // Invia il tipo di operazione
@@ -150,7 +151,6 @@ static int existFile(const char* pathname) {
         free(tmp);
         return -1;
     }
-    // int len_msg = strnlen(pathname, STRLEN);
     if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {
         free(tmp);
         return -1;
@@ -168,7 +168,8 @@ static int existFile(const char* pathname) {
     }
 
     free(tmp);
-    return exists; //Fare una migliore gestione dell'errore
+    if (!exists) errno = ECANCELED;
+    return exists;
 }
 
 
@@ -180,22 +181,21 @@ static int existFile(const char* pathname) {
 static int createFile(const char* pathname) {
     int pathlen = strnlen(pathname, STRLEN) + 1;
     char* tmp = calloc(pathlen, sizeof(char));
-    if (tmp == NULL) return -1;
+    if (tmp == NULL) {errno = ENOMEM; return -1;}
     strncpy(tmp, pathname, pathlen);
 
     int opt = CREATE_FILE;
     if (writen(fdSocket, &opt, sizeof(int)) == -1) {
-        return -1;
         free(tmp);
+        return -1;
     }
-    // int len_msg = strnlen(pathname, STRLEN);
     if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {
-        return -1;
         free(tmp);
+        return -1;
     }
     if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {
-        return -1;
         free(tmp);
+        return -1;
     }
 
     //Lettura risposta dal server
@@ -206,7 +206,8 @@ static int createFile(const char* pathname) {
     }
 
     free(tmp);
-    return res; //Fare una migliore gestione dell'errore
+    if (!res) errno = ECANCELED;
+    return res;
 }
 
 
@@ -232,7 +233,7 @@ int openFile(const char* pathname, int flags) {
     }
 
     if (flags == O_LOCK || flags == (O_CREATE | O_LOCK)) {
-        errno = ENOLCK;
+        errno = EPERM;
         return -1;
     }
 
@@ -247,38 +248,35 @@ int openFile(const char* pathname, int flags) {
 
     //File non esistente e flag di creazione non attivo
     if (!exists && flags != O_CREATE) {
-        errno = EADDRNOTAVAIL;
+        errno = EPERM;
         return -1;
     }
 
 
     if (flags == O_CREATE) { //Crea il file
-        if (createFile(pathname) == -1) {
-            errno = EACCES; //Da cambiare
-            return -1;
-        }
+        if (createFile(pathname) == -1) return -1;
     }
 
     //Copia il nome del file
     int pathlen = strnlen(pathname, STRLEN) + 1;
     char* tmp = calloc(pathlen, sizeof(char));
-    if (tmp == NULL) return -1;
+    if (tmp == NULL) {errno = ENOMEM; return -1;}
     strncpy(tmp, pathname, pathlen);
 
     //Apre il file
     int opt = OPEN_FILE;
     if (writen(fdSocket, &opt, sizeof(int)) == -1) {
-        return -1;
         free(tmp);
+        return -1;
     }
     // int len_msg;
     if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {
-        return -1;
         free(tmp);
+        return -1;
     }
     if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {
-        return -1;
         free(tmp);
+        return -1;
     }
 
     //Risposta del server
@@ -290,9 +288,11 @@ int openFile(const char* pathname, int flags) {
 
     if (res == 0) {
         if(list_append(&openedFiles, tmp) == -1) {
-            return -1;
             free(tmp);
+            return -1;
         }
+    } else {
+        errno = ECANCELED;
     }
 
     return res;
@@ -318,7 +318,7 @@ int readFile(const char* pathname, void** buf, size_t* size) {
     //Copia il nome del file
     int pathlen = strnlen(pathname, STRLEN) + 1;
     char* tmp = calloc(pathlen, sizeof(char));
-    if (tmp == NULL) return -1;
+    if (tmp == NULL) {errno = ENOMEM; return -1;}
     strncpy(tmp, pathname, pathlen);
 
     if (list_find(&openedFiles, tmp) == NULL) {
@@ -372,10 +372,6 @@ int readFile(const char* pathname, void** buf, size_t* size) {
  * Restituisce il numero dei file letti in caso di successo, -1 in caso di fallimento e setta errno
 **/
 static int writeRemoteFiles(int res, const char* dirname) {
-    // if (dirname == NULL) {
-    //     errno = EINVAL;
-    //     return -1;
-    // }
     if (dirname != NULL) {
     //Verifica che dirname sia una directory
         struct stat info;
@@ -393,7 +389,7 @@ static int writeRemoteFiles(int res, const char* dirname) {
         if (readn(fdSocket, &len, sizeof(int)) == -1) return -1;
 
         char* path = calloc(len, sizeof(char));
-        if (path == NULL) return -1; //Settare errno
+        if (path == NULL) {errno = ENOMEM; return -1;}
 
         //Lettura del path
         if (readn(fdSocket, path, len * sizeof(char)) == -1) {free(path); return -1;}
@@ -403,10 +399,10 @@ static int writeRemoteFiles(int res, const char* dirname) {
         if (readn(fdSocket, &dim, sizeof(size_t)) == -1) {free(path); return -1;}
 
         char* data = malloc(dim * sizeof(char));
-        if (data == NULL) {free(path); return -1;} //Settare errno
+        if (data == NULL) {free(path); errno = ENOMEM; return -1;}
 
         //Lettura del file
-        if (readn(fdSocket, data, dim * sizeof(char)) == -1) {free(path); return -1;}
+        if (readn(fdSocket, data, dim * sizeof(char)) == -1) {free(path); free(data); return -1;}
 
         if (dirname == NULL) { //Se non è stata specificata la directory, i file vengono scartati
             free(path);
@@ -430,6 +426,7 @@ static int writeRemoteFiles(int res, const char* dirname) {
             if (extension == NULL) {
                 free(path);
                 free(data);
+                errno = ENOMEM;
                 return -1;
             }
 
@@ -437,20 +434,32 @@ static int writeRemoteFiles(int res, const char* dirname) {
         }
 
         //Salvataggio e cambio della CWD per poter salvare i file
-        char* cwd = calloc(512, sizeof(char));
+        char* cwd = calloc(STRLEN, sizeof(char));
         if (cwd == NULL) {
             free(path);
             free(data);
             if (fullstop != -1) free(extension);
+            errno = ENOMEM;
             return -1;
         }
 
-        if ((cwd = getcwd(cwd, 512)) == NULL) {
-            free(path);
-            free(data);
-            if (fullstop != -1) free(extension);
-            free(cwd);
-            return -1; //Bisogna controllare se errno == ERANGE e fare una realloc e riprovare
+        //Nell'evenutlità che non ci sia abbastanza memoria allocata, la rialloca
+        int len = STRLEN;
+        if((cwd = getcwd(cwd, len)) == NULL) {
+            if (errno != ERANGE) {
+                perror("getcwd"); 
+                free(path);
+                free(data);
+                if (fullstop != -1) free(extension);
+                free(cwd);
+                return -1;
+            }
+            do {
+                len *= 2;
+                char* tmp = realloc(cwd, len);
+                if (tmp == NULL) {perror("realloc in req_W"); return -1;}
+                cwd = tmp;
+            } while((cwd = getcwd(cwd, len)) == NULL);
         }
 
         if (chdir(dirname) == -1) {
@@ -469,7 +478,7 @@ static int writeRemoteFiles(int res, const char* dirname) {
 
             if (try == 1) {
                 char* tmp = realloc(path, (len + 3) * sizeof(char));
-                if (tmp == NULL) return -1;
+                if (tmp == NULL) {errno = ENOMEM; return -1;}
                 path = tmp;
                 len += 3;
             }
@@ -483,7 +492,7 @@ static int writeRemoteFiles(int res, const char* dirname) {
 
             if (nCifre > oldCifre) {
                 char* tmp = realloc(path, (len + 1) * sizeof(char));
-                if (tmp == NULL) return -1;
+                if (tmp == NULL) {errno = ENOMEM; return -1;}
                 path = tmp;
                 len++;
             }
@@ -529,8 +538,6 @@ static int writeRemoteFiles(int res, const char* dirname) {
         nWrote++;
     }
 
-    // if (res != 0) {errno = ; return -1;} //Per ora non ci sono resposte di errore
-
     return nWrote;
 }
 
@@ -562,7 +569,7 @@ int readNFiles(int N, const char* dirname) {
     int res;
     if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
 
-    return writeRemoteFiles(res, dirname); //Probabilmente bisogna controllare qualche altro caso di errore
+    return writeRemoteFiles(res, dirname);
 }
 
 
@@ -595,7 +602,7 @@ int appendToFile(const char* pathname, void* buf, size_t size, const char* dirna
     //Copia il nome del file
     int pathlen = strnlen(pathname, STRLEN) + 1;
     char* tmp = calloc(pathlen, sizeof(char));
-    if (tmp == NULL) return -1;
+    if (tmp == NULL) {errno = ENOMEM; return -1;}
     strncpy(tmp, pathname, pathlen);
 
     if (list_find(&openedFiles, tmp) == NULL) {
@@ -632,7 +639,10 @@ int appendToFile(const char* pathname, void* buf, size_t size, const char* dirna
     int res;
     if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
 
-    if (res != SEND_FILE) return res; //Bisogna settare errno
+    if (res != SEND_FILE) {
+        if (res == -1) errno = ECANCELED;
+        return res;
+    }
 
     if(writeRemoteFiles(res, dirname) == -1) return -1;
     return 0;
@@ -657,7 +667,7 @@ int closeFile(const char* pathname) {
     //Copia il nome del file
     int pathlen = strnlen(pathname, STRLEN) + 1;
     char* tmp = calloc(pathlen, sizeof(char));
-    if (tmp == NULL) return -1;
+    if (tmp == NULL) {errno = ENOMEM; return -1;}
     strncpy(tmp, pathname, pathlen);
 
     if (list_find(&openedFiles, tmp) == NULL) {
@@ -705,5 +715,65 @@ int closeFile(const char* pathname) {
     if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
     
     if (res == -1) errno = ENOENT;
+    return res;
+}
+
+
+/*
+* Rimuove il file cancellandolo dal file storage server. L’operazione fallisce se il file non è in stato locked, o è in
+* stato locked da parte di un processo client diverso da chi effettua la removeFile
+*/
+int removeFile(const char* pathname) {
+    if (pathname == NULL) {
+        errno = EINVAL;
+        return -1;
+    }
+
+    if (socketName == NULL) {
+        errno = ENOTCONN;
+        return -1;
+    }
+
+    //Copia il nome del file
+    int pathlen = strnlen(pathname, STRLEN) + 1;
+    char* tmp = calloc(pathlen, sizeof(char));
+    if (tmp == NULL) {errno = ENOMEM; return -1;}
+    strncpy(tmp, pathname, pathlen);
+
+    if (list_find(&openedFiles, tmp) == NULL) {
+        free(tmp);
+        errno = ENOENT;
+        return -1;
+    }
+
+    if (list_delete(&openedFiles, tmp, free) == -1) {
+        free(tmp);
+        return -1;
+    }
+
+    int exists;
+    if ((exists = existFile(tmp)) == -1) {
+        free(tmp);
+        return -1;
+    }
+
+    if (!exists) {
+        free(tmp);
+        errno = ENOENT;
+        return -1;
+    }
+
+    //Richiesta al server
+    int opt = REMOVE_FILE;
+    if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {free(tmp); return -1;}
+    free(tmp);
+
+    //Attesa risposta dal server
+    int res;
+    if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
+
+    if (res == -1) errno = ECANCELED;
     return res;
 }
