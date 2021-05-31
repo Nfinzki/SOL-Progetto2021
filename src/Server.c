@@ -634,6 +634,35 @@ int closeFile(int fd) {
     return 0;
 }
 
+int removeFile(int fd) {
+    int len;
+    int res = -1;
+    SYSCALL_ONE_RETURN(readn(fd, &len, sizeof(int)), "readn")
+
+    char* path = calloc(len, sizeof(char));
+    EQ_NULL_EXIT_F(path, "calloc in closeFile", SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen"))
+
+    SYSCALL_ONE_RETURN_F(readn(fd, path, len * sizeof(char)), "readn", free(path))
+
+    Pthread_mutex_lock(&mutex_storage);
+    Pthread_mutex_lock(&mutex_filehistory);
+
+    if (icl_hash_delete(storage, path, NULL, freeFile) == -1) {
+        SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "writen", Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
+        return -1;
+    }
+
+    if (list_delete(&fileHistory, path, free) == -1) {
+        SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "writen", Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
+        return -1;
+    }
+    free(path);
+    Pthread_mutex_unlock(&mutex_filehistory);
+    Pthread_mutex_unlock(&mutex_storage);
+
+    return 0;
+}
+
 void* workerThread(void* arg) {
     int Wendpoint = *(int*) arg;
     // while(!sigCaught) {
@@ -676,6 +705,7 @@ void* workerThread(void* arg) {
             case READN_FILE: if (readnFile(fd) != 0) {closeFd = 1; break;}
             case APPEND_FILE: if (appendFile(fd) != 0) {closeFd = 1; break;}
             case CLOSE_FILE: if (closeFile(fd) != 0) {closeFd = 1; break;}
+            case REMOVE_FILE: if (removeFile(fd) != 0) {closeFd = 1; break;}
             default: {closeFd = 1; break;}
         }
 
