@@ -64,6 +64,41 @@ char* getabspath(char* path) {
     for(i = len - 1; i >= 0; i--) {
         if (path[i] == '/') break;
     }
+
+    if (i == -1) {
+        char* cwd = calloc(STRLEN, sizeof(char));
+        if (cwd == NULL) return NULL;
+
+        int len_cwd = STRLEN;
+        if((cwd = getcwd(cwd, len_cwd)) == NULL) {
+            if (errno != ERANGE) {
+                perror("getcwd");
+                free(cwd);
+                return NULL;
+            }
+            do {
+                len_cwd *= 2;
+                char* tmp = realloc(cwd, len_cwd);
+                if (tmp == NULL) {perror("realloc in req_W"); return NULL;}
+                cwd = tmp;
+            } while((cwd = getcwd(cwd, len_cwd)) == NULL);
+        }
+
+        if (len_cwd <= strnlen(cwd, len_cwd) + len) {
+            cwd += (len - i);
+            char* tmp = realloc(cwd, len_cwd * sizeof(char));
+            if (tmp == NULL) {
+                free(cwd);
+                return NULL;
+            }
+            cwd = tmp;
+        }
+
+        strncat(cwd, "/", 2);
+        strncat(cwd, path, len);
+
+        return cwd;
+    }
     
     char* dirpath = calloc(i, sizeof(char));
     if (dirpath == NULL) return NULL;
@@ -114,7 +149,7 @@ char* getabspath(char* path) {
             char* tmp = realloc(cwd, len_cwd_file);
             if (tmp == NULL) return NULL;
             cwd_file = tmp;
-        } while((cwd_file = getcwd(cwd, len_cwd)) == NULL);
+        } while((cwd_file = getcwd(cwd_file, len_cwd_file)) == NULL);
     }
 
     if (len_cwd_file <= strnlen(cwd_file, len_cwd_file) + (len - i)) {
@@ -129,7 +164,7 @@ char* getabspath(char* path) {
         cwd_file = tmp;
     }
 
-    strncpy(cwd_file, path + i, len_cwd_file);
+    strncat(cwd_file, path + i, len_cwd_file);
 
     if (chdir(cwd) == -1) {
         free(cwd);
@@ -797,6 +832,7 @@ int main(int argc, char* argv[]) {
     }
     maxTime.tv_sec += 10;
 
+    if (flagP) printf("Connessione al server in corso...\n");
     //Connessione al server
     if (openConnection(socketName, 200, maxTime) == -1) {
         perror("openConnection");
