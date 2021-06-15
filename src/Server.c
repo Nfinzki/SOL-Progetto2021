@@ -37,6 +37,7 @@ typedef struct _file_t {
     char* path;
     size_t byteDim;
     void* data;
+    int M;
     list_t clients;
 } file_t;
 
@@ -87,7 +88,7 @@ int FIFO_ReplacementPolicy(long space, int numFiles, int fd) {
             exit(EXIT_FAILURE);
         }
 
-        if (fd != -1) {
+        if (fd != -1 && oldFile->M) {
             int opt = SEND_FILE;
             if (writen(fd, &opt, sizeof(int)) == -1) {
                 Pthread_mutex_unlock(&mutex_storage);
@@ -306,6 +307,7 @@ int createFile(int fd) {
 
     newFile->byteDim = 0;
     newFile->data = NULL;
+    newFile->M = 0;
     int len;
     
     SYSCALL_ONE_RETURN_F(readn(fd, &len, sizeof(int)), "readn", free(newFile)) //Se fallisce la readn tornerà al chiamante, che chiuderà il fd e quindi il client se ne accorgerà
@@ -593,6 +595,7 @@ int writeFile(int fd) {
             memcpy((char*)f->data + f->byteDim, buf, dim);
         }
         f->byteDim += dim;
+        // f->M = 1; //Qui non bisogna impostare il flag M ad 1 perché la write potrà essere fatta una sola volta e viene fatta direttamente dopo la creazione del file (?)
         actual_space += dim;
         if (actual_space > max_space_reached) max_space_reached = actual_space;
 
@@ -663,6 +666,7 @@ int appendFile(int fd) {
         memcpy((char*)f->data + f->byteDim, newData, fileDim);
     }
     f->byteDim += fileDim;
+    f->M = 1;
     actual_space += fileDim;
     if (actual_space > max_space_reached) max_space_reached = actual_space;
     Pthread_mutex_unlock(&mutex_storage);
