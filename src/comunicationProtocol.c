@@ -28,14 +28,14 @@ static int fdSocket;
 
 static list_t openedFiles;
 
-static openFile_compare(void* a, void* b) {
+static int openFile_compare(void* a, void* b) {
     oFile *aa = (oFile*) a;
     oFile *bb = (oFile*) b;
 
     return str_compare(aa->path, bb->path);
 }
 
-static freeOFile(void* a) {
+static void freeOFile(void* a) {
     oFile *aa = (oFile*) a;
 
     free(aa->path);
@@ -262,7 +262,11 @@ int openFile(const char* pathname, int flags) {
     //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
     oFile *file = malloc(sizeof(oFile));
     if (file == NULL) {errno = ENOMEM; return -1;}
-    file->path = pathname;
+
+    int len = strnlen(pathname, STRLEN) + 1;
+    file->path = calloc(len, sizeof(char));
+    if (file->path == NULL) {errno = ENOMEM; return -1;}
+    strncpy(file->path, pathname, len);
 
     //Se il file è stato già aperto ritorna subito
     if (list_find(&openedFiles, file) != NULL) {free(file); return 0;}
@@ -708,7 +712,7 @@ int writeFile(const char* pathname, const char* dirname) {
         if (writen(fdSocket, &len, sizeof(size_t)) == -1) {free(tmp); return -1;}
         if (writen(fdSocket, tmp, len * sizeof(char)) == -1) {free(tmp); return -1;}
         memset(tmp, 0, STRLEN);
-    } while(res == 0);
+    } while(res != 0);
     free(tmp);
     close(fd);
     

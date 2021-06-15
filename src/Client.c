@@ -680,7 +680,7 @@ int createLocalFile(char* dirname, char* path) {
 int req_W(const char* path, char* saveDir) {
     if (path == NULL) return -1;
 
-    if (flagP) printf("Apertura del file nel server... ");
+    if (flagP) printf("Apertura del file nel server\n");
     if (openFile(path, O_CREATE) == -1) {perror("openFile"); return -1;}
     if (flagP) printf("Successo\n");
 
@@ -688,7 +688,7 @@ int req_W(const char* path, char* saveDir) {
     if (writeFile(path, saveDir) == -1) {perror("writeFile"); return -1;}
     if (flagP) printf("Scrittura completata con successo\n");
     
-    if (flagP) printf("Chiusura del file %s... ", path);
+    if (flagP) printf("Chiusura del file %s\n", path);
     if (closeFile(path) == -1) {perror("closeFile"); return -1;}
     if (flagP) printf("Successo\n");
 
@@ -908,7 +908,7 @@ int main(int argc, char* argv[]) {
                     if(dir != NULL) {
                         //Creazione del file nella directory specificata
                         int fd;
-                        if (flagP) printf("Creazione del file nella directory %s ... ", dir);
+                        if (flagP) printf("Creazione del file nella directory %s...\n", dir);
                         if ((fd = createLocalFile(dir, req->arg[i])) == -1) {perror("createLocalFile"); return -1;}
                         if (flagP) printf("File creato correttamente\n");
 
