@@ -400,7 +400,7 @@ int openFile(int fd) {
     }
 
     //Se il file è già aperto restituisce esito positivo al client. Non effettua cambiamenti
-    if (list_find(&(f->clients), &fd) == NULL) {
+    if (list_find(&(f->clients), &fd) != NULL) {
         Pthread_mutex_unlock(&mutex_storage);
         res = 0;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "readn")
@@ -547,7 +547,7 @@ int writeFile(int fd) {
     SYSCALL_ONE_RETURN(readn(fd, &len, sizeof(int)), "readn")
 
     char* path = calloc(len, sizeof(char));
-    EQ_NULL_EXIT_F(path, "calloc in appendFile", SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn"))
+    EQ_NULL_EXIT_F(path, "calloc in writeFile", SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn"))
 
     SYSCALL_ONE_RETURN_F(readn(fd, path, len * sizeof(char)), "readn", free(path))
 
@@ -574,6 +574,7 @@ int writeFile(int fd) {
     while(dim != 0) {
         char* buf = calloc(dim, sizeof(char));
         EQ_NULL_EXIT_F(buf, "calloc in writeFile", Pthread_mutex_unlock(&mutex_storage); SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen"))
+        SYSCALL_ONE_RETURN_F(readn(fd, buf, dim * sizeof(char)), "readn", free(buf); Pthread_mutex_unlock(&mutex_storage); SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen"))
 
         if (actual_space + dim > max_space) {
             Pthread_mutex_unlock(&mutex_storage);
@@ -773,16 +774,16 @@ void* workerThread(void* arg) {
         int closeFd = 0;
 
         switch (opt) {
-            case FIND_FILE: if (findFile(fd) != 0) {closeFd = 1; break;}
-            case CREATE_FILE: if (createFile(fd) != 0) { closeFd = 1; break;}
-            case OPEN_FILE: if (openFile(fd) != 0) {closeFd = 1; break;}
+            case FIND_FILE: if (findFile(fd) != 0) closeFd = 1; break;
+            case CREATE_FILE: if (createFile(fd) != 0) closeFd = 1; break;
+            case OPEN_FILE: if (openFile(fd) != 0) closeFd = 1; break;
             case END_CONNECTION: closeConnection(fd); closeFd = 1; break; //Ricontrollare questo
-            case READ_FILE: if (readFile(fd) != 0) {closeFd = 1; break;}
-            case READN_FILE: if (readnFile(fd) != 0) {closeFd = 1; break;}
-            case WRITE_FILE: if (writeFile(fd) != 0) {closeFd = 1; break;}
-            case APPEND_FILE: if (appendFile(fd) != 0) {closeFd = 1; break;}
-            case CLOSE_FILE: if (closeFile(fd) != 0) {closeFd = 1; break;}
-            case REMOVE_FILE: if (removeFile(fd) != 0) {closeFd = 1; break;}
+            case READ_FILE: if (readFile(fd) != 0) closeFd = 1; break;
+            case READN_FILE: if (readnFile(fd) != 0) closeFd = 1; break;
+            case WRITE_FILE: if (writeFile(fd) != 0) closeFd = 1; break;
+            case APPEND_FILE: if (appendFile(fd) != 0) closeFd = 1; break;
+            case CLOSE_FILE: if (closeFile(fd) != 0) closeFd = 1; break;
+            case REMOVE_FILE: if (removeFile(fd) != 0) closeFd = 1; break;
             default: {closeFd = 1; break;}
         }
 
