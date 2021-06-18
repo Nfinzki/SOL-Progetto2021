@@ -25,20 +25,22 @@ int int_compare(void* a, void* b) {
  * @param lst -- puntatore alla lista
  * @param compare_fun -- puntatore alla funzione che compara due elementi della lista
  * 
- * @return 0 on success, -1 on error (sets errno)
+ * @return puntatore alla lista in caso di successo, NULL in caso di errore (sets errno)
 **/
-int list_create(list_t* lst, int (*compare_fun)(void*, void*)) {
+list_t* list_create(list_t* lst, int (*compare_fun)(void*, void*)) {
     if (!*compare_fun) {
         errno = EINVAL;
-        return -1;
+        return NULL;
     }
 
+    lst = malloc(sizeof(list_t));
+    if (lst == NULL) { errno = ENOMEM; return NULL;}
     lst->head = NULL;
     lst->tail = NULL;
     lst->dim = 0;
     lst->list_data_compare = compare_fun;
 
-    return 0;
+    return lst;
 }
 
 
@@ -158,7 +160,7 @@ void* list_find(list_t* lst, void* data) {
     node_t *curr = lst->head;
 
     while(curr != NULL) {
-        if (lst->list_data_compare(curr->data, data)) return curr;
+        if (lst->list_data_compare(curr->data, data)) return curr->data;
         curr = curr->next;
     }
 
@@ -212,10 +214,13 @@ int list_delete(list_t* lst, void* data, void (*free_data)(void*)) {
 
     while(curr != NULL) {
         if (lst->list_data_compare(curr->data, data)) {
-            if (prev == NULL)
+            if (prev == NULL) {
                 lst->head = curr->next;
-            else
+                if (lst->head == NULL) lst->tail = NULL;
+            } else {
                 prev->next = curr->next;
+                if (lst->list_data_compare(curr->data, lst->tail->data)) lst->tail = prev;
+            }
             
             if (*free_data && curr->data) (*free_data)(curr->data);
             lst->dim--;
@@ -226,6 +231,7 @@ int list_delete(list_t* lst, void* data, void (*free_data)(void*)) {
         curr = curr->next;
     }
 
+    errno = EINVAL;
     return -1;
 }
 
@@ -256,5 +262,6 @@ int list_destroy(list_t* lst, void (*free_fun)(void*)) {
     lst->tail = NULL;
     lst->dim = 0;
 
+    free(lst);
     return 0;
 }

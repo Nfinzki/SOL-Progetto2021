@@ -17,7 +17,7 @@ typedef struct _list {
 int str_compare(void* a, void* b);
 int int_compare(void* a, void* b);
 
-int list_create(list_t* lst, int (*compare_fun)(void*, void*));
+list_t* list_create(list_t* lst, int (*compare_fun)(void*, void*));
 
 int list_push(list_t* head, void* data);
 
