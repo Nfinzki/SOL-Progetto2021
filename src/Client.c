@@ -946,14 +946,24 @@ int main(int argc, char* argv[]) {
             }
             case 'R': {
                 char* dir = (char*) list_pop(dirLst);
-                if (flagP && req->option != 0) printf("Lettura di %d file dal server\n", flagR);
+                if (flagP && req->option != 0) printf("Lettura di %d file dal server\n", req->option);
                 if (flagP && req->option == 0) printf("Lettura di tutti i file dal server\n");
                 if (readNFiles(req->option, dir) == -1) {perror("readNFile"); return -1;}
                 if (flagP) printf("Lettura dei file dal server completata correttamente\n");
                 free(dir);
                 break;
             }
-            case 'c': break;
+            case 'c': {
+                for(int i = 0; i < req->dim; i++) {
+                    if (removeFile(req->arg[i]) == -1) {perror("removeFile"); return -1;}
+                }
+                break;
+            }
+
+            default: {
+                fprintf(stderr, "Errore nel recuperare le richieste\n");
+                exit(EXIT_FAILURE);
+            }
         }
 
         if(flagT != 0) {
