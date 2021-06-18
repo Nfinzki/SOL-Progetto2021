@@ -919,26 +919,26 @@ int removeFile(const char* pathname) {
     if (tmp == NULL) {errno = ENOMEM; return -1;}
     strncpy(tmp, pathname, pathlen);
 
-    //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
-    oFile *file = malloc(sizeof(oFile));
-    if (file == NULL) {errno = ENOMEM; return -1;}
-    file->path = tmp;
-    oFile *f;
+    // //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
+    // oFile *file = malloc(sizeof(oFile));
+    // if (file == NULL) {errno = ENOMEM; return -1;}
+    // file->path = tmp;
+    // oFile *f;
 
-    if ((f = list_find(openedFiles, file)) == NULL) {
-        free(tmp);
-        free(file);
-        errno = ENOENT;
-        return -1;
-    }
+    // if ((f = list_find(openedFiles, file)) == NULL) {
+    //     free(tmp);
+    //     free(file);
+    //     errno = ENOENT;
+    //     return -1;
+    // }
 
-    if (list_delete(openedFiles, file, freeOFile) == -1) {
-        free(tmp);
-        return -1;
-    }
-    free(file);
+    // if (list_delete(openedFiles, file, freeOFile) == -1) {
+    //     free(tmp);
+    //     return -1;
+    // }
+    // free(file);
 
-    f->op = 1;
+    // f->op = 1;
 
     int exists;
     if ((exists = existFile(tmp)) == -1) {
