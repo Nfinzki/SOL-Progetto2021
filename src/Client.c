@@ -594,7 +594,7 @@ int createLocalFile(char* dirname, char* filepath) {
     char* path = calloc(len, sizeof(char));
     if (path == NULL) return -1;
     strncpy(path, filepath, len);
-    
+
     //Manipolazione delle stringhe per estrapolare dal path il nome e l'eventuale estensione del file
     int startName;
     int fullstop = -1;
@@ -632,7 +632,7 @@ int createLocalFile(char* dirname, char* filepath) {
         do {
             len_cwd *= 2;
             char* tmp = realloc(cwd, len_cwd);
-            if (tmp == NULL) {perror("realloc in req_W"); return -1;}
+            if (tmp == NULL) {perror("realloc in req_W"); free(extension); return -1;}
             cwd = tmp;
         } while((cwd = getcwd(cwd, len_cwd)) == NULL);
     }
@@ -678,6 +678,15 @@ int createLocalFile(char* dirname, char* filepath) {
         
         try++;
     }
+    free(extension);
+
+    //Ripristino la vecchia CWD
+    if (chdir(cwd) == -1) {
+        free(cwd);
+        return -1;
+    }
+
+    free(cwd);
 
     return createdFile;
 }
