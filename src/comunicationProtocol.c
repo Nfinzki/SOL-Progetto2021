@@ -26,7 +26,7 @@
 static char* socketName = NULL;
 static int fdSocket;
 
-static list_t openedFiles;
+static list_t* openedFiles;
 
 static int openFile_compare(void* a, void* b) {
     oFile *aa = (oFile*) a;
@@ -103,7 +103,7 @@ int openConnection(const char* sockname, int msec, const struct timespec abstime
         }
     }
 
-    if(list_create(&openedFiles, openFile_compare) == -1) return -1;
+    if((openedFiles = list_create(openedFiles, openFile_compare)) == NULL) return -1;
 
     return 0;
 }
@@ -122,12 +122,12 @@ int closeConnection(const char* sockname) {
     if (writen(fdSocket, &opt, sizeof(int)) == -1) return -1;
 
     //Invia il numero di file da chiudere al server
-    if (writen(fdSocket, &(openedFiles.dim), sizeof(int)) == -1) return -1;
+    if (writen(fdSocket, &(openedFiles->dim), sizeof(int)) == -1) return -1;
 
-    int nFiles = openedFiles.dim;
+    int nFiles = openedFiles->dim;
 
     for(int i = 0; i < nFiles; i++) {
-        oFile* file = (oFile*) list_pop(&openedFiles);
+        oFile* file = (oFile*) list_pop(openedFiles);
         char* path = file->path;
         free(file);
         if (path == NULL) {errno = ECANCELED; return -1;}
@@ -150,6 +150,7 @@ int closeConnection(const char* sockname) {
 
     close(fdSocket);
     free(socketName);
+    free(openedFiles);
     return 0;
 }
 
@@ -269,7 +270,7 @@ int openFile(const char* pathname, int flags) {
     strncpy(file->path, pathname, len);
 
     //Se il file è stato già aperto ritorna subito
-    if (list_find(&openedFiles, file) != NULL) {free(file); return 0;}
+    if (list_find(openedFiles, file) != NULL) {free(file); return 0;}
     free(file);
 
     int exists;
@@ -323,11 +324,15 @@ int openFile(const char* pathname, int flags) {
 
     oFile *newof = malloc(sizeof(oFile));
     if (newof == NULL) {errno = ENOMEM; return -1;}
-    newof->path = tmp;
+    newof->path = calloc(pathlen, sizeof(char));
+    if (newof->path == NULL) {errno = ENOMEM; return -1;}
+    strncpy(newof->path, tmp, pathlen);
     newof->op = 0;
 
+    free(tmp);
+
     if (res == 0) {
-        if(list_append(&openedFiles, newof) == -1) {
+        if(list_append(openedFiles, newof) == -1) {
             free(tmp);
             return -1;
         }
@@ -368,7 +373,7 @@ int readFile(const char* pathname, void** buf, size_t* size) {
     oFile *f;
 
     //Cerca il file nella lista dei file aperti. Se il file viene trovato viene impostato il bit operazione ad 1
-    if ((f = list_find(&openedFiles, file)) == NULL) {
+    if ((f = list_find(openedFiles, file)) == NULL) {
         free(tmp);
         free(file);
         errno = ENOENT;
@@ -386,7 +391,7 @@ int readFile(const char* pathname, void** buf, size_t* size) {
 
     if (!exists) {
         //Il file non è più presente nel server. Viene rimosso dalla lista dei file aperti e viene restituito un errore
-        if (list_delete(&openedFiles, file, freeOFile) == -1) {free(tmp); free(file); return -1;}
+        if (list_delete(openedFiles, file, freeOFile) == -1) {free(tmp); free(file); return -1;}
         free(tmp); 
         free(file);
         errno = ENOENT;
@@ -655,7 +660,7 @@ int writeFile(const char* pathname, const char* dirname) {
     file->path = path;
     oFile *f;
 
-    if ((f = list_find(&openedFiles, file)) == NULL) {
+    if ((f = list_find(openedFiles, file)) == NULL) {
         free(path);
         free(file);
         errno = ENOENT;
@@ -671,7 +676,7 @@ int writeFile(const char* pathname, const char* dirname) {
 
     if (!exists) {
         //Il file non è più presente nel server. Viene rimosso dalla lista dei file aperti e viene restituito un errore
-        if (list_delete(&openedFiles, file, freeOFile) == -1) {free(path); return -1;}
+        if (list_delete(openedFiles, file, freeOFile) == -1) {free(path); return -1;}
         free(path); 
         errno = ENOENT;
         return -1;
@@ -761,7 +766,7 @@ int appendToFile(const char* pathname, void* buf, size_t size, const char* dirna
     file->path = tmp;
     oFile *f;
 
-    if ((f = list_find(&openedFiles, file)) == NULL) {
+    if ((f = list_find(openedFiles, file)) == NULL) {
         free(tmp);
         free(file);
         errno = ENOENT;
@@ -779,7 +784,7 @@ int appendToFile(const char* pathname, void* buf, size_t size, const char* dirna
 
     if (!exists) {
         //Il file non è più presente nel server. Viene rimosso dalla lista dei file aperti e viene restituito un errore
-        if (list_delete(&openedFiles, file, freeOFile) == -1) {free(tmp); free(file); return -1;}
+        if (list_delete(openedFiles, file, freeOFile) == -1) {free(tmp); free(file); return -1;}
         free(tmp); 
         free(file);
         errno = ENOENT;
@@ -839,7 +844,7 @@ int closeFile(const char* pathname) {
     file->path = tmp;
     oFile *f;
 
-    if ((f = list_find(&openedFiles, file)) == NULL) {
+    if ((f = list_find(openedFiles, file)) == NULL) {
         free(tmp);
         free(file);
         errno = ENOENT;
@@ -848,7 +853,7 @@ int closeFile(const char* pathname) {
 
     f->op = 1;
 
-    if (list_delete(&openedFiles, file, freeOFile) == -1) {
+    if (list_delete(openedFiles, file, freeOFile) == -1) {
         free(tmp);
         free(file);
         return -1;
@@ -920,14 +925,14 @@ int removeFile(const char* pathname) {
     file->path = tmp;
     oFile *f;
 
-    if ((f = list_find(&openedFiles, file)) == NULL) {
+    if ((f = list_find(openedFiles, file)) == NULL) {
         free(tmp);
         free(file);
         errno = ENOENT;
         return -1;
     }
 
-    if (list_delete(&openedFiles, file, freeOFile) == -1) {
+    if (list_delete(openedFiles, file, freeOFile) == -1) {
         free(tmp);
         return -1;
     }
