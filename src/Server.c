@@ -20,15 +20,28 @@
 #define MAXCONN 100
 #define BUCKETS 250
 
-icl_hash_t *storage;
-long max_space = 0;
-int max_file = 0;
-long actual_space = 0; //Mettere tutto dentro un'unica struct che contiene anche l'hash table
-int actual_numFile = 0;
-int max_file_reached = 0;
-long max_space_reached = 0;
-int replacementPolicy = 0;
+typedef struct _filestorage {
+    icl_hash_t *files;
+    long max_space;
+    int max_file;
+    long actual_space;
+    int actual_numFile;
+    int max_file_reached;
+    long max_space_reached;
+    int replacementPolicy;    
+} file_storage_t;
+
+file_storage_t* fileStorage;
 static pthread_mutex_t mutex_storage = PTHREAD_MUTEX_INITIALIZER;
+
+// icl_hash_t *storage;
+// long max_space = 0;
+// int max_file = 0;
+// long actual_space = 0; //Mettere tutto dentro un'unica struct che contiene anche l'hash table
+// int actual_numFile = 0;
+// int max_file_reached = 0;
+// long max_space_reached = 0;
+// int replacementPolicy = 0;
 
 list_t* fileHistory;
 static pthread_mutex_t mutex_filehistory = PTHREAD_MUTEX_INITIALIZER;
@@ -54,6 +67,21 @@ char* logFile;
 
 //Scrivere nella relazione che fileHistory e i file in storage hanno lo stesso path allocato quindi basta liberare uno dei due per liberare entrambi
 
+file_storage_t* initializeStorage(file_storage_t* storage) {
+    if ((storage = malloc(sizeof(file_storage_t))) == NULL) return NULL;
+
+    if ((storage->files = icl_hash_create(BUCKETS, hash_pjw, string_compare)) == NULL) {errno = ECANCELED; return NULL;}
+    storage->max_space = 0;
+    storage->max_file = 0;
+    storage->actual_space = 0;
+    storage->actual_numFile = 0;
+    storage->max_file_reached = 0;
+    storage->max_space_reached = 0;
+    storage->replacementPolicy = 0;
+
+    return storage;
+}
+
 void freeFile(void* f) {
     file_t *file = (file_t*) f;
     
@@ -68,8 +96,8 @@ int FIFO_ReplacementPolicy(long space, int numFiles, int fd) {
     fflush(stdout);
 
     Pthread_mutex_lock(&mutex_storage);
-    replacementPolicy++;
-    while(space > max_space || numFiles > max_file) {
+    fileStorage->replacementPolicy++;
+    while(space > fileStorage->max_space || numFiles > fileStorage->max_file) {
         Pthread_mutex_unlock(&mutex_storage);
 
         Pthread_mutex_lock(&mutex_filehistory);
@@ -82,7 +110,7 @@ int FIFO_ReplacementPolicy(long space, int numFiles, int fd) {
         }
 
         Pthread_mutex_lock(&mutex_storage);
-        file_t* oldFile = (file_t*) icl_hash_find(storage, oldFile_name);
+        file_t* oldFile = (file_t*) icl_hash_find(fileStorage->files, oldFile_name);
         if (oldFile == NULL) { //Se c'è un'inconsistenza il file server non è più affidabile
             fprintf(stderr, "Inconsistenza tra lo storage e la cronologia dei file\n");
             exit(EXIT_FAILURE);
@@ -116,7 +144,7 @@ int FIFO_ReplacementPolicy(long space, int numFiles, int fd) {
         space -= oldFile->byteDim;
         numFiles--;
 
-        if (icl_hash_delete(storage, oldFile_name, NULL, freeFile) == -1) exit(EXIT_FAILURE);
+        if (icl_hash_delete(fileStorage->files, oldFile_name, NULL, freeFile) == -1) exit(EXIT_FAILURE);
 
         //Non eseguo la unlock perché la guardia del while valuterà le variabili condivise dello storage
     }
@@ -320,9 +348,9 @@ int createFile(int fd) {
     EQ_NULL_RETURN(newFile->clients =  list_create(newFile->clients, int_compare), "list_create")
 
     Pthread_mutex_lock(&mutex_storage);
-    if (actual_space + newFile->byteDim > max_space || actual_numFile + 1 > max_file) {
+    if (fileStorage->actual_space + newFile->byteDim > fileStorage->max_space || fileStorage->actual_numFile + 1 > fileStorage->max_file) {
         Pthread_mutex_unlock(&mutex_storage);
-        if (FIFO_ReplacementPolicy(actual_space + newFile->byteDim, actual_numFile + 1, -1) == -1) {
+        if (FIFO_ReplacementPolicy(fileStorage->actual_space + newFile->byteDim, fileStorage->actual_numFile + 1, -1) == -1) {
             fprintf(stderr, "Errore nell'algoritmo di esecuzione\n");
             SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "readn")
             return -1;
@@ -330,15 +358,15 @@ int createFile(int fd) {
         Pthread_mutex_lock(&mutex_storage);
     }
 
-    if (icl_hash_insert(storage, newFile->path, newFile) == NULL) {
+    if (icl_hash_insert(fileStorage->files, newFile->path, newFile) == NULL) {
         fprintf(stderr, "Errore in icl_hash_insert\n");
         SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
         exit(EXIT_FAILURE);
     }
-    actual_space += newFile->byteDim;
-    actual_numFile++;
-    if (actual_space > max_space_reached) max_space_reached = actual_space;
-    if (actual_numFile > max_file_reached) max_file_reached = actual_numFile;
+    fileStorage->actual_space += newFile->byteDim;
+    fileStorage->actual_numFile++;
+    if (fileStorage->actual_space > fileStorage->max_space_reached) fileStorage->max_space_reached = fileStorage->actual_space;
+    if (fileStorage->actual_numFile > fileStorage->max_file_reached) fileStorage->max_file_reached = fileStorage->actual_numFile;
     Pthread_mutex_unlock(&mutex_storage);
 
     Pthread_mutex_lock(&mutex_filehistory);
@@ -366,7 +394,7 @@ int findFile(int fd) {
     SYSCALL_ONE_RETURN_F(readn(fd, path, len * sizeof(char)), "readn", free(path))
 
     Pthread_mutex_lock(&mutex_storage);
-    if(icl_hash_find(storage, path) == NULL)
+    if(icl_hash_find(fileStorage->files, path) == NULL)
         found = 0;
     else
         found = 1;
@@ -390,7 +418,7 @@ int openFile(int fd) {
     SYSCALL_ONE_RETURN_F(readn(fd, path, len * sizeof(char)), "readn", free(path))
 
     Pthread_mutex_lock(&mutex_storage);
-    file_t *f = (file_t*) icl_hash_find(storage, path);
+    file_t *f = (file_t*) icl_hash_find(fileStorage->files, path);
     free(path);
     if (f == NULL) {
         fprintf(stderr, "File non presente nello storage\n");
@@ -441,7 +469,7 @@ int closeConnection(int fd) {
         SYSCALL_ONE_RETURN_F(readn(fd, path, len * sizeof(char)), "readn", free(path))
 
         Pthread_mutex_lock(&mutex_storage);
-        file_t *f = (file_t*) icl_hash_find(storage, path);
+        file_t *f = (file_t*) icl_hash_find(fileStorage->files, path);
         if (f == NULL) {
             fprintf(stderr, "File non presente nello storage\n");
             Pthread_mutex_unlock(&mutex_storage);
@@ -474,7 +502,7 @@ int readFile(int fd) {
     SYSCALL_ONE_RETURN_F(readn(fd, path, len * sizeof(char)), "readn", free(path);)
 
     Pthread_mutex_lock(&mutex_storage);
-    file_t *f = (file_t*) icl_hash_find(storage, path);
+    file_t *f = (file_t*) icl_hash_find(fileStorage->files, path);
         if (f == NULL) {
             Pthread_mutex_unlock(&mutex_storage);
             fprintf(stderr, "File non presente nello storage\n");
@@ -507,14 +535,14 @@ int readnFile(int fd) {
     SYSCALL_ONE_RETURN(readn(fd, &N, sizeof(int)), "readn")
 
     Pthread_mutex_lock(&mutex_storage);
-    if (N <= 0 || N > actual_numFile) N = actual_numFile;
+    if (N <= 0 || N > fileStorage->actual_numFile) N = fileStorage->actual_numFile;
     
     Pthread_mutex_lock(&mutex_filehistory);
     node_t* state = NULL;
     char* path = (char*) list_getNext(fileHistory, &state);
     int i = 0;
     while(i < N && path != NULL) {
-        file_t *f = icl_hash_find(storage, path);
+        file_t *f = icl_hash_find(fileStorage->files, path);
         if (f == NULL) {
             fprintf(stderr, "Errore critico: Inconsistenza tra storage e fileHistory\n");
             exit(EXIT_FAILURE);
@@ -552,7 +580,7 @@ int writeFile(int fd) {
     SYSCALL_ONE_RETURN_F(readn(fd, path, len * sizeof(char)), "readn", free(path))
 
     Pthread_mutex_lock(&mutex_storage);
-    file_t *f = (file_t*) icl_hash_find(storage, path);
+    file_t *f = (file_t*) icl_hash_find(fileStorage->files, path);
         if (f == NULL) {
             Pthread_mutex_unlock(&mutex_storage);
             fprintf(stderr, "File non presente nello storage\n");
@@ -576,9 +604,9 @@ int writeFile(int fd) {
         EQ_NULL_EXIT_F(buf, "calloc in writeFile", Pthread_mutex_unlock(&mutex_storage); SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen"))
         SYSCALL_ONE_RETURN_F(readn(fd, buf, dim * sizeof(char)), "readn", free(buf); Pthread_mutex_unlock(&mutex_storage); SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen"))
 
-        if (actual_space + dim > max_space) {
+        if (fileStorage->actual_space + dim > fileStorage->max_space) {
             Pthread_mutex_unlock(&mutex_storage);
-            if (FIFO_ReplacementPolicy(actual_space + dim, actual_numFile, fd) == -1) {
+            if (FIFO_ReplacementPolicy(fileStorage->actual_space + dim, fileStorage->actual_numFile, fd) == -1) {
                 fprintf(stderr, "Errore nell'esecuzione dell'algoritmo di sostituzione\n");
                 SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
                 return -1;
@@ -598,8 +626,8 @@ int writeFile(int fd) {
         }
         f->byteDim += dim;
         // f->M = 1; //Qui non bisogna impostare il flag M ad 1 perché la write potrà essere fatta una sola volta e viene fatta direttamente dopo la creazione del file (?)
-        actual_space += dim;
-        if (actual_space > max_space_reached) max_space_reached = actual_space;
+        fileStorage->actual_space += dim;
+        if (fileStorage->actual_space > fileStorage->max_space_reached) fileStorage->max_space_reached = fileStorage->actual_space;
 
 
         SYSCALL_ONE_RETURN_F(readn(fd, &dim, sizeof(size_t)), "readn", Pthread_mutex_unlock(&mutex_storage))
@@ -623,7 +651,7 @@ int appendFile(int fd) {
     SYSCALL_ONE_RETURN_F(readn(fd, path, len * sizeof(char)), "readn", free(path))
 
     Pthread_mutex_lock(&mutex_storage);
-    file_t *f = (file_t*) icl_hash_find(storage, path);
+    file_t *f = (file_t*) icl_hash_find(fileStorage->files, path);
         if (f == NULL) {
             Pthread_mutex_unlock(&mutex_storage);
             fprintf(stderr, "File non presente nello storage\n");
@@ -647,9 +675,9 @@ int appendFile(int fd) {
 
     SYSCALL_ONE_RETURN_F(readn(fd, newData, fileDim * sizeof(char)), "readn", free(newData); Pthread_mutex_unlock(&mutex_storage))
 
-    if (actual_space + fileDim > max_space) {
+    if (fileStorage->actual_space + fileDim > fileStorage->max_space) {
         Pthread_mutex_unlock(&mutex_storage);
-        if (FIFO_ReplacementPolicy(actual_space + fileDim, actual_numFile, fd) == -1) {
+        if (FIFO_ReplacementPolicy(fileStorage->actual_space + fileDim, fileStorage->actual_numFile, fd) == -1) {
             fprintf(stderr, "Errore nell'esecuzione dell'algoritmo di sostituzione\n");
             SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
             return -1;
@@ -669,8 +697,8 @@ int appendFile(int fd) {
     }
     f->byteDim += fileDim;
     f->M = 1;
-    actual_space += fileDim;
-    if (actual_space > max_space_reached) max_space_reached = actual_space;
+    fileStorage->actual_space += fileDim;
+    if (fileStorage->actual_space > fileStorage->max_space_reached) fileStorage->max_space_reached = fileStorage->actual_space;
     Pthread_mutex_unlock(&mutex_storage);
 
     res = 0;
@@ -690,7 +718,7 @@ int closeFile(int fd) {
     SYSCALL_ONE_RETURN_F(readn(fd, path, len * sizeof(char)), "readn", free(path))
 
     Pthread_mutex_lock(&mutex_storage);
-    file_t *file = (file_t*) icl_hash_find(storage, path);
+    file_t *file = (file_t*) icl_hash_find(fileStorage->files, path);
     free(path);
 
     if (file == NULL) {
@@ -724,18 +752,22 @@ int removeFile(int fd) {
     Pthread_mutex_lock(&mutex_storage);
     Pthread_mutex_lock(&mutex_filehistory);
 
-    if (icl_hash_delete(storage, path, NULL, freeFile) == -1) {
+    if (list_delete(fileHistory, path, NULL) == -1) { //Non libero la memoria perché verrà liberata dalla icl_hash_delete
         SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "writen", Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
         return -1;
     }
 
-    if (list_delete(fileHistory, path, free) == -1) {
+    if (icl_hash_delete(fileStorage->files, path, NULL, freeFile) == -1) {
         SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "writen", Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
         return -1;
     }
+
     free(path);
     Pthread_mutex_unlock(&mutex_filehistory);
     Pthread_mutex_unlock(&mutex_storage);
+
+    res = 0;
+    SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "readn")
 
     return 0;
 }
@@ -853,9 +885,10 @@ int main(int argc, char* argv[]) {
     setHandlers();
 
     //Inizializzazione tabella hash
-    EQ_NULL_EXIT(storage = icl_hash_create(BUCKETS, hash_pjw, string_compare), "icl_hash_create")
-    EQ_NULL_EXIT_F(fileHistory = list_create(fileHistory, str_compare), "list_create", icl_hash_destroy(storage, NULL, freeFile))
-    EQ_NULL_EXIT_F(connection = list_create(connection, int_compare), "list_create", icl_hash_destroy(storage, NULL, freeFile); list_destroy(fileHistory, free))
+    // EQ_NULL_EXIT(storage = icl_hash_create(BUCKETS, hash_pjw, string_compare), "icl_hash_create")
+    EQ_NULL_EXIT(fileStorage = initializeStorage(fileStorage), "fileStorage")
+    EQ_NULL_EXIT_F(fileHistory = list_create(fileHistory, str_compare), "list_create", icl_hash_destroy(fileStorage->files, NULL, freeFile))
+    EQ_NULL_EXIT_F(connection = list_create(connection, int_compare), "list_create", icl_hash_destroy(fileStorage->files, NULL, freeFile); list_destroy(fileHistory, free))
     // if ((fileHistory = list_create(fileHistory, str_compare)) == NULL) { perror("list_create"); exit(EXIT_FAILURE);}
     // if ((connection = list_create(connection, int_compare)) == NULL) {perror("list_create"); list_destroy(fileHistory, free); exit(EXIT_FAILURE);}
     
@@ -867,7 +900,7 @@ int main(int argc, char* argv[]) {
     SYSCALL_NOT_ZERO_EXIT(err, pthread_create(&sighandler_thread, NULL, sighandler, (void*) &signalPipe[1]), "pthread_create")
 
     int numW;
-    if (parseFile(argv[1], &numW, &max_space, &max_file, &socketName, &logFile) != 0) {
+    if (parseFile(argv[1], &numW, &(fileStorage->max_space), &(fileStorage->max_file), &socketName, &logFile) != 0) {
         fprintf(stderr, "Error parsing %s\n", argv[1]);
         freeGlobal();
         return EXIT_FAILURE;
@@ -977,7 +1010,7 @@ int main(int argc, char* argv[]) {
 
     SYSCALL_NOT_ZERO_EXIT(err, pthread_join(sighandler_thread, NULL), "pthread_join")
 
-    printf("Numero di file massimo memorizzato nel server: %d\nDimensione massima in MBytes raggiunta dal file storage: %f\nNumero di volte in cui l'algoritmo di rimpiazzamento della cache è stato eseguito per selezionare uno o più file vittima: %d\n", max_file_reached, (double)max_space_reached/(1024*1024), replacementPolicy);
+    printf("Numero di file massimo memorizzato nel server: %d\nDimensione massima in MBytes raggiunta dal file storage: %f\nNumero di volte in cui l'algoritmo di rimpiazzamento della cache è stato eseguito per selezionare uno o più file vittima: %d\n", fileStorage->max_file_reached, (double)fileStorage->max_space_reached/(1024*1024), fileStorage->replacementPolicy);
     printf("Lista dei file contenuti nello storage al momento della chiusura del server:\n");
     Pthread_mutex_lock(&mutex_filehistory); //Forse non è necessario
     char* file;
@@ -986,7 +1019,8 @@ int main(int argc, char* argv[]) {
     Pthread_mutex_unlock(&mutex_filehistory);
 
     SYSCALL_ONE_EXIT(list_destroy(connection, free), "list_destroy")
-    SYSCALL_ONE_EXIT(icl_hash_destroy(storage, NULL, freeFile), "icl_hash_destrory")
+    SYSCALL_ONE_EXIT(icl_hash_destroy(fileStorage->files, NULL, freeFile), "icl_hash_destrory")
+    free(fileStorage);
     close(listenSocket);
     close(fdPipe[0]);
     close(fdPipe[1]);
