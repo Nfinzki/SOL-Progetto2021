@@ -30,7 +30,7 @@ long max_space_reached = 0;
 int replacementPolicy = 0;
 static pthread_mutex_t mutex_storage = PTHREAD_MUTEX_INITIALIZER;
 
-list_t fileHistory;
+list_t* fileHistory;
 static pthread_mutex_t mutex_filehistory = PTHREAD_MUTEX_INITIALIZER;
 
 typedef struct _file_t {
@@ -38,10 +38,10 @@ typedef struct _file_t {
     size_t byteDim;
     void* data;
     int M;
-    list_t clients;
+    list_t* clients;
 } file_t;
 
-list_t connection;
+list_t* connection;
 static pthread_mutex_t mutex_connections = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t cond_emptyConnections = PTHREAD_COND_INITIALIZER;
 
@@ -59,7 +59,7 @@ void freeFile(void* f) {
     
     free(file->path);
     free(file->data);
-    SYSCALL_ONE_EXIT(list_destroy(&(file->clients), free), "list_destroy")
+    SYSCALL_ONE_EXIT(list_destroy(file->clients, free), "list_destroy")
     free(file);
 }
 
@@ -73,7 +73,7 @@ int FIFO_ReplacementPolicy(long space, int numFiles, int fd) {
         Pthread_mutex_unlock(&mutex_storage);
 
         Pthread_mutex_lock(&mutex_filehistory);
-        char* oldFile_name = (char*) list_pop(&fileHistory);
+        char* oldFile_name = (char*) list_pop(fileHistory);
         Pthread_mutex_unlock(&mutex_filehistory);
 
         if (oldFile_name == NULL) {
@@ -317,7 +317,7 @@ int createFile(int fd) {
 
     SYSCALL_ONE_RETURN_F(readn(fd, newFile->path, len * sizeof(char)), "readn", free(newFile->path); free(newFile))
 
-    SYSCALL_ONE_RETURN(list_create(&(newFile->clients), int_compare), "list_create")
+    EQ_NULL_RETURN(newFile->clients =  list_create(newFile->clients, int_compare), "list_create")
 
     Pthread_mutex_lock(&mutex_storage);
     if (actual_space + newFile->byteDim > max_space || actual_numFile + 1 > max_file) {
@@ -342,7 +342,7 @@ int createFile(int fd) {
     Pthread_mutex_unlock(&mutex_storage);
 
     Pthread_mutex_lock(&mutex_filehistory);
-    if (list_append(&fileHistory, newFile->path) == -1) {
+    if (list_append(fileHistory, newFile->path) == -1) {
         perror("list_append");
         SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "readn")
         exit(EXIT_FAILURE);
@@ -400,7 +400,7 @@ int openFile(int fd) {
     }
 
     //Se il file è già aperto restituisce esito positivo al client. Non effettua cambiamenti
-    if (list_find(&(f->clients), &fd) != NULL) {
+    if (list_find(f->clients, &fd) != NULL) {
         Pthread_mutex_unlock(&mutex_storage);
         res = 0;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "readn")
@@ -412,7 +412,7 @@ int openFile(int fd) {
 
     *newClient = fd;
 
-    if(list_push(&(f->clients), newClient) == -1) {
+    if(list_push(f->clients, newClient) == -1) {
         perror("list_push");
         Pthread_mutex_unlock(&mutex_storage);
         SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "readn", free(newClient))
@@ -450,7 +450,7 @@ int closeConnection(int fd) {
 
         free(path);
 
-        SYSCALL_ONE_RETURN_F(list_delete(&(f->clients), &fd, free), "list_delete in closeConnection", SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "readn"))
+        SYSCALL_ONE_RETURN_F(list_delete(f->clients, &fd, free), "list_delete in closeConnection", SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "readn"))
         Pthread_mutex_unlock(&mutex_storage);
     }
 
@@ -484,7 +484,7 @@ int readFile(int fd) {
     free(path);
 
     //Controlla che il client abbia aperto quel file
-    if (list_find(&(f->clients), &fd) == NULL) {
+    if (list_find(f->clients, &fd) == NULL) {
         Pthread_mutex_unlock(&mutex_storage);
         fprintf(stderr, "File non aperto dal client\n");
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "readn")
@@ -511,7 +511,7 @@ int readnFile(int fd) {
     
     Pthread_mutex_lock(&mutex_filehistory);
     node_t* state = NULL;
-    char* path = (char*) list_getNext(&fileHistory, &state);
+    char* path = (char*) list_getNext(fileHistory, &state);
     int i = 0;
     while(i < N && path != NULL) {
         file_t *f = icl_hash_find(storage, path);
@@ -562,7 +562,7 @@ int writeFile(int fd) {
     free(path);
 
     //Controlla che il client abbia aperto quel file
-    if (list_find(&(f->clients), &fd) == NULL) {
+    if (list_find(f->clients, &fd) == NULL) {
         Pthread_mutex_unlock(&mutex_storage);
         fprintf(stderr, "File non aperto dal client\n");
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "readn")
@@ -594,13 +594,13 @@ int writeFile(int fd) {
         
             f->data = tmp;
             memcpy((char*)f->data + f->byteDim, buf, dim);
+            free(buf);
         }
         f->byteDim += dim;
         // f->M = 1; //Qui non bisogna impostare il flag M ad 1 perché la write potrà essere fatta una sola volta e viene fatta direttamente dopo la creazione del file (?)
         actual_space += dim;
         if (actual_space > max_space_reached) max_space_reached = actual_space;
 
-        free(buf);
 
         SYSCALL_ONE_RETURN_F(readn(fd, &dim, sizeof(size_t)), "readn", Pthread_mutex_unlock(&mutex_storage))
     }
@@ -633,7 +633,7 @@ int appendFile(int fd) {
     free(path);
 
     //Controlla che il client abbia aperto quel file
-    if (list_find(&(f->clients), &fd) == NULL) {
+    if (list_find(f->clients, &fd) == NULL) {
         Pthread_mutex_unlock(&mutex_storage);
         fprintf(stderr, "File non aperto dal client\n");
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "readn")
@@ -665,13 +665,13 @@ int appendFile(int fd) {
         
         f->data = tmp;
         memcpy((char*)f->data + f->byteDim, newData, fileDim);
+        free(newData);
     }
     f->byteDim += fileDim;
     f->M = 1;
     actual_space += fileDim;
     if (actual_space > max_space_reached) max_space_reached = actual_space;
     Pthread_mutex_unlock(&mutex_storage);
-    free(newData);
 
     res = 0;
     SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
@@ -699,7 +699,7 @@ int closeFile(int fd) {
         return -1;
     }
 
-    if (list_delete(&(file->clients), &fd, free) == -1) {
+    if (list_delete(file->clients, &fd, free) == -1) {
         SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "writen", Pthread_mutex_unlock(&mutex_storage))
         return -1;
     }
@@ -729,7 +729,7 @@ int removeFile(int fd) {
         return -1;
     }
 
-    if (list_delete(&fileHistory, path, free) == -1) {
+    if (list_delete(fileHistory, path, free) == -1) {
         SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "writen", Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
         return -1;
     }
@@ -747,7 +747,7 @@ void* workerThread(void* arg) {
         int fd;
         Pthread_mutex_lock(&mutex_connections);
 
-        while (connection.head == NULL && !sigCaught)
+        while (connection->head == NULL && !sigCaught)
             pthread_cond_wait(&cond_emptyConnections, &mutex_connections);
         
         if (sigCaught) { //Forse il problema sta in questi due sigCaught
@@ -756,7 +756,7 @@ void* workerThread(void* arg) {
         }
 
         int *tmp;
-        EQ_NULL_EXIT_F(tmp = (int*) list_pop(&connection), "list_pop", Pthread_mutex_unlock(&mutex_connections))
+        EQ_NULL_EXIT_F(tmp = (int*) list_pop(connection), "list_pop", Pthread_mutex_unlock(&mutex_connections))
         fd = *tmp;
         free(tmp);
 
@@ -854,15 +854,10 @@ int main(int argc, char* argv[]) {
 
     //Inizializzazione tabella hash
     EQ_NULL_EXIT(storage = icl_hash_create(BUCKETS, hash_pjw, string_compare), "icl_hash_create")
-    if (list_create(&fileHistory, str_compare) == -1) {
-        perror("list_create");
-        exit(EXIT_FAILURE);
-    }
-    if (list_create(&connection, int_compare) == -1) {
-        perror("list_create");
-        list_destroy(&fileHistory, free);
-        exit(EXIT_FAILURE);
-    }
+    EQ_NULL_EXIT_F(fileHistory = list_create(fileHistory, str_compare), "list_create", icl_hash_destroy(storage, NULL, freeFile))
+    EQ_NULL_EXIT_F(connection = list_create(connection, int_compare), "list_create", icl_hash_destroy(storage, NULL, freeFile); list_destroy(fileHistory, free))
+    // if ((fileHistory = list_create(fileHistory, str_compare)) == NULL) { perror("list_create"); exit(EXIT_FAILURE);}
+    // if ((connection = list_create(connection, int_compare)) == NULL) {perror("list_create"); list_destroy(fileHistory, free); exit(EXIT_FAILURE);}
     
     int signalPipe[2];
     SYSCALL_ONE_EXIT(pipe(signalPipe), "pipe");
@@ -967,7 +962,7 @@ int main(int argc, char* argv[]) {
 
                     Pthread_mutex_lock(&mutex_connections);
 
-                    SYSCALL_ONE_EXIT(list_append(&connection, new), "list_append")
+                    SYSCALL_ONE_EXIT(list_append(connection, new), "list_append")
                     
                     pthread_cond_signal(&cond_emptyConnections);
                     Pthread_mutex_unlock(&mutex_connections);
@@ -984,12 +979,13 @@ int main(int argc, char* argv[]) {
 
     printf("Numero di file massimo memorizzato nel server: %d\nDimensione massima in MBytes raggiunta dal file storage: %f\nNumero di volte in cui l'algoritmo di rimpiazzamento della cache è stato eseguito per selezionare uno o più file vittima: %d\n", max_file_reached, (double)max_space_reached/(1024*1024), replacementPolicy);
     printf("Lista dei file contenuti nello storage al momento della chiusura del server:\n");
-    Pthread_mutex_lock(&mutex_connections); //Forse non è necessario
+    Pthread_mutex_lock(&mutex_filehistory); //Forse non è necessario
     char* file;
-    while((file = list_pop(&fileHistory)) != NULL) printf("%s\n", file); //Non esegue la free perché l'elemento nella lista è lo stesso che è presente nella chiave della hashtable quindi va liberato una volta sola
-    Pthread_mutex_unlock(&mutex_connections);
+    while((file = list_pop(fileHistory)) != NULL) printf("%s\n", file); //Non esegue la free perché l'elemento nella lista è lo stesso che è presente nella chiave della hashtable quindi va liberato una volta sola
+    free(fileHistory);
+    Pthread_mutex_unlock(&mutex_filehistory);
 
-    SYSCALL_ONE_EXIT(list_destroy(&connection, free), "list_destroy")
+    SYSCALL_ONE_EXIT(list_destroy(connection, free), "list_destroy")
     SYSCALL_ONE_EXIT(icl_hash_destroy(storage, NULL, freeFile), "icl_hash_destrory")
     close(listenSocket);
     close(fdPipe[0]);
