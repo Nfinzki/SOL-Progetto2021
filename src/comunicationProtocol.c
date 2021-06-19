@@ -607,11 +607,6 @@ static int writeRemoteFiles(int res, const char* dirname) {
 * effettivamente letti), -1 in caso di fallimento, errno viene settato opportunamente.
 */
 int readNFiles(int N, const char* dirname) {
-    if (dirname == NULL) {
-        errno = EINVAL;
-        return -1;
-    }
-
     if (socketName == NULL) {
         errno = ENOTCONN;
         return -1;
