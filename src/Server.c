@@ -158,21 +158,18 @@ void* sighandler(void* arg){ //Da scrivere nella relazione: Si suppone che se fa
     sigaddset(&mask, SIGQUIT);
     sigaddset(&mask, SIGHUP);
 
-    while(!sigCaught) {
-        int sig;
-        int err;
-        SYSCALL_NOT_ZERO_EXIT(err, sigwait(&mask, &sig), "sigwait")
+    int sig;
+    int err;
+    SYSCALL_NOT_ZERO_EXIT(err, sigwait(&mask, &sig), "sigwait")
 
-        switch (sig) {
-        case SIGINT:
-        case SIGQUIT: stopRequests = 1;
-        case SIGHUP: stopConnections = 1; break;
-        }
-
-        sigCaught = 1;
-
-        close(sigPipe);
+    switch (sig) {
+    case SIGINT:
+    case SIGQUIT: stopRequests = 1;
+    case SIGHUP: stopConnections = 1; break;
     }
+
+    close(sigPipe);
+
     return NULL;
 }
 
@@ -476,9 +473,6 @@ int closeConnection(int fd) {
     res = 0;
     SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "readn")
 
-    // int msg = -1;
-    // SYSCALL_ONE_RETURN(writen(endpoint, &msg, sizeof(int)), "readn")
-    // close(fd);
     return 0;
 }
 
@@ -765,15 +759,15 @@ int removeFile(int fd) {
 
 void* workerThread(void* arg) {
     int Wendpoint = *(int*) arg;
-    // while(!sigCaught) {
-    while(1) {
+    
+    while(!sigCaught) {
         int fd;
         Pthread_mutex_lock(&mutex_connections);
 
         while (connection->head == NULL && !sigCaught)
             pthread_cond_wait(&cond_emptyConnections, &mutex_connections);
         
-        if (sigCaught) { //Forse il problema sta in questi due sigCaught
+        if (sigCaught) {
             Pthread_mutex_unlock(&mutex_connections);
             return NULL;
         }
@@ -800,7 +794,7 @@ void* workerThread(void* arg) {
             case FIND_FILE: if (findFile(fd) != 0) closeFd = 1; break;
             case CREATE_FILE: if (createFile(fd) != 0) closeFd = 1; break;
             case OPEN_FILE: if (openFile(fd) != 0) closeFd = 1; break;
-            case END_CONNECTION: closeConnection(fd); closeFd = 1; break; //Ricontrollare questo
+            case END_CONNECTION: closeConnection(fd); closeFd = 1; break;
             case READ_FILE: if (readFile(fd) != 0) closeFd = 1; break;
             case READN_FILE: if (readnFile(fd) != 0) closeFd = 1; break;
             case WRITE_FILE: if (writeFile(fd) != 0) closeFd = 1; break;
@@ -878,20 +872,17 @@ int main(int argc, char* argv[]) {
 
     setHandlers();
 
-    //Inizializzazione tabella hash
-    // EQ_NULL_EXIT(storage = icl_hash_create(BUCKETS, hash_pjw, string_compare), "icl_hash_create")
+    //Inizializzazione storage
     EQ_NULL_EXIT(fileStorage = initializeStorage(fileStorage), "fileStorage")
     EQ_NULL_EXIT_F(fileHistory = list_create(fileHistory, str_compare), "list_create", icl_hash_destroy(fileStorage->files, NULL, freeFile))
     EQ_NULL_EXIT_F(connection = list_create(connection, int_compare), "list_create", icl_hash_destroy(fileStorage->files, NULL, freeFile); list_destroy(fileHistory, free))
-    // if ((fileHistory = list_create(fileHistory, str_compare)) == NULL) { perror("list_create"); exit(EXIT_FAILURE);}
-    // if ((connection = list_create(connection, int_compare)) == NULL) {perror("list_create"); list_destroy(fileHistory, free); exit(EXIT_FAILURE);}
     
     int signalPipe[2];
     SYSCALL_ONE_EXIT(pipe(signalPipe), "pipe");
 
     int err;
     pthread_t sighandler_thread;
-    SYSCALL_NOT_ZERO_EXIT(err, pthread_create(&sighandler_thread, NULL, sighandler, (void*) &signalPipe[1]), "pthread_create")
+    SYSCALL_NOT_ZERO_EXIT(err, pthread_create(&sighandler_thread, NULL, sighandler, (void*) &signalPipe[1]), "pthread_create") //Devo fare detached anche questo?
 
     int numW;
     if (parseFile(argv[1], &numW, &(fileStorage->max_space), &(fileStorage->max_file), &socketName, &logFile) != 0) {
@@ -920,10 +911,11 @@ int main(int argc, char* argv[]) {
 
     int connectedMax = 0;
     fd_set setConnected;
+    FD_ZERO(&setConnected);
 
     int stillConnected = 1;
     
-    while(stillConnected) { //Bisogna aggiungere che se non ci sono più client connessi e stopConnections è attivo, termina tutto.
+    while(stillConnected) {
         rdset = set;
 
         if (select(fdMax + 1, &rdset, NULL, NULL, NULL) == -1) {
@@ -940,9 +932,7 @@ int main(int argc, char* argv[]) {
                     break;
                 }
 
-                // if (fd == signalPipe[0]) break; //Questo non ci va perché sennò non gestisce bene il tipo di segnale che gli arriva
-
-                if (fd == fdPipe[0]) { //Invece che mandare -1 potrei mandare -fd che vorrebbe dire "Elimina questo fd dal set"
+                if (fd == fdPipe[0]) {
                     int c_fd;
 
                     if (readn(fd, &c_fd, sizeof(int)) == -1) {
@@ -978,12 +968,12 @@ int main(int argc, char* argv[]) {
                     continue;
                 }
 
-                if (fd != fdPipe[0] && fd != listenSocket) { //Ragionare se ho modificato correttamente
+                if (fd != fdPipe[0] && fd != listenSocket && fd != signalPipe[0]) {
                     FD_CLR(fd, &set);
                     fdMax = updateSet(&set, fdMax);
 
                     int *new = malloc(sizeof(int));
-                    EQ_NULL_EXIT(new, "malloc") //Aggiungere freeGlobal. Se si verifica non viene cancellato il socket
+                    EQ_NULL_EXIT(new, "malloc")
 
                     *new = fd;
 
@@ -993,6 +983,11 @@ int main(int argc, char* argv[]) {
                     
                     pthread_cond_signal(&cond_emptyConnections);
                     Pthread_mutex_unlock(&mutex_connections);
+                }
+
+                if (fd == signalPipe[0]) {
+                    FD_CLR(fd, &set);
+                    break;
                 }
             }
         }
@@ -1014,6 +1009,9 @@ int main(int argc, char* argv[]) {
 
     SYSCALL_ONE_EXIT(list_destroy(connection, free), "list_destroy")
     SYSCALL_ONE_EXIT(icl_hash_destroy(fileStorage->files, NULL, freeFile), "icl_hash_destrory")
+
+    sigCaught = 1;
+    pthread_cond_broadcast(&cond_emptyConnections);
     free(fileStorage);
     close(listenSocket);
     close(fdPipe[0]);
