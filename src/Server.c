@@ -34,15 +34,6 @@ typedef struct _filestorage {
 file_storage_t* fileStorage;
 static pthread_mutex_t mutex_storage = PTHREAD_MUTEX_INITIALIZER;
 
-// icl_hash_t *storage;
-// long max_space = 0;
-// int max_file = 0;
-// long actual_space = 0; //Mettere tutto dentro un'unica struct che contiene anche l'hash table
-// int actual_numFile = 0;
-// int max_file_reached = 0;
-// long max_space_reached = 0;
-// int replacementPolicy = 0;
-
 list_t* fileHistory;
 static pthread_mutex_t mutex_filehistory = PTHREAD_MUTEX_INITIALIZER;
 
@@ -864,7 +855,10 @@ int updateSet(fd_set *set, int fdMax) {
 
 void closeConnections(fd_set *set, int max) {
     for(int i = 0; i < max + 1; i++) {
-        if (FD_ISSET(i, set)) close(i);
+        if (FD_ISSET(i, set)) {
+            close(i);
+            FD_CLR(i, set);
+        }
     }
 }
 
@@ -909,10 +903,10 @@ int main(int argc, char* argv[]) {
     int fdPipe[2];
     SYSCALL_ONE_EXIT(pipe(fdPipe), "pipe");
 
-    spawnThread(numW, &fdPipe[1]); //Aggiungere freeGlobal
+    spawnThread(numW, &fdPipe[1]);
 
     int listenSocket;
-    initializeSocket(&listenSocket); //Aggiungere freeGlobal
+    initializeSocket(&listenSocket);
 
     int fdMax = 0;
     if (listenSocket > fdMax) fdMax = listenSocket;
