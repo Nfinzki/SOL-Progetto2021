@@ -504,8 +504,7 @@ static int writeRemoteFiles(int res, const char* dirname) {
         //Nell'evenutlità che non ci sia abbastanza memoria allocata, la rialloca
         int len_cwd = STRLEN;
         if((cwd = getcwd(cwd, len_cwd)) == NULL) {
-            if (errno != ERANGE) {
-                perror("getcwd"); 
+            if (errno != ERANGE) { 
                 free(path);
                 free(data);
                 if (fullstop != -1) free(extension);
@@ -515,7 +514,7 @@ static int writeRemoteFiles(int res, const char* dirname) {
             do {
                 len_cwd *= 2;
                 char* tmp = realloc(cwd, len_cwd);
-                if (tmp == NULL) {perror("realloc in req_W"); return -1;}
+                if (tmp == NULL) {errno = ENOMEM; return -1;}
                 cwd = tmp;
             } while((cwd = getcwd(cwd, len_cwd)) == NULL);
         }
