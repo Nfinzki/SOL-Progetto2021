@@ -766,7 +766,14 @@ int main(int argc, char* argv[]) {
             break;
         }
         case 'R': {
-            if ((flagR = arg_R(optarg)) == -1) {
+            if (optarg[0] == '-') { //Non è stato specificato l'argomento per l'opzione -R
+                optind -= 1;
+                flagR = arg_R("n=0");
+            } else {
+                flagR = arg_R(optarg);
+            }
+            
+            if (flagR == -1) {
                 fprintf(stderr, "Error in arg_R\n");
                 SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
                 exit(EXIT_FAILURE);
@@ -807,7 +814,11 @@ int main(int argc, char* argv[]) {
         }
         case ':': {
             if (optopt == 'R') {
-                flagR = 0;
+                if ((flagR = arg_R("n=0")) == -1) {
+                    fprintf(stderr, "Error in arg_R\n");
+                    SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
+                    exit(EXIT_FAILURE);
+                }
                 break;
             } else {
                 printf("L'opzione '-%c' richiede un argomento\n", optopt);
