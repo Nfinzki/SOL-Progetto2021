@@ -814,6 +814,150 @@ int appendToFile(const char* pathname, void* buf, size_t size, const char* dirna
 
 
 /*
+* In caso di successo setta il flag O_LOCK al file. Se il file era stato aperto/creato con il flag O_LOCK e la
+* richiesta proviene dallo stesso processo, oppure se il file non ha il flag O_LOCK settato, l’operazione termina
+* immediatamente con successo, altrimenti l’operazione non viene completata fino a quando il flag O_LOCK non
+* viene resettato dal detentore della lock. L’ordine di acquisizione della lock sul file non è specificato. Ritorna 0 in
+* caso di successo, -1 in caso di fallimento, errno viene settato opportunamente.
+*/
+int lockFile(const char* pathname) {
+    if (pathname == NULL) {
+        errno = EINVAL;
+        return -1;
+    }
+
+    if (socketName == NULL) {
+        errno = ENOTCONN;
+        return -1;
+    }
+
+    //Copia il nome del file
+    int pathlen = strnlen(pathname, STRLEN) + 1;
+    char* tmp = calloc(pathlen, sizeof(char));
+    if (tmp == NULL) {errno = ENOMEM; return -1;}
+    strncpy(tmp, pathname, pathlen);
+
+    //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
+    oFile *file = malloc(sizeof(oFile));
+    if (file == NULL) {errno = ENOMEM; return -1;}
+    file->path = tmp;
+    oFile *f;
+
+    if ((f = list_find(openedFiles, file)) == NULL) {
+        free(tmp);
+        free(file);
+        errno = ENOENT;
+        return -1;
+    }
+
+    f->op = 1;
+
+    int exists;
+    if ((exists = existFile(tmp)) == -1) {
+        free(tmp);
+        free(file);
+        return -1;
+    }
+
+    if (!exists) {
+        //Il file non è più presente nel server. Viene rimosso dalla lista dei file aperti e viene restituito un errore
+        if (list_delete(openedFiles, file, freeOFile) == -1) {free(tmp); free(file); return -1;}
+        free(tmp); 
+        free(file);
+        errno = ENOENT;
+        return -1;
+    }
+
+    free(file);
+
+    //Richiesta al server
+    int opt = LOCK_FILE;
+    if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {free(tmp); return -1;}
+
+    free(tmp);
+
+    //Lettura risposta
+    int res;
+    if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
+
+    return res;
+}
+
+
+/*
+* Resetta il flag O_LOCK sul file ‘pathname’. L’operazione ha successo solo se l’owner della lock è il processo che
+* ha richiesto l’operazione, altrimenti l’operazione termina con errore. Ritorna 0 in caso di successo, -1 in caso di
+* fallimento, errno viene settato opportunamente.
+*/
+int unlockFile(const char* pathname) {
+    if (pathname == NULL) {
+        errno = EINVAL;
+        return -1;
+    }
+
+    if (socketName == NULL) {
+        errno = ENOTCONN;
+        return -1;
+    }
+
+    //Copia il nome del file
+    int pathlen = strnlen(pathname, STRLEN) + 1;
+    char* tmp = calloc(pathlen, sizeof(char));
+    if (tmp == NULL) {errno = ENOMEM; return -1;}
+    strncpy(tmp, pathname, pathlen);
+
+    //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
+    oFile *file = malloc(sizeof(oFile));
+    if (file == NULL) {errno = ENOMEM; return -1;}
+    file->path = tmp;
+    oFile *f;
+
+    if ((f = list_find(openedFiles, file)) == NULL) {
+        free(tmp);
+        free(file);
+        errno = ENOENT;
+        return -1;
+    }
+
+    f->op = 1;
+
+    int exists;
+    if ((exists = existFile(tmp)) == -1) {
+        free(tmp);
+        free(file);
+        return -1;
+    }
+
+    if (!exists) {
+        //Il file non è più presente nel server. Viene rimosso dalla lista dei file aperti e viene restituito un errore
+        if (list_delete(openedFiles, file, freeOFile) == -1) {free(tmp); free(file); return -1;}
+        free(tmp); 
+        free(file);
+        errno = ENOENT;
+        return -1;
+    }
+
+    free(file);
+
+    //Richiesta al server
+    int opt = UNLOCK_FILE;
+    if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {free(tmp); return -1;}
+
+    free(tmp);
+
+    //Lettura risposta
+    int res;
+    if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
+
+    return res;
+}
+
+
+/*
 * Richiesta di chiusura del file puntato da ‘pathname’. Eventuali operazioni sul file dopo la closeFile falliscono.
 * Ritorna 0 in caso di successo, -1 in caso di fallimento, errno viene settato opportunamente.
 */
@@ -915,26 +1059,26 @@ int removeFile(const char* pathname) {
     if (tmp == NULL) {errno = ENOMEM; return -1;}
     strncpy(tmp, pathname, pathlen);
 
-    // //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
-    // oFile *file = malloc(sizeof(oFile));
-    // if (file == NULL) {errno = ENOMEM; return -1;}
-    // file->path = tmp;
-    // oFile *f;
+    //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
+    oFile *file = malloc(sizeof(oFile));
+    if (file == NULL) {errno = ENOMEM; return -1;}
+    file->path = tmp;
+    oFile *f;
 
-    // if ((f = list_find(openedFiles, file)) == NULL) {
-    //     free(tmp);
-    //     free(file);
-    //     errno = ENOENT;
-    //     return -1;
-    // }
+    if ((f = list_find(openedFiles, file)) == NULL) {
+        free(tmp);
+        free(file);
+        errno = ENOENT;
+        return -1;
+    }
 
-    // if (list_delete(openedFiles, file, freeOFile) == -1) {
-    //     free(tmp);
-    //     return -1;
-    // }
-    // free(file);
+    if (list_delete(openedFiles, file, freeOFile) == -1) {
+        free(tmp);
+        return -1;
+    }
+    free(file);
 
-    // f->op = 1;
+    f->op = 1;
 
     int exists;
     if ((exists = existFile(tmp)) == -1) {

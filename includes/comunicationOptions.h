@@ -13,5 +13,7 @@
 #define READN_FILE 9
 #define REMOVE_FILE 10
 #define WRITE_FILE 11
+#define LOCK_FILE 12
+#define UNLOCK_FILE 13
 
 #endif
