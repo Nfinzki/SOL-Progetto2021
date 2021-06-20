@@ -528,16 +528,17 @@ static int writeRemoteFiles(int res, const char* dirname) {
         }
 
         //Creazione del file. Se esiste un file con lo stesso nome verrà modificato il nome del file da creare
-        int createdFile, oldCifre;
+        int createdFile;
+        int oldCifre = 0;
         int try = 1;
         while((createdFile = open(path + startName, O_WRONLY | O_CREAT | O_EXCL, 0666)) == -1) {
             if (errno != EEXIST) return -1;
 
             if (try == 1) {
-                char* tmp = realloc(path, (len + 3) * sizeof(char));
+                char* tmp = realloc(path, (len + 2) * sizeof(char));
                 if (tmp == NULL) {errno = ENOMEM; return -1;}
                 path = tmp;
-                len += 3;
+                len += 2;
             }
 
             int tmp_try = try;
@@ -556,7 +557,8 @@ static int writeRemoteFiles(int res, const char* dirname) {
 
             oldCifre = nCifre;
 
-            snprintf(path + fullstop, sizeof(int) + 2 * sizeof(char), "(%d)", try);
+            int offset = fullstop == -1 ? len-(3+nCifre) : fullstop; //2 + nCifre posizioni per '(x)' e un'altra posizione per sovrascrivere il carattere terminatore
+            snprintf(path + offset, sizeof(int) + 2 * sizeof(char), "(%d)", try);
             if (fullstop != -1) strncpy(path + fullstop + nCifre + 2, extension, len - fullstop);
             
             try++;
