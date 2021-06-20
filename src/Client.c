@@ -592,7 +592,7 @@ int createLocalFile(char* dirname, char* filepath) {
     int len = strnlen(filepath, STRLEN) + 1;
 
     char* path = calloc(len, sizeof(char));
-    if (path == NULL) return -1;
+    if (path == NULL) {errno = ENOMEM; return -1;}
     strncpy(path, filepath, len);
 
     //Manipolazione delle stringhe per estrapolare dal path il nome e l'eventuale estensione del file
@@ -607,7 +607,7 @@ int createLocalFile(char* dirname, char* filepath) {
     char* extension;
     if (fullstop != -1) {
         extension = calloc(len - fullstop, sizeof(char));
-        if (extension == NULL) return -1;
+        if (extension == NULL) {free(path); errno = ENOMEM; return -1;}
 
         strncpy(extension, path + fullstop, len - fullstop);
     }
@@ -616,6 +616,7 @@ int createLocalFile(char* dirname, char* filepath) {
     char* cwd = calloc(STRLEN, sizeof(char));
     if (cwd == NULL) {
         fprintf(stderr, "Errore critico in memoria\n");
+        free(path);
         if (fullstop != -1) free(extension);
         return -1;
     }
@@ -625,6 +626,7 @@ int createLocalFile(char* dirname, char* filepath) {
     if((cwd = getcwd(cwd, len_cwd)) == NULL) {
         if (errno != ERANGE) {
             perror("getcwd"); 
+            free(path);
             if (fullstop != -1) free(extension);
             free(cwd);
             return -1;
@@ -632,7 +634,12 @@ int createLocalFile(char* dirname, char* filepath) {
         do {
             len_cwd *= 2;
             char* tmp = realloc(cwd, len_cwd);
-            if (tmp == NULL) {perror("realloc in req_W"); free(extension); return -1;}
+            if (tmp == NULL) {
+                perror("realloc in req_W");
+                free(path);
+                if (fullstop != -1) free(extension);
+                free(cwd);
+                return -1;}
             cwd = tmp;
         } while((cwd = getcwd(cwd, len_cwd)) == NULL);
     }
@@ -641,20 +648,28 @@ int createLocalFile(char* dirname, char* filepath) {
     if (chdir(dirname) == -1) {
         if (fullstop != -1) free(extension);
         free(cwd);
+        free(path);
         return -1;
     }
 
     //Creazione del file. Se esiste un file con lo stesso nome verrà modificato il nome del file da creare
-    int createdFile, oldCifre;
+    int createdFile;
+    int oldCifre = 0;
     int try = 1;
     while((createdFile = open(path + startName, O_WRONLY | O_CREAT | O_EXCL, 0666)) == -1) {
         if (errno != EEXIST) return -1;
 
         if (try == 1) {
-            char* tmp = realloc(path, (len + 3) * sizeof(char));
-            if (tmp == NULL) return -1;
+            char* tmp = realloc(path, (len + 2) * sizeof(char));
+            if (tmp == NULL) {
+                fprintf(stderr, "realloc: Errore critico in memoria\n");
+                free(path);
+                if (fullstop != -1) free(extension);
+                free(cwd);
+                return -1;
+            }
             path = tmp;
-            len += 3;
+            len += 2;
         }
 
         int tmp_try = try;
@@ -666,19 +681,28 @@ int createLocalFile(char* dirname, char* filepath) {
 
         if (nCifre > oldCifre) {
             char* tmp = realloc(path, (len + 1) * sizeof(char));
-            if (tmp == NULL) return -1;
+            if (tmp == NULL) {
+                fprintf(stderr, "realloc: Errore critico in memoria\n");
+                free(path);
+                if (fullstop != -1) free(extension);
+                free(cwd);
+                return -1;
+            }
             path = tmp;
             len++;
         }
 
         oldCifre = nCifre;
 
-        snprintf(path + fullstop, sizeof(int) + 2 * sizeof(char), "(%d)", try);
+        int offset = fullstop == -1 ? len-(3+nCifre) : fullstop;
+        snprintf(path + offset, sizeof(int) + 2 * sizeof(char), "(%d)", try);
         if (fullstop != -1) strncpy(path + fullstop + nCifre + 2, extension, len - fullstop);
         
         try++;
     }
-    free(extension);
+    
+    if (fullstop != -1) free(extension);
+    free(path);
 
     //Ripristino la vecchia CWD
     if (chdir(cwd) == -1) {
