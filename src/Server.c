@@ -113,6 +113,8 @@ int FIFO_ReplacementPolicy(long space, int numFiles, int fd) {
             exit(EXIT_FAILURE);
         }
 
+        //TODO Mandare a tutte le lock in attesa il messaggio di errore
+
         if (fd != -1 && oldFile->M) {
             int opt = SEND_FILE;
             if (writen(fd, &opt, sizeof(int)) == -1) {
@@ -495,6 +497,8 @@ int closeConnection(int fd) {
             } else {
                 f->lock = *lock_fd;
                 free(lock_fd);
+                res = 0;
+                SYSCALL_ONE_RETURN(writen(f->lock, &res, sizeof(int)), "readn") //Invia al client in attesa di acquisire la lock il risultato
             }
         }
 
@@ -775,6 +779,8 @@ int closeFile(int fd) {
         } else {
             file->lock = *lock_fd;
             free(lock_fd);
+            res = 0;
+            SYSCALL_ONE_RETURN(writen(file->lock, &res, sizeof(int)), "readn")
         }
     }
 
@@ -901,6 +907,8 @@ int unlock_file(int fd) {
         } else {
             f->lock = *lock_fd;
             free(lock_fd);
+            res = 0;
+            SYSCALL_ONE_RETURN(writen(f->lock, &res, sizeof(int)), "readn")
         }
 
         res = 0;
