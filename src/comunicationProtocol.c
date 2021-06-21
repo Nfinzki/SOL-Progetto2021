@@ -255,10 +255,10 @@ int openFile(const char* pathname, int flags) {
         return -1;
     }
 
-    if (flags == O_LOCK || flags == (O_CREATE | O_LOCK)) {
-        errno = EPERM;
-        return -1;
-    }
+    // if (flags == O_LOCK || flags == (O_CREATE | O_LOCK)) {
+    //     errno = EPERM;
+    //     return -1;
+    // }
 
     //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
     oFile *file = malloc(sizeof(oFile));
@@ -277,19 +277,19 @@ int openFile(const char* pathname, int flags) {
     if((exists = existFile(pathname)) == -1) return -1;
 
     //File esistente e flag di creazione attivo
-    if (flags == O_CREATE && exists) {
+    if ((flags & O_CREATE) == O_CREATE && exists) {
         errno = EEXIST;
         return -1;
     }
 
     //File non esistente e flag di creazione non attivo
-    if (!exists && flags != O_CREATE) {
+    if (!exists && (flags & O_CREATE) != O_CREATE) {
         errno = EPERM;
         return -1;
     }
 
 
-    if (flags == O_CREATE) { //Crea il file
+    if ((flags & O_CREATE) == O_CREATE) { //Crea il file
         if (createFile(pathname) == -1) return -1;
     }
 
@@ -338,6 +338,10 @@ int openFile(const char* pathname, int flags) {
         }
     } else {
         errno = ECANCELED;
+    }
+
+    if ((flags & O_LOCK) == O_LOCK) {
+        res = lockFile(pathname);
     }
 
     return res;
@@ -882,6 +886,7 @@ int lockFile(const char* pathname) {
     int res;
     if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
 
+    if (res == -1) errno = ENOLCK;
     return res;
 }
 
@@ -953,6 +958,7 @@ int unlockFile(const char* pathname) {
     int res;
     if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
 
+    if (res == -1) errno = ENOLCK;
     return res;
 }
 
