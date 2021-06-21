@@ -189,21 +189,6 @@ char** tokString (char** str, int* initSize) {
         return NULL;
     }
 
-    // for(int i = 0; i < *initSize; i++) {
-    //     arg[i] = calloc(STRLEN, sizeof(char));
-
-    //     if (arg[i] == NULL) {
-
-    //         for(int j = 0; j < i; j++)
-    //             free(arg[j]);
-    //         free(arg);
-
-    //         perror("calloc");
-    //         return NULL;
-    //     }
-
-    // }
-
     char *state = NULL;
     char *token = strtok_r(*str, ",", &state);
 
@@ -436,6 +421,54 @@ void arg_D(char* arg) {
     }
 }
 
+void arg_l(char* arg) {
+    request_t *newR = malloc(sizeof(request_t));
+    if (newR == NULL) {
+        perror("malloc in arg_l");
+        SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
+        exit(EXIT_FAILURE);
+    }
+
+    newR->flag = 'l';
+    newR->option = -1;
+    if((newR->arg = tokString(arg, &(newR->dim))) == NULL) {
+        perror("tokString");
+        free(newR);
+        SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
+        exit(EXIT_FAILURE);
+    }
+    
+    if (list_append(requestLst, newR) == -1) {
+        freeRequest(newR);
+        SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
+        exit(EXIT_FAILURE);
+    }
+}
+
+void arg_u(char* arg) {
+    request_t *newR = malloc(sizeof(request_t));
+    if (newR == NULL) {
+        perror("malloc in arg_c");
+        SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
+        exit(EXIT_FAILURE);
+    }
+
+    newR->flag = 'u';
+    newR->option = -1;
+    if((newR->arg = tokString(arg, &(newR->dim))) == NULL) {
+        perror("tokString");
+        free(newR);
+        SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
+        exit(EXIT_FAILURE);
+    }
+    
+    if (list_append(requestLst, newR) == -1) {
+        freeRequest(newR);
+        SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
+        exit(EXIT_FAILURE);
+    }
+}
+
 void ignoreSigpipe() {
     struct sigaction s;
     //Ignora SIGPIPE
@@ -514,12 +547,6 @@ int inspectDir(const char* dir, int* n, char* saveDir) {
             if (S_ISDIR(statFile.st_mode)) {
                 inspectDir(filepath, n, saveDir);
             } else {
-                // int fd;
-                //Apre il file e lo crea sul server
-                // if (flagP) printf("Apertura del file %s in lettura... ", filepath);
-                // if ((fd = open(filepath, O_RDONLY)) == -1) {perror("open"); return -1;}
-                // if (flagP) printf("Successo\n");
-
                 if (flagP) printf("Apertura del file nel server... ");
                 if (openFile(filepath, O_CREATE) == -1) {perror("openFile"); return -1;}
                 if (flagP) printf("Successo\n");
@@ -531,21 +558,6 @@ int inspectDir(const char* dir, int* n, char* saveDir) {
                 if (flagP) printf("Chiusura del file %s... ", filepath);
                 if (closeFile(filepath) == -1) {perror("closeFile"); return -1;}
                 if (flagP) printf("Successo\n");
-                // char* tmp = calloc(STRLEN, sizeof(char));
-                // if (tmp == NULL) {perror("calloc"); return -1;}   
-                // int res;
-                // //Scrive il file sul server STRLEN byte alla volta
-                // if (flagP) printf("Scrittura del file %s nel server\n", filepath);
-                // do {
-                //     int len;
-                //     if ((res = readn(fd, tmp, STRLEN)) == -1) {perror("readn"); return -1;}
-                //     if (res == 0) len = strnlen(tmp, STRLEN) + 1;
-                //     else len = res;
-                //     if (appendToFile(filepath, tmp, len, saveDir) == -1) {perror("appendToFile"); return -1;} //Qui modificare il NULL se implemento il -D
-                //     memset(tmp, 0, STRLEN);
-                // } while(res == 0);
-                // if (flagP) printf("Scrittura del file %s avvenuta con successo\n", filepath);
-                // free(tmp);
 
                 (*n)--;
             }
@@ -823,8 +835,8 @@ int main(int argc, char* argv[]) {
             }
             break;
         }
-        case 'l': printf("L'operazione -l non è gestita\n"); break;
-        case 'u': printf("L'operazione -u non è gestita\n"); break;
+        case 'l': arg_l(&optarg); break;
+        case 'u': arg_u(&optarg); break;
         case 'c': arg_c(&optarg); break;
         case 'p': {
             if (!flagP)
@@ -988,9 +1000,56 @@ int main(int argc, char* argv[]) {
                 free(dir);
                 break;
             }
+            case 'l': {
+                //arg[0] lo locko con openFile solo per provare anche questa funzione
+                if (flagP) printf("Lock del file %s\n", req->arg[0]);
+                if (openFile(req->arg[0], O_LOCK) == -1) {perror("lockFile"); return -1;}
+                if (flagP) printf("Successo\n");
+
+                for(int i = 1; i < req->dim; i++) {
+                    if (flagP) printf("Apertura file %s\n", req->arg[i]);
+                    if (openFile(req->arg[i], 0) == -1) {perror("openFile"); return -1;}
+                    if (flagP) printf("File %s aperto correttamente\n", req->arg[i]);
+
+                    if (flagP) printf("Lock del file %s\n", req->arg[i]);
+                    if (lockFile(req->arg[i]) == -1) {perror("lockFile"); return -1;}
+                    if (flagP) printf("Successo\n");
+
+                    if (flagP) printf("Chiusura file %s\n", req->arg[i]);
+                    if (closeFile(req->arg[i]) == -1) {perror("closeFile"); return -1;}
+                    if (flagP) printf("File %s chiuso correttamente\n", req->arg[i]);
+                }
+                break;
+            }
+            case 'u': {
+                for(int i = 0; i < req->dim; i++) {
+                    if (flagP) printf("Apertura file %s\n", req->arg[i]);
+                    if (openFile(req->arg[i], 0) == -1) {perror("openFile"); return -1;}
+                    if (flagP) printf("File %s aperto correttamente\n", req->arg[i]);
+
+                    if (flagP) printf("Unlock del file %s\n", req->arg[i]);
+                    if (unlockFile(req->arg[i]) == -1) {perror("unlockFile"); return -1;}
+                    if (flagP) printf("Successo\n");
+
+                    if (flagP) printf("Chiusura file %s\n", req->arg[i]);
+                    if (closeFile(req->arg[i]) == -1) {perror("closeFile"); return -1;}
+                    if (flagP) printf("File %s chiuso correttamente\n", req->arg[i]);
+                }
+                break;
+            }
             case 'c': {
                 for(int i = 0; i < req->dim; i++) {
+                    if (flagP) printf("Apertura file %s\n", req->arg[i]);
+                    if (openFile(req->arg[i], 0) == -1) {perror("openFile"); return -1;}
+                    if (flagP) printf("File %s aperto correttamente\n", req->arg[i]);
+
+                    if (flagP) printf("Rimozione del file %s\n", req->arg[i]);
                     if (removeFile(req->arg[i]) == -1) {perror("removeFile"); return -1;}
+                    if (flagP) printf("Successo\n");
+
+                    if (flagP) printf("Chiusura file %s\n", req->arg[i]);
+                    if (closeFile(req->arg[i]) == -1) {perror("closeFile"); return -1;}
+                    if (flagP) printf("File %s chiuso correttamente\n", req->arg[i]);
                 }
                 break;
             }
