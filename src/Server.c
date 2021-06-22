@@ -609,8 +609,8 @@ int openFile(int fd) {
     int len;
     int res;
     int flag;
-    SYSCALL_ONE_RETURN_F(readn(fd, &len, sizeof(int)), "readn", res = EINTR; SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen"))
     SYSCALL_ONE_RETURN_F(readn(fd, &flag, sizeof(int)), "readn", res = EINTR; SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen"))
+    SYSCALL_ONE_RETURN_F(readn(fd, &len, sizeof(int)), "readn", res = EINTR; SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen"))
 
     char* path = calloc(len, sizeof(char));
     EQ_NULL_EXIT(path, "calloc in openFile")
