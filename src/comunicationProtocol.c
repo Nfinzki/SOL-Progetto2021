@@ -14,6 +14,7 @@
 #include "../includes/comunicationOptions.h"
 #include "../includes/comunicationProtocol.h"
 #include "../includes/list.h"
+#include "../includes/comunicationFlags.h"
 
 #if !defined(UNIX_PATH_MAX)
 #define UNIX_PATH_MAX 108
@@ -142,9 +143,10 @@ int closeConnection(const char* sockname) {
     if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
 
     if (res != 0) {
-        errno = ECONNABORTED;
+        errno = res;
         close(fdSocket);
         free(socketName);
+        free(openedFiles);
         return -1;
     }
 
@@ -229,7 +231,7 @@ static int createFile(const char* pathname) {
     }
 
     free(tmp);
-    if (!res) errno = ECANCELED;
+    if (!res) {errno = res; res = -1;}
     return res;
 }
 
@@ -254,11 +256,6 @@ int openFile(const char* pathname, int flags) {
         errno = EINVAL;
         return -1;
     }
-
-    // if (flags == O_LOCK || flags == (O_CREATE | O_LOCK)) {
-    //     errno = EPERM;
-    //     return -1;
-    // }
 
     //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
     oFile *file = malloc(sizeof(oFile));
@@ -289,9 +286,9 @@ int openFile(const char* pathname, int flags) {
     }
 
 
-    if ((flags & O_CREATE) == O_CREATE) { //Crea il file
-        if (createFile(pathname) == -1) return -1;
-    }
+    // if ((flags & O_CREATE) == O_CREATE) { //Crea il file
+    //     if (createFile(pathname) == -1) return -1;
+    // }
 
     //Copia il nome del file
     int pathlen = strnlen(pathname, STRLEN) + 1;
@@ -301,48 +298,37 @@ int openFile(const char* pathname, int flags) {
 
     //Apre il file
     int opt = OPEN_FILE;
-    if (writen(fdSocket, &opt, sizeof(int)) == -1) {
-        free(tmp);
-        return -1;
-    }
-    // int len_msg;
-    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {
-        free(tmp);
-        return -1;
-    }
-    if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {
-        free(tmp);
-        return -1;
-    }
+    if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, &flags, sizeof(int)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {free(tmp); return -1;}
 
     //Risposta del server
     int res;
-    if (readn(fdSocket, &res, sizeof(int)) == -1) {
-        return -1;
-        free(tmp);
-    }
-
-    oFile *newof = malloc(sizeof(oFile));
-    if (newof == NULL) {errno = ENOMEM; return -1;}
-    newof->path = calloc(pathlen, sizeof(char));
-    if (newof->path == NULL) {errno = ENOMEM; return -1;}
-    strncpy(newof->path, tmp, pathlen);
-    newof->op = 0;
-
-    free(tmp);
+    if (readn(fdSocket, &res, sizeof(int)) == -1) {free(tmp); return -1;}
 
     if (res == 0) {
+        oFile *newof = malloc(sizeof(oFile));
+        if (newof == NULL) {errno = ENOMEM; return -1;}
+        newof->path = calloc(pathlen, sizeof(char));
+        if (newof->path == NULL) {errno = ENOMEM; return -1;}
+        strncpy(newof->path, tmp, pathlen);
+        newof->op = 0;
+
+        free(tmp);
+        
         if(list_append(openedFiles, newof) == -1) {
             free(tmp);
             return -1;
         }
     } else {
-        errno = ECANCELED;
+        errno = res;
+        return -1;
     }
 
-    if ((flags & O_LOCK) == O_LOCK) {
-        res = lockFile(pathname);
-    }
+    // if ((flags & O_LOCK) == O_LOCK) {
+    //     res = lockFile(pathname);
+    // }
 
     return res;
 }
@@ -414,7 +400,7 @@ int readFile(const char* pathname, void** buf, size_t* size) {
     //Attesa risposta del server
     int res;
     if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
-    if (res == -1) {errno = EIDRM; return -1;}
+    if (res != 0) {errno = res; return -1;}
 
     //Lettura della dimensione del file
     if (readn(fdSocket, size, sizeof(size_t)) == -1) return -1;
@@ -601,6 +587,8 @@ static int writeRemoteFiles(int res, const char* dirname) {
         nWrote++;
     }
 
+    if (res != 0) {errno = res; return -1;}
+
     return nWrote;
 }
 
@@ -728,7 +716,7 @@ int writeFile(const char* pathname, const char* dirname) {
     if (readn(fdSocket, &result, sizeof(int)) == -1) return -1;
 
     if (result != SEND_FILE) {
-        if (result == -1) errno = ECANCELED;
+        if (result != 0) {errno = res; return -1;}
         return result;
     }
     
@@ -808,7 +796,7 @@ int appendToFile(const char* pathname, void* buf, size_t size, const char* dirna
     if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
 
     if (res != SEND_FILE) {
-        if (res == -1) errno = ECANCELED;
+        if (res != 0) {errno = res; return -1;}
         return res;
     }
 
@@ -886,7 +874,7 @@ int lockFile(const char* pathname) {
     int res;
     if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
 
-    if (res == -1) errno = ENOLCK;
+    if (res != 0) {errno = res; return -1;}
     return res;
 }
 
@@ -958,7 +946,7 @@ int unlockFile(const char* pathname) {
     int res;
     if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
 
-    if (res == -1) errno = ENOLCK;
+    if (res != 0) {errno = res; return -1;}
     return res;
 }
 
@@ -1039,7 +1027,7 @@ int closeFile(const char* pathname) {
     int res;
     if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
     
-    if (res == -1) errno = ENOENT;
+    if (res != 0) {errno = res; return -1;}
     return res;
 }
 
@@ -1109,6 +1097,6 @@ int removeFile(const char* pathname) {
     int res;
     if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
 
-    if (res == -1) errno = ECANCELED;
+    if (res != 0) {errno = res; return -1;}
     return res;
 }
