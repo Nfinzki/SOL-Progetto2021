@@ -60,7 +60,7 @@ int openConnection(const char* sockname, int msec, const struct timespec abstime
         socketName = NULL;
     }
 
-    int socklen = strnlen(sockname, STRLEN);
+    int socklen = strnlen(sockname, STRLEN) + 1;
     if((socketName = calloc(socklen, sizeof(char))) == NULL) return -1;
     
     strncpy(socketName, sockname, socklen);
@@ -268,6 +268,7 @@ int openFile(const char* pathname, int flags) {
 
     //Se il file è stato già aperto ritorna subito
     if (list_find(openedFiles, file) != NULL) {free(file); return 0;}
+    free(file->path);
     free(file);
 
     int exists;
@@ -720,7 +721,7 @@ int writeFile(const char* pathname, const char* dirname) {
         return result;
     }
     
-    if(writeRemoteFiles(res, dirname) == -1) return -1;
+    if(writeRemoteFiles(result, dirname) == -1) return -1;
     return 0;
 }
 
