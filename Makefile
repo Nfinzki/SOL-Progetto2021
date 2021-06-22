@@ -4,7 +4,7 @@ INCLUDES = -I ./includes
 
 TARGETS = ./bin/Server ./bin/Client
 
-.PHONY: all
+.PHONY: all clean cleanall
 
 ./bin/Server: ./objs/Server.o ./libs/dataStructures.so
 	$(CC) $(CFLAGS) $(INCLUDES) $< -o $@ -Wl,-rpath,./libs -L ./libs -ldataStructures -lpthread
@@ -33,4 +33,13 @@ clean:
 	rm -f $(TARGETS)
 
 cleanall: clean
-	\rm -f objs/*.o *~ libs/*.a libs/*.so
+	\rm -f objs/*.o *~ libs/*.a libs/*.so tmp/*
+
+test1:
+	echo FILE_SPACE 10000 > ./tmp/test1.txt && echo MEM_SPACE 128MB >> ./tmp/test1.txt && echo N_WORKERS 1 >> ./tmp/test1.txt && echo SOCKET_NAME tmp/socket.sk >> ./tmp/test1.txt
+	./script/test1.sh
+
+test2:
+	echo FILE_SPACE 10 > ./tmp/test2.txt && echo MEM_SPACE 1MB >> ./tmp/test2.txt && echo N_WORKERS 4 >> ./tmp/test2.txt && echo SOCKET_NAME socket.sk >> ./tmp/test2.txt
+	./bin/Server ./tmp/test2.txt
+	./script/test2.sh
