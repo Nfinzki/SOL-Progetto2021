@@ -1,9 +1,6 @@
 #if !defined(_COMUNICATIONPROTOCOL_H)
 #define _COMUNICATIONPROTOCOL_H
 
-// #define O_CREATE 01
-// #define O_LOCK 02
-
 #include <stdlib.h>
 
 typedef struct _openFile {

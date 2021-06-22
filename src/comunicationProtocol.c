@@ -198,44 +198,6 @@ static int existFile(const char* pathname) {
 }
 
 
-/** Richiesta di creazione di un file.
- * @param pathname -- file da creare
- * 
- * @return 0 in caso di successo, -1 in caso di fallimento (setta errno)
-**/
-static int createFile(const char* pathname) {
-    int pathlen = strnlen(pathname, STRLEN) + 1;
-    char* tmp = calloc(pathlen, sizeof(char));
-    if (tmp == NULL) {errno = ENOMEM; return -1;}
-    strncpy(tmp, pathname, pathlen);
-
-    int opt = CREATE_FILE;
-    if (writen(fdSocket, &opt, sizeof(int)) == -1) {
-        free(tmp);
-        return -1;
-    }
-    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {
-        free(tmp);
-        return -1;
-    }
-    if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {
-        free(tmp);
-        return -1;
-    }
-
-    //Lettura risposta dal server
-    int res;
-    if (readn(fdSocket, &res, sizeof(int)) == -1) {
-        return -1;
-        free(tmp);
-    }
-
-    free(tmp);
-    if (!res) {errno = res; res = -1;}
-    return res;
-}
-
-
 /* Richiesta di apertura o di creazione di un file. La semantica della openFile dipende dai flags passati come secondo
 * argomento che possono essere O_CREATE ed O_LOCK. Se viene passato il flag O_CREATE ed il file esiste già
 * memorizzato nel server, oppure il file non esiste ed il flag O_CREATE non è stato specificato, viene ritornato un
@@ -286,11 +248,6 @@ int openFile(const char* pathname, int flags) {
         return -1;
     }
 
-
-    // if ((flags & O_CREATE) == O_CREATE) { //Crea il file
-    //     if (createFile(pathname) == -1) return -1;
-    // }
-
     //Copia il nome del file
     int pathlen = strnlen(pathname, STRLEN) + 1;
     char* tmp = calloc(pathlen, sizeof(char));
@@ -326,10 +283,6 @@ int openFile(const char* pathname, int flags) {
         errno = res;
         return -1;
     }
-
-    // if ((flags & O_LOCK) == O_LOCK) {
-    //     res = lockFile(pathname);
-    // }
 
     return res;
 }
@@ -577,7 +530,6 @@ static int writeRemoteFiles(int res, const char* dirname) {
         }
 
         //Libera la memoria
-        if (fullstop != -1) free(extension);
         free(cwd);
         free(path);
         free(data);
@@ -616,7 +568,10 @@ int readNFiles(int N, const char* dirname) {
     int res;
     if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
 
-    return writeRemoteFiles(res, dirname);
+    if (res != 0)
+        return writeRemoteFiles(res, dirname);
+    else
+        return res;
 }
 
 
