@@ -101,7 +101,7 @@ char* getabspath(char* path) {
         return cwd;
     }
     
-    char* dirpath = calloc(i, sizeof(char));
+    char* dirpath = calloc(i+1, sizeof(char));
     if (dirpath == NULL) return NULL;
 
     strncpy(dirpath, path, i);
@@ -204,6 +204,7 @@ char** tokString (char** str, int* initSize) {
             return NULL;
         }
         strncpy(arg[i], file, filelen);
+        free(file);
         i++;
         token = strtok_r(NULL, ",", &state);
     }
@@ -548,7 +549,7 @@ int inspectDir(const char* dir, int* n, char* saveDir) {
             if (S_ISDIR(statFile.st_mode)) {
                 inspectDir(filepath, n, saveDir);
             } else {
-                if (flagP) printf("Apertura del file nel server... ");
+                if (flagP) printf("Apertura del file %s nel server\n", filepath);
                 if (openFile(filepath, O_CREATE) == -1) {perror("openFile"); return -1;}
                 if (flagP) printf("Successo\n");
 
@@ -556,7 +557,7 @@ int inspectDir(const char* dir, int* n, char* saveDir) {
                 if (writeFile(filepath, saveDir) == -1) {perror("writeFile"); return -1;}
                 if (flagP) printf("Scrittura completata con successo\n");
                 
-                if (flagP) printf("Chiusura del file %s... ", filepath);
+                if (flagP) printf("Chiusura del file %s\n", filepath);
                 if (closeFile(filepath) == -1) {perror("closeFile"); return -1;}
                 if (flagP) printf("Successo\n");
 
@@ -622,7 +623,7 @@ int createLocalFile(char* dirname, char* filepath) {
         extension = calloc(len - fullstop, sizeof(char));
         if (extension == NULL) {free(path); errno = ENOMEM; return -1;}
 
-        strncpy(extension, path + fullstop, len - fullstop);
+        strncpy(extension, path + fullstop, len - fullstop - 1);
     }
 
     //Salvataggio e cambio della CWD per poter salvare i file
@@ -714,16 +715,12 @@ int createLocalFile(char* dirname, char* filepath) {
         try++;
     }
     
-    if (fullstop != -1) free(extension);
-    free(path);
-
     //Ripristino la vecchia CWD
     if (chdir(cwd) == -1) {
         free(cwd);
+        free(path);
         return -1;
     }
-
-    free(cwd);
 
     return createdFile;
 }
@@ -731,7 +728,7 @@ int createLocalFile(char* dirname, char* filepath) {
 int req_W(const char* path, char* saveDir) {
     if (path == NULL) return -1;
 
-    if (flagP) printf("Apertura del file nel server\n");
+    if (flagP) printf("Apertura del file %s nel server\n", path);
     if (openFile(path, O_CREATE) == -1) {perror("openFile"); return -1;}
     if (flagP) printf("Successo\n");
 
@@ -885,7 +882,7 @@ int main(int argc, char* argv[]) {
     }
 
 
-    //Provvisorio
+    //Il client tenterà di connettersi al server al massimo per 10 secondi
     struct timespec maxTime;
     if (clock_gettime(CLOCK_REALTIME, &maxTime) == -1) {
         perror("clock_gettime");
@@ -917,7 +914,7 @@ int main(int argc, char* argv[]) {
                 if (dir != NULL) {
                     //Verifica che dir sia una directory
                     struct stat info;
-                    if (stat(dir, &info) == -1) return -1; //Forse conviene spostare questi controlli nella fase di parsing
+                    if (stat(dir, &info) == -1) return -1;
                     if (!S_ISDIR(info.st_mode)) {
                         errno = ENOTDIR;
                         return -1;
@@ -932,7 +929,7 @@ int main(int argc, char* argv[]) {
                 if (dir != NULL) {
                     //Verifica che dir sia una directory
                     struct stat info;
-                    if (stat(dir, &info) == -1) return -1; //Forse conviene spostare questi controlli nella fase di parsing
+                    if (stat(dir, &info) == -1) return -1;
                     if (!S_ISDIR(info.st_mode)) {
                         errno = ENOTDIR;
                         return -1;
@@ -949,7 +946,7 @@ int main(int argc, char* argv[]) {
                 if (dir != NULL) {
                 //Verifica che dir sia una directory
                     struct stat info;
-                    if (stat(dir, &info) == -1) return -1; //Forse conviene spostare questi controlli nella fase di parsing
+                    if (stat(dir, &info) == -1) return -1;
                     if (!S_ISDIR(info.st_mode)) {
                         errno = ENOTDIR;
                         return -1;
