@@ -14,6 +14,7 @@
 #include "../includes/comunicationProtocol.h"
 #include "../includes/list.h"
 #include "../includes/comunication.h"
+#include "../includes/comunicationFlags.h"
 
 #define STRLEN 512
 
