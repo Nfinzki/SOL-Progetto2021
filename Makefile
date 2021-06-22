@@ -40,6 +40,5 @@ test1:
 	./script/test1.sh
 
 test2:
-	echo FILE_SPACE 10 > ./tmp/test2.txt && echo MEM_SPACE 1MB >> ./tmp/test2.txt && echo N_WORKERS 4 >> ./tmp/test2.txt && echo SOCKET_NAME socket.sk >> ./tmp/test2.txt
-	./bin/Server ./tmp/test2.txt
+	echo FILE_SPACE 10 > ./tmp/test2.txt && echo MEM_SPACE 1MB >> ./tmp/test2.txt && echo N_WORKERS 4 >> ./tmp/test2.txt && echo SOCKET_NAME tmp/socket.sk >> ./tmp/test2.txt
 	./script/test2.sh
