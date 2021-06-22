@@ -11,6 +11,5 @@ echo -e "\n\tEsecuzione Client 2\n"
 echo -e "\n\tEsecuzione Client 3\n"
 ./bin/Client -f tmp/socket.sk -l TestFolder/img/NewYorkCity.jpg -c TestFolder/img/NewYorkCity.jpg -W TestFolder/img/basket/Leonard.jpg -D tmp -p
 
-sleep 5
 kill -SIGHUP ${PID}
 sleep 1
