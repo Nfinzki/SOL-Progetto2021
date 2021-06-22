@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS += -Wall -g -pedantic
+CFLAGS += -std=c99 -Wall -g -pedantic -D_GNU_SOURCE=1
 INCLUDES = -I ./includes
 
 TARGETS = ./bin/Server ./bin/Client
