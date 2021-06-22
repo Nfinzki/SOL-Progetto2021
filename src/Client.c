@@ -79,7 +79,7 @@ char* getabspath(char* path) {
             do {
                 len_cwd *= 2;
                 char* tmp = realloc(cwd, len_cwd);
-                if (tmp == NULL) {perror("realloc in req_W"); return NULL;}
+                if (tmp == NULL) {perror("realloc in getabspath"); return NULL;}
                 cwd = tmp;
             } while((cwd = getcwd(cwd, len_cwd)) == NULL);
         }
@@ -119,7 +119,7 @@ char* getabspath(char* path) {
         do {
             len_cwd *= 2;
             char* tmp = realloc(cwd, len_cwd);
-            if (tmp == NULL) {perror("realloc in req_W"); return NULL;}
+            if (tmp == NULL) {perror("realloc in getabspath"); return NULL;}
             cwd = tmp;
         } while((cwd = getcwd(cwd, len_cwd)) == NULL);
     }
@@ -421,7 +421,7 @@ void arg_D(char* arg) {
     }
 }
 
-void arg_l(char* arg) {
+void arg_l(char** arg) {
     request_t *newR = malloc(sizeof(request_t));
     if (newR == NULL) {
         perror("malloc in arg_l");
@@ -445,7 +445,7 @@ void arg_l(char* arg) {
     }
 }
 
-void arg_u(char* arg) {
+void arg_u(char** arg) {
     request_t *newR = malloc(sizeof(request_t));
     if (newR == NULL) {
         perror("malloc in arg_c");
@@ -491,7 +491,7 @@ int inspectDir(const char* dir, int* n, char* saveDir) {
     //Salva il cwd
     char* cwd = calloc(STRLEN, sizeof(char));
     if (cwd == NULL) {
-        perror("calloc in req_W");
+        perror("calloc in inspectDir");
         return -1;
     }
 
@@ -502,7 +502,7 @@ int inspectDir(const char* dir, int* n, char* saveDir) {
         do {
             len *= 2;
             char* tmp = realloc(cwd, len);
-            if (tmp == NULL) {perror("realloc in req_W"); return -1;}
+            if (tmp == NULL) {perror("realloc in inspectDir"); return -1;}
             cwd = tmp;
         } while((cwd = getcwd(cwd, len)) == NULL);
     }
@@ -523,7 +523,7 @@ int inspectDir(const char* dir, int* n, char* saveDir) {
                 do {
                     len *= 2;
                     char* tmp = realloc(filepath, len);
-                    if (tmp == NULL) {perror("realloc in req_W"); return -1;}
+                    if (tmp == NULL) {perror("realloc in inspectDir"); return -1;}
                     filepath = tmp;
                 } while((filepath = getcwd(filepath, len)) == NULL);
             }
@@ -531,7 +531,7 @@ int inspectDir(const char* dir, int* n, char* saveDir) {
             if (strnlen(filepath, len) + strnlen(currentFile->d_name, STRLEN) > len) {
                 len += strnlen(currentFile->d_name, STRLEN);
                 char* tmp = realloc(filepath, len);
-                if (tmp == NULL) {perror("realloc in req_W"); return -1;}
+                if (tmp == NULL) {perror("realloc in inspectDir"); return -1;}
                 filepath = tmp;
             }
 
@@ -938,7 +938,7 @@ int main(int argc, char* argv[]) {
                     }
                 }
                 for(int i = 0; i < req->dim; i++) {
-                    if (req_W(req->arg[i], dir) == -1) {perror("req_w"); free(dir); return -1;}
+                    if (req_W(req->arg[i], dir) == -1) {perror("flag -W"); free(dir); return -1;}
                 }
                 free(dir);
                 break;
@@ -1046,10 +1046,6 @@ int main(int argc, char* argv[]) {
                     if (flagP) printf("Rimozione del file %s\n", req->arg[i]);
                     if (removeFile(req->arg[i]) == -1) {perror("removeFile"); return -1;}
                     if (flagP) printf("Successo\n");
-
-                    if (flagP) printf("Chiusura file %s\n", req->arg[i]);
-                    if (closeFile(req->arg[i]) == -1) {perror("closeFile"); return -1;}
-                    if (flagP) printf("File %s chiuso correttamente\n", req->arg[i]);
                 }
                 break;
             }
