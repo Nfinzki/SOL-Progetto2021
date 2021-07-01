@@ -401,18 +401,49 @@ void arg_d(char* arg) {
 }
 
 void arg_D(char* arg) {    
-    int len = strnlen(arg, STRLEN) + 1;
-    char* newD = calloc(len, sizeof(char));
+    // int len = strnlen(arg, STRLEN) + 1;
+    // char* newD = calloc(len, sizeof(char));
+    // if(newD == NULL) {
+    //     perror("calloc in arg_d");
+    //     SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
+    //     SYSCALL_ONE_EXIT(list_destroy(dirLst, free), "list_destroy");
+    //     SYSCALL_ONE_EXIT(list_destroy(DdirLst, free), "list_destroy");
+    //     exit(EXIT_FAILURE);
+    // }
+
+    char* newD = calloc(STRLEN, sizeof(char));
     if(newD == NULL) {
         perror("calloc in arg_d");
-        free(newD);
         SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
         SYSCALL_ONE_EXIT(list_destroy(dirLst, free), "list_destroy");
         SYSCALL_ONE_EXIT(list_destroy(DdirLst, free), "list_destroy");
         exit(EXIT_FAILURE);
     }
 
-    strncpy(newD, arg, len);
+    //Nell'evenutlità che non ci sia abbastanza memoria allocata, la rialloca
+    int len_cwd = STRLEN;
+    if((newD = getcwd(newD, len_cwd)) == NULL) {
+        if (errno != ERANGE) { 
+            perror("getcwd in arg_d");
+            free(newD);
+            SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
+            SYSCALL_ONE_EXIT(list_destroy(dirLst, free), "list_destroy");
+            SYSCALL_ONE_EXIT(list_destroy(DdirLst, free), "list_destroy");
+            exit(EXIT_FAILURE);
+        }
+        do {
+            len_cwd *= 2;
+            char* tmp = realloc(newD, len_cwd);
+            if (tmp == NULL) {errno = ENOMEM; return -1;}
+            newD = tmp;
+        } while((newD = getcwd(newD, len_cwd)) == NULL);
+    }
+
+    strncat(newD, "/", 1);
+    int len = strnlen(arg, STRLEN) + 1;
+    strncat(newD, arg, len);
+
+    // strncpy(newD, arg, len);
 
     if (list_append(DdirLst, newD) == -1) {
         free(newD);
@@ -913,21 +944,21 @@ int main(int argc, char* argv[]) {
         switch (req->flag) {
             case 'w': {
                 char* dir = (char*) list_pop(DdirLst);
-                if (dir != NULL) {
-                    //Verifica che dir sia una directory
-                    struct stat info;
-                    if (stat(dir, &info) == -1) return -1;
-                    if (!S_ISDIR(info.st_mode)) {
-                        errno = ENOTDIR;
-                        return -1;
-                    }
-                }
+                // if (dir != NULL) {
+                //     //Verifica che dir sia una directory
+                //     struct stat info;
+                //     if (stat(dir, &info) == -1) return -1;
+                //     if (!S_ISDIR(info.st_mode)) {
+                //         errno = ENOTDIR;
+                //         return -1;
+                //     }
+                // }
 
-                char* prova = calloc(256, sizeof(char));
-                if (prova == NULL) return -1;
-                if ((prova = getcwd(prova, 256)) == NULL) {free(prova); return -1;}
-                strncat(prova, "/", 1);
-                strncat(prova, dir, 256);
+                // char* prova = calloc(256, sizeof(char));
+                // if (prova == NULL) return -1;
+                // if ((prova = getcwd(prova, 256)) == NULL) {free(prova); return -1;}
+                // strncat(prova, "/", 1);
+                // strncat(prova, dir, 256);
 
                 if (req_w(req->arg[0], req->option, dir) == -1) {perror("flag -w"); free(dir); return -1;}
                 free(dir);
