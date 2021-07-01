@@ -243,17 +243,46 @@ void arg_w (char* arg) {
         SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
         exit(EXIT_FAILURE);
     }
-    
+
+    if (arg != NULL) {
+        //Verifica che dir sia una directory
+        struct stat info;
+        if (stat(arg, &info) == -1) return -1;
+        if (!S_ISDIR(info.st_mode)) {
+            errno = ENOTDIR;
+            return -1;
+        }
+    }
+
     newR->arg[0] = calloc(STRLEN, sizeof(char));
     if(newR->arg[0] == NULL) {
-        perror("malloc in arg[0] in arg_w");
+        perror("calloc in arg[0] in arg_w");
         free(newR->arg);
         free(newR);
         SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
         exit(EXIT_FAILURE);
     }
 
-    strncpy(newR->arg[0], arg, strlen(arg));
+    //Nell'evenutlità che non ci sia abbastanza memoria allocata, la rialloca
+    int len_path = STRLEN;
+    if((newR->arg[0] = getcwd(newR->arg[0], len_path)) == NULL) {
+        if (errno != ERANGE) { 
+            perror("getcwd in arg_w");
+            free(newR->arg);
+            free(newR);
+            SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
+            exit(EXIT_FAILURE);
+        }
+        do {
+            len_path *= 2;
+            char* tmp = realloc(newR->arg[0], len_path);
+            if (tmp == NULL) {errno = ENOMEM; return -1;}
+            newR->arg[0] = tmp;
+        } while((newR->arg[0] = getcwd(newR->arg[0], len_path)) == NULL);
+    }
+
+    strncat(newR->arg[0], "/", 1);
+    strncat(newR->arg[0], arg, strlen(arg));
 
     if (lenDir == -1) {
         newR->option = 0;
@@ -553,11 +582,11 @@ int inspectDir(const char* dir, int* n, char* saveDir) {
                 if (openFile(filepath, O_CREATE) == -1) {perror("openFile"); return -1;}
                 if (flagP) printf("Successo\n");
 
-                if (chdir(cwd) == -1) {perror("chdir"); return -1;}
+                // if (chdir(cwd) == -1) {perror("chdir"); return -1;}
                 if (flagP) printf("Scrittura del file %s nel server\n", filepath);
                 if (writeFile(filepath, saveDir) == -1) {perror("writeFile"); return -1;}
                 if (flagP) printf("Scrittura completata con successo\n");
-                if (chdir(dir) == -1) {perror("chdir"); return -1;}
+                // if (chdir(dir) == -1) {perror("chdir"); return -1;}
                 
                 if (flagP) printf("Chiusura del file %s\n", filepath);
                 if (closeFile(filepath) == -1) {perror("closeFile"); return -1;}
@@ -913,15 +942,22 @@ int main(int argc, char* argv[]) {
         switch (req->flag) {
             case 'w': {
                 char* dir = (char*) list_pop(DdirLst);
-                if (dir != NULL) {
-                    //Verifica che dir sia una directory
-                    struct stat info;
-                    if (stat(dir, &info) == -1) return -1;
-                    if (!S_ISDIR(info.st_mode)) {
-                        errno = ENOTDIR;
-                        return -1;
-                    }
-                }
+                // if (dir != NULL) {
+                //     //Verifica che dir sia una directory
+                //     struct stat info;
+                //     if (stat(dir, &info) == -1) return -1;
+                //     if (!S_ISDIR(info.st_mode)) {
+                //         errno = ENOTDIR;
+                //         return -1;
+                //     }
+                // }
+
+                // char* prova = calloc(256, sizeof(char));
+                // if (prova == NULL) return -1;
+                // if ((prova = getcwd(prova, 256)) == NULL) {free(prova); return -1;}
+                // strncat(prova, "/", 1);
+                // strncat(prova, dir, 256);
+
                 if (req_w(req->arg[0], req->option, dir) == -1) {perror("flag -w"); free(dir); return -1;}
                 free(dir);
                 break;
