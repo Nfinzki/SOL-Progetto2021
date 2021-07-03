@@ -1516,6 +1516,7 @@ int main(int argc, char* argv[]) {
     for(int i = 0; i < numW; i++) {
         pthread_join(tidLst[i], NULL);
     }
+    free(tidLst);
 
     char* file;
     while((file = list_pop(fileHistory)) != NULL) printf("%s\n", file); //Non esegue la free perché l'elemento nella lista è lo stesso che è presente nella chiave della hashtable quindi va liberato una volta sola
