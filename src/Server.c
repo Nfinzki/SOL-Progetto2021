@@ -678,6 +678,7 @@ int readnFile(int fd) { //Le lock vengono ignorate
     if (N <= 0 || N > fileStorage->actual_numFile) N = fileStorage->actual_numFile;
     
     if (N == 0) { //Non sono presenti file nello storage
+        Pthread_mutex_unlock(&mutex_storage);
         res = 0;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return 0;
