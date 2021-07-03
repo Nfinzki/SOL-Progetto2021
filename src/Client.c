@@ -424,12 +424,12 @@ void arg_D(char* arg) {
         do {
             len_cwd *= 2;
             char* tmp = realloc(newD, len_cwd);
-            if (tmp == NULL) {errno = ENOMEM; return -1;}
+            if (tmp == NULL) {errno = ENOMEM; exit(EXIT_FAILURE);}
             newD = tmp;
         } while((newD = getcwd(newD, len_cwd)) == NULL);
     }
 
-    strncat(newD, "/", 1);
+    strcat(newD, "/");
     int len = strnlen(arg, STRLEN) + 1;
     strncat(newD, arg, len);
 

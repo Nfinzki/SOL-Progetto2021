@@ -1332,14 +1332,19 @@ void initializeSocket(int* fd_socket) {
     SYSCALL_ONE_EXIT(listen(*fd_socket, MAXCONN), "listen")
 }
 
-void spawnThread(int W, int *writeEndpoint) {
+pthread_t* spawnThread(int W, int *writeEndpoint) {
+    pthread_t *tidLst = malloc(sizeof(pthread_t) * W);
+    if (tidLst == NULL) return NULL;
     for(int i = 0; i < W; i++) {
         int err;
-        pthread_t tid;
-        SYSCALL_NOT_ZERO_EXIT(err, pthread_create(&tid, NULL, workerThread, (void*) writeEndpoint), "pthread_create")
+        // pthread_t tid;
+        // SYSCALL_NOT_ZERO_EXIT(err, pthread_create(&tid, NULL, workerThread, (void*) writeEndpoint), "pthread_create")
+        // SYSCALL_NOT_ZERO_EXIT(err, pthread_detach(tid), "pthread_detach")
 
-        SYSCALL_NOT_ZERO_EXIT(err, pthread_detach(tid), "pthread_detach")
+        SYSCALL_NOT_ZERO_EXIT(err, pthread_create(&(tidLst[i]), NULL, workerThread, (void*) writeEndpoint), "pthread_create")
     }
+
+    return tidLst;
 }
 
 int updateSet(fd_set *set, int fdMax) {
@@ -1396,7 +1401,8 @@ int main(int argc, char* argv[]) {
     int fdPipe[2];
     SYSCALL_ONE_EXIT(pipe(fdPipe), "pipe");
 
-    spawnThread(numW, &fdPipe[1]);
+    pthread_t *tidLst;
+    if ((tidLst = spawnThread(numW, &fdPipe[1])) == NULL) exit(EXIT_FAILURE);
 
     int listenSocket;
     initializeSocket(&listenSocket);
@@ -1506,6 +1512,10 @@ int main(int argc, char* argv[]) {
     
     sigCaught = 1;
     pthread_cond_broadcast(&cond_emptyConnections);
+
+    for(int i = 0; i < numW; i++) {
+        pthread_join(tidLst[i], NULL);
+    }
 
     char* file;
     while((file = list_pop(fileHistory)) != NULL) printf("%s\n", file); //Non esegue la free perché l'elemento nella lista è lo stesso che è presente nella chiave della hashtable quindi va liberato una volta sola
