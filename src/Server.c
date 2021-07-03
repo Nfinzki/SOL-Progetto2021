@@ -402,6 +402,8 @@ int createFile(int fd, int len, char* path) {
     if (fileStorage->actual_space > fileStorage->max_space_reached) fileStorage->max_space_reached = fileStorage->actual_space;
     if (fileStorage->actual_numFile > fileStorage->max_file_reached) fileStorage->max_file_reached = fileStorage->actual_numFile;
 
+    Pthread_mutex_unlock(&mutex_storage);
+    Pthread_mutex_lock(&mutex_filehistory);
     if (list_append(fileHistory, newFile->path) == -1) {
         perror("list_append");
         icl_hash_delete(fileStorage->files, newFile->path, NULL, freeFile);
@@ -409,6 +411,7 @@ int createFile(int fd, int len, char* path) {
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return -1;
     }
+    Pthread_mutex_unlock(&mutex_filehistory);
 
     return 0;
 }
@@ -1090,6 +1093,9 @@ int removeFile(int fd) {
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return -1;
     }
+
+    file->isDeleted = 1;
+    pthread_cond_broadcast(&(file->wait_lock));
 
     if (list_delete(fileHistory, path, NULL) == -1) { //Non libero la memoria perché verrà liberata dalla icl_hash_delete
         free(path);
