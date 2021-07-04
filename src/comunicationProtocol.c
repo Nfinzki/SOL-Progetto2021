@@ -409,6 +409,7 @@ static int writeRemoteFiles(int res, const char* dirname) {
         if (dirname == NULL) { //Se non è stata specificata la directory, i file vengono scartati
             free(path);
             free(data);
+            nWrote++;
             if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
             continue;
         }
