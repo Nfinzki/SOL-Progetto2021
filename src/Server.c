@@ -1458,12 +1458,12 @@ int main(int argc, char* argv[]) {
                     if (c_fd < 0) {
                         c_fd *= -1;
                         FD_CLR(c_fd, &setConnected);
-                        continue;
+                        break;
                     }
 
                     FD_SET(c_fd, &set);
                     if (c_fd > fdMax) fdMax = c_fd;
-                    continue;
+                    break;
                 }
 
                 if (fd == listenSocket && !stopConnections) {
@@ -1471,7 +1471,7 @@ int main(int argc, char* argv[]) {
 
                     if (newFd == -1) {
                         fprintf(stderr, "An error has occurred accepting connection\n");
-                        continue;
+                        break;
                     }
 
                     FD_SET(newFd, &set);
@@ -1480,7 +1480,7 @@ int main(int argc, char* argv[]) {
                     if (newFd > connectedMax) connectedMax = newFd;
                     printf("Client connesso\n");
                     fflush(stdout);
-                    continue;
+                    break;
                 }
 
                 if (fd != fdPipe[0] && fd != listenSocket && fd != signalPipe[0]) {
@@ -1498,6 +1498,8 @@ int main(int argc, char* argv[]) {
                     
                     pthread_cond_signal(&cond_emptyConnections);
                     Pthread_mutex_unlock(&mutex_connections);
+
+                    break;
                 }
 
                 if (fd == signalPipe[0]) {
