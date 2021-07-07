@@ -165,7 +165,7 @@ int closeConnection(const char* sockname) {
 static int existFile(const char* pathname) {
     int pathlen = strnlen(pathname, STRLEN) + 1;
     char* tmp = calloc(pathlen, sizeof(char));
-    if (tmp == NULL) {errno = ENOMEM; return -1;}
+    if (tmp == NULL) return -1;
     strncpy(tmp, pathname, pathlen);
 
     // Invia il tipo di operazione
@@ -221,11 +221,11 @@ int openFile(const char* pathname, int flags) {
 
     //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
     oFile *file = malloc(sizeof(oFile));
-    if (file == NULL) {errno = ENOMEM; return -1;}
+    if (file == NULL) return -1;
 
     int len = strnlen(pathname, STRLEN) + 1;
     file->path = calloc(len, sizeof(char));
-    if (file->path == NULL) {errno = ENOMEM; return -1;}
+    if (file->path == NULL) return -1;
     strncpy(file->path, pathname, len);
 
     //Se il file è stato già aperto ritorna subito
@@ -251,7 +251,7 @@ int openFile(const char* pathname, int flags) {
     //Copia il nome del file
     int pathlen = strnlen(pathname, STRLEN) + 1;
     char* tmp = calloc(pathlen, sizeof(char));
-    if (tmp == NULL) {errno = ENOMEM; return -1;}
+    if (tmp == NULL) return -1;
     strncpy(tmp, pathname, pathlen);
 
     //Apre il file
@@ -267,9 +267,9 @@ int openFile(const char* pathname, int flags) {
 
     if (res == 0) {
         oFile *newof = malloc(sizeof(oFile));
-        if (newof == NULL) {errno = ENOMEM; return -1;}
+        if (newof == NULL) return -1;
         newof->path = calloc(pathlen, sizeof(char));
-        if (newof->path == NULL) {errno = ENOMEM; return -1;}
+        if (newof->path == NULL) return -1;
         strncpy(newof->path, tmp, pathlen);
         newof->op = 0;
 
@@ -307,12 +307,12 @@ int readFile(const char* pathname, void** buf, size_t* size) {
     //Copia il nome del file
     int pathlen = strnlen(pathname, STRLEN) + 1;
     char* tmp = calloc(pathlen, sizeof(char));
-    if (tmp == NULL) {errno = ENOMEM; return -1;}
+    if (tmp == NULL) return -1;
     strncpy(tmp, pathname, pathlen);
 
     //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
     oFile *file = malloc(sizeof(oFile));
-    if (file == NULL) {errno = ENOMEM; return -1;}
+    if (file == NULL) return -1;
     file->path = tmp;
     oFile *f;
 
@@ -360,7 +360,7 @@ int readFile(const char* pathname, void** buf, size_t* size) {
     if (readn(fdSocket, size, sizeof(size_t)) == -1) return -1;
 
     //Alloca la dimensione per il buffer
-    if((*buf = calloc(*size, sizeof(char))) == NULL) {errno = ENOMEM; return -1;}
+    if((*buf = calloc(*size, sizeof(char))) == NULL) return -1;
 
     //Lettura del contenuto del file
     if (readn(fdSocket, *buf, *size * sizeof(char)) == -1) return -1;
@@ -391,7 +391,7 @@ static int writeRemoteFiles(int res, const char* dirname) {
         if (readn(fdSocket, &len, sizeof(int)) == -1) return -1;
 
         char* path = calloc(len, sizeof(char));
-        if (path == NULL) {errno = ENOMEM; return -1;}
+        if (path == NULL) return -1;
 
         //Lettura del path
         if (readn(fdSocket, path, len * sizeof(char)) == -1) {free(path); return -1;}
@@ -401,7 +401,7 @@ static int writeRemoteFiles(int res, const char* dirname) {
         if (readn(fdSocket, &dim, sizeof(size_t)) == -1) {free(path); return -1;}
 
         char* data = malloc(dim * sizeof(char));
-        if (data == NULL) {free(path); errno = ENOMEM; return -1;}
+        if (data == NULL) {free(path); return -1;}
 
         //Lettura del file
         if (readn(fdSocket, data, dim * sizeof(char)) == -1) {free(path); free(data); return -1;}
@@ -419,7 +419,7 @@ static int writeRemoteFiles(int res, const char* dirname) {
         int fullstop = -1;
         for(startName = len - 1; startName >= 0; startName--) {
             if (path[startName] == '/') break;
-            if (path[startName] == '.') fullstop = fullstop == -1 ? startName : fullstop;
+            if (path[startName] == '.') fullstop = (fullstop == -1 ? startName : fullstop);
         }
         startName++;
 
@@ -429,7 +429,6 @@ static int writeRemoteFiles(int res, const char* dirname) {
             if (extension == NULL) {
                 free(path);
                 free(data);
-                errno = ENOMEM;
                 return -1;
             }
 
@@ -442,7 +441,6 @@ static int writeRemoteFiles(int res, const char* dirname) {
             free(path);
             free(data);
             if (fullstop != -1) free(extension);
-            errno = ENOMEM;
             return -1;
         }
 
@@ -459,7 +457,7 @@ static int writeRemoteFiles(int res, const char* dirname) {
             do {
                 len_cwd *= 2;
                 char* tmp = realloc(cwd, len_cwd);
-                if (tmp == NULL) {errno = ENOMEM; return -1;}
+                if (tmp == NULL) return -1;
                 cwd = tmp;
             } while((cwd = getcwd(cwd, len_cwd)) == NULL);
         }
@@ -481,7 +479,7 @@ static int writeRemoteFiles(int res, const char* dirname) {
 
             if (try == 1) {
                 char* tmp = realloc(path, (len + 2) * sizeof(char));
-                if (tmp == NULL) {errno = ENOMEM; return -1;}
+                if (tmp == NULL) return -1;
                 path = tmp;
                 len += 2;
             }
@@ -495,15 +493,15 @@ static int writeRemoteFiles(int res, const char* dirname) {
 
             if (nCifre > oldCifre) {
                 char* tmp = realloc(path, (len + 1) * sizeof(char));
-                if (tmp == NULL) {errno = ENOMEM; return -1;}
+                if (tmp == NULL) return -1;
                 path = tmp;
                 len++;
             }
 
             oldCifre = nCifre;
 
-            int offset = fullstop == -1 ? len-(3+nCifre) : fullstop; //2 + nCifre posizioni per '(x)' e un'altra posizione per sovrascrivere il carattere terminatore
-            snprintf(path + offset, sizeof(int) + 2 * sizeof(char), "(%d)", try);
+            int offset = (fullstop == -1 ? len-(3+nCifre) : fullstop); //2 + nCifre posizioni per '(x)' e un'altra posizione per sovrascrivere il carattere terminatore
+            snprintf(path + offset, 2+nCifre+1, "(%d)", try);
             if (fullstop != -1) strncpy(path + fullstop + nCifre + 2, extension, len - fullstop);
             
             try++;
@@ -596,12 +594,12 @@ int writeFile(const char* pathname, const char* dirname) {
     //Copia il nome del file
     int pathlen = strnlen(pathname, STRLEN) + 1;
     char* path = calloc(pathlen, sizeof(char));
-    if (path == NULL) {errno = ENOMEM; return -1;}
+    if (path == NULL) return -1;
     strncpy(path, pathname, pathlen);
 
     //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
     oFile *file = malloc(sizeof(oFile));
-    if (file == NULL) {errno = ENOMEM; return -1;}
+    if (file == NULL) return -1;
     file->path = path;
     oFile *f;
 
@@ -643,7 +641,7 @@ int writeFile(const char* pathname, const char* dirname) {
     if ((fd = open(path, O_RDONLY)) == -1) return -1;
 
     char* tmp = calloc(STRLEN, sizeof(char));
-    if (tmp == NULL) {errno = ENOMEM; return -1;}   
+    if (tmp == NULL) return -1;
 
     int opt = WRITE_FILE;
     if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(path); free(tmp); return -1;}
@@ -702,12 +700,12 @@ int appendToFile(const char* pathname, void* buf, size_t size, const char* dirna
     //Copia il nome del file
     int pathlen = strnlen(pathname, STRLEN) + 1;
     char* tmp = calloc(pathlen, sizeof(char));
-    if (tmp == NULL) {errno = ENOMEM; return -1;}
+    if (tmp == NULL) return -1;
     strncpy(tmp, pathname, pathlen);
 
     //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
     oFile *file = malloc(sizeof(oFile));
-    if (file == NULL) {errno = ENOMEM; return -1;}
+    if (file == NULL) return -1;
     file->path = tmp;
     oFile *f;
 
@@ -783,12 +781,12 @@ int lockFile(const char* pathname) {
     //Copia il nome del file
     int pathlen = strnlen(pathname, STRLEN) + 1;
     char* tmp = calloc(pathlen, sizeof(char));
-    if (tmp == NULL) {errno = ENOMEM; return -1;}
+    if (tmp == NULL) return -1;
     strncpy(tmp, pathname, pathlen);
 
     //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
     oFile *file = malloc(sizeof(oFile));
-    if (file == NULL) {errno = ENOMEM; return -1;}
+    if (file == NULL) return -1;
     file->path = tmp;
     oFile *f;
 
@@ -855,12 +853,12 @@ int unlockFile(const char* pathname) {
     //Copia il nome del file
     int pathlen = strnlen(pathname, STRLEN) + 1;
     char* tmp = calloc(pathlen, sizeof(char));
-    if (tmp == NULL) {errno = ENOMEM; return -1;}
+    if (tmp == NULL) return -1;
     strncpy(tmp, pathname, pathlen);
 
     //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
     oFile *file = malloc(sizeof(oFile));
-    if (file == NULL) {errno = ENOMEM; return -1;}
+    if (file == NULL) return -1;
     file->path = tmp;
     oFile *f;
 
@@ -926,12 +924,12 @@ int closeFile(const char* pathname) {
     //Copia il nome del file
     int pathlen = strnlen(pathname, STRLEN) + 1;
     char* tmp = calloc(pathlen, sizeof(char));
-    if (tmp == NULL) {errno = ENOMEM; return -1;}
+    if (tmp == NULL) return -1;
     strncpy(tmp, pathname, pathlen);
 
     //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
     oFile *file = malloc(sizeof(oFile));
-    if (file == NULL) {errno = ENOMEM; return -1;}
+    if (file == NULL) return -1;
     file->path = tmp;
     oFile *f;
 
@@ -1007,12 +1005,12 @@ int removeFile(const char* pathname) {
     //Copia il nome del file
     int pathlen = strnlen(pathname, STRLEN) + 1;
     char* tmp = calloc(pathlen, sizeof(char));
-    if (tmp == NULL) {errno = ENOMEM; return -1;}
+    if (tmp == NULL) return -1;
     strncpy(tmp, pathname, pathlen);
 
     //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
     oFile *file = malloc(sizeof(oFile));
-    if (file == NULL) {errno = ENOMEM; return -1;}
+    if (file == NULL) return -1;
     file->path = tmp;
     oFile *f;
 

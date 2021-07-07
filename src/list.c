@@ -34,7 +34,7 @@ list_t* list_create(list_t* lst, int (*compare_fun)(void*, void*)) {
     }
 
     lst = malloc(sizeof(list_t));
-    if (lst == NULL) {errno = ENOMEM; return NULL;}
+    if (lst == NULL) return NULL;
     lst->head = NULL;
     lst->tail = NULL;
     lst->dim = 0;
@@ -59,10 +59,7 @@ int list_push(list_t* lst, void* data) {
     }
 
     node_t *newData = (node_t*)malloc(sizeof(node_t));
-    if (newData == NULL) {
-        errno = ENOMEM;
-        return -1;
-    }
+    if (newData == NULL) return -1;
 
     newData->data = data;
     newData->next = NULL;
@@ -96,10 +93,7 @@ int list_append(list_t* lst, void* data) {
     }
 
     node_t *newData = (node_t*) malloc(sizeof(node_t));
-    if (newData == NULL) {
-        errno = ENOMEM;
-        return -1;
-    }
+    if (newData == NULL) return -1;
 
     newData->data = data;
     newData->next = NULL;

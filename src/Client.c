@@ -424,7 +424,7 @@ void arg_D(char* arg) {
         do {
             len_cwd *= 2;
             char* tmp = realloc(newD, len_cwd);
-            if (tmp == NULL) {errno = ENOMEM; exit(EXIT_FAILURE);}
+            if (tmp == NULL) exit(EXIT_FAILURE);
             newD = tmp;
         } while((newD = getcwd(newD, len_cwd)) == NULL);
     }
@@ -627,7 +627,7 @@ int createLocalFile(char* dirname, char* filepath) {
     int len = strnlen(filepath, STRLEN) + 1;
 
     char* path = calloc(len, sizeof(char));
-    if (path == NULL) {errno = ENOMEM; return -1;}
+    if (path == NULL) return -1;
     strncpy(path, filepath, len);
 
     //Manipolazione delle stringhe per estrapolare dal path il nome e l'eventuale estensione del file
@@ -642,7 +642,7 @@ int createLocalFile(char* dirname, char* filepath) {
     char* extension;
     if (fullstop != -1) {
         extension = calloc(len - fullstop, sizeof(char));
-        if (extension == NULL) {free(path); errno = ENOMEM; return -1;}
+        if (extension == NULL) {free(path); return -1;}
 
         strncpy(extension, path + fullstop, len - fullstop - 1);
     }
