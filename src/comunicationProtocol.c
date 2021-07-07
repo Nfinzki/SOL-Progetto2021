@@ -229,7 +229,7 @@ int openFile(const char* pathname, int flags) {
     strncpy(file->path, pathname, len);
 
     //Se il file è stato già aperto ritorna subito
-    if (list_find(openedFiles, file) != NULL) {free(file); return 0;}
+    if (list_find(openedFiles, file) != NULL) {free(file->path); free(file); return 0;}
     free(file->path);
     free(file);
 
