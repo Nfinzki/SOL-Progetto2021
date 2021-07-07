@@ -424,15 +424,17 @@ static int writeRemoteFiles(int res, const char* dirname) {
         startName++;
 
         char* extension;
+        int extension_len = -1;
         if (fullstop != -1) {
-            extension = calloc(len - fullstop, sizeof(char));
+            extension_len = len - fullstop;
+            extension = calloc(extension_len, sizeof(char));
             if (extension == NULL) {
                 free(path);
                 free(data);
                 return -1;
             }
 
-            strncpy(extension, path + fullstop, len - fullstop);
+            strncpy(extension, path + fullstop, extension_len);
         }
 
         //Salvataggio e cambio della CWD per poter salvare i file
@@ -455,10 +457,24 @@ static int writeRemoteFiles(int res, const char* dirname) {
                 return -1;
             }
             do {
-                len_cwd *= 2;
-                char* tmp = realloc(cwd, len_cwd);
-                if (tmp == NULL) return -1;
-                cwd = tmp;
+                if (errno != ERANGE) { 
+                    free(path);
+                    free(data);
+                    if (fullstop != -1) free(extension);
+                    free(cwd);
+                    return -1;
+                } else {
+                    len_cwd *= 2;
+                    char* tmp = realloc(cwd, len_cwd);
+                    if (tmp == NULL) {
+                        free(path);
+                        free(data);
+                        if (fullstop != -1) free(extension);
+                        free(cwd);
+                        return -1;
+                    }
+                    cwd = tmp;
+                }
             } while((cwd = getcwd(cwd, len_cwd)) == NULL);
         }
 
@@ -479,7 +495,13 @@ static int writeRemoteFiles(int res, const char* dirname) {
 
             if (try == 1) {
                 char* tmp = realloc(path, (len + 2) * sizeof(char));
-                if (tmp == NULL) return -1;
+                if (tmp == NULL) {
+                    free(path);
+                    free(data);
+                    if (fullstop != -1) free(extension);
+                    free(cwd);
+                    return -1;
+                }
                 path = tmp;
                 len += 2;
             }
@@ -493,7 +515,13 @@ static int writeRemoteFiles(int res, const char* dirname) {
 
             if (nCifre > oldCifre) {
                 char* tmp = realloc(path, (len + 1) * sizeof(char));
-                if (tmp == NULL) return -1;
+                if (tmp == NULL) {
+                    free(path);
+                    free(data);
+                    if (fullstop != -1) free(extension);
+                    free(cwd);
+                    return -1;
+                }
                 path = tmp;
                 len++;
             }
@@ -501,8 +529,9 @@ static int writeRemoteFiles(int res, const char* dirname) {
             oldCifre = nCifre;
 
             int offset = (fullstop == -1 ? len-(3+nCifre) : fullstop); //2 + nCifre posizioni per '(x)' e un'altra posizione per sovrascrivere il carattere terminatore
-            snprintf(path + offset, 2+nCifre+1, "(%d)", try);
-            if (fullstop != -1) strncpy(path + fullstop + nCifre + 2, extension, len - fullstop);
+            snprintf(path + offset, 2 + nCifre + 1, "(%d)", try);
+            // if (fullstop != -1) strncpy(path + fullstop + nCifre + 2, extension, len - fullstop);
+            if (fullstop != -1) strncat(path, extension, extension_len);
             
             try++;
         }
@@ -532,6 +561,7 @@ static int writeRemoteFiles(int res, const char* dirname) {
         free(cwd);
         free(path);
         free(data);
+        if (fullstop != -1) free(extension);
 
         //Lettura del prossimo potenziale file inviato dal server
         if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;

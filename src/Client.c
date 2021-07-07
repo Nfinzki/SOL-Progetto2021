@@ -635,16 +635,18 @@ int createLocalFile(char* dirname, char* filepath) {
     int fullstop = -1;
     for(startName = len - 1; startName >= 0; startName--) {
         if (path[startName] == '/') break;
-        if (path[startName] == '.') fullstop = fullstop == -1 ? startName : fullstop;
+        if (path[startName] == '.') fullstop = (fullstop == -1 ? startName : fullstop);
     }
     startName++;
 
     char* extension;
+    int extension_len = -1;
     if (fullstop != -1) {
-        extension = calloc(len - fullstop, sizeof(char));
+        extension_len = len - fullstop;
+        extension = calloc(extension_len, sizeof(char));
         if (extension == NULL) {free(path); return -1;}
 
-        strncpy(extension, path + fullstop, len - fullstop - 1);
+        strncpy(extension, path + fullstop, extension_len);
     }
 
     //Salvataggio e cambio della CWD per poter salvare i file
@@ -667,15 +669,24 @@ int createLocalFile(char* dirname, char* filepath) {
             return -1;
         }
         do {
-            len_cwd *= 2;
-            char* tmp = realloc(cwd, len_cwd);
-            if (tmp == NULL) {
-                perror("realloc in req_W");
+            if (errno != ERANGE) {
+                perror("getcwd"); 
                 free(path);
                 if (fullstop != -1) free(extension);
                 free(cwd);
-                return -1;}
-            cwd = tmp;
+                return -1;
+            } else {
+                len_cwd *= 2;
+                char* tmp = realloc(cwd, len_cwd);
+                if (tmp == NULL) {
+                    perror("realloc in req_W");
+                    free(path);
+                    if (fullstop != -1) free(extension);
+                    free(cwd);
+                    return -1;
+                }
+                cwd = tmp;
+            }
         } while((cwd = getcwd(cwd, len_cwd)) == NULL);
     }
 
@@ -729,9 +740,10 @@ int createLocalFile(char* dirname, char* filepath) {
 
         oldCifre = nCifre;
 
-        int offset = fullstop == -1 ? len-(3+nCifre) : fullstop;
-        snprintf(path + offset, sizeof(int) + 2 * sizeof(char), "(%d)", try);
-        if (fullstop != -1) strncpy(path + fullstop + nCifre + 2, extension, len - fullstop);
+        int offset = (fullstop == -1 ? len-(3+nCifre) : fullstop);
+        snprintf(path + offset, 2 + nCifre + 1, "(%d)", try);
+        // if (fullstop != -1) strncpy(path + fullstop + nCifre + 2, extension, len - fullstop);
+        if (fullstop != -1) strncat(path, extension, extension_len);
         
         try++;
     }
@@ -740,8 +752,14 @@ int createLocalFile(char* dirname, char* filepath) {
     if (chdir(cwd) == -1) {
         free(cwd);
         free(path);
+        if (fullstop != -1) free(extension);
         return -1;
     }
+
+    //Libera la memoria
+    free(cwd);
+    free(path);
+    if (fullstop != -1) free(extension);
 
     return createdFile;
 }
