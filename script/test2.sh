@@ -1,5 +1,5 @@
 #!/bin/bash
-echo -e "\nEsecuzione del server con storage:\10 file\n1MB\nThreads worker: 4\n"
+echo -e "\nEsecuzione del server con storage:\n10 file\n1MB\nThreads worker: 4\n"
 ./bin/Server ./tmp/test2.txt &
 PID=$!
 sleep 1
