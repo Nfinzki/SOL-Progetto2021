@@ -178,7 +178,7 @@ void freeGlobal(){
     if (logFile != NULL) free(logFile);
 }
 
-void* sighandler(void* arg){ //Da scrivere nella relazione: Si suppone che se fallisce la sigwait tutto il processo viene terminato perché potrei non riuscire più a terminare il server.
+void* sighandler(void* arg){
     int sigPipe = *(int*) arg;
 
     sigset_t mask;
