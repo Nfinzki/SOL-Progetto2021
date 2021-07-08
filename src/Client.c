@@ -569,14 +569,12 @@ int inspectDir(const char* dir, int* n, char* saveDir) {
                 inspectDir(filepath, n, saveDir);
             } else {
                 if (flagP) printf("Apertura del file %s nel server\n", filepath);
-                if (openFile(filepath, O_CREATE) == -1) {perror("openFile"); return -1;}
+                if (openFile(filepath, O_CREATE | O_LOCK) == -1) {perror("openFile"); return -1;}
                 if (flagP) printf("Successo\n");
 
-                // if (chdir(cwd) == -1) {perror("chdir"); return -1;}
                 if (flagP) printf("Scrittura del file %s nel server\n", filepath);
                 if (writeFile(filepath, saveDir) == -1) {perror("writeFile"); return -1;}
                 if (flagP) printf("Scrittura completata con successo\n");
-                // if (chdir(dir) == -1) {perror("chdir"); return -1;}
                 
                 if (flagP) printf("Chiusura del file %s\n", filepath);
                 if (closeFile(filepath) == -1) {perror("closeFile"); return -1;}
@@ -768,7 +766,7 @@ int req_W(const char* path, char* saveDir) {
     if (path == NULL) return -1;
 
     if (flagP) printf("Apertura del file %s nel server\n", path);
-    if (openFile(path, O_CREATE) == -1) {perror("openFile"); return -1;}
+    if (openFile(path, O_CREATE | O_LOCK) == -1) {perror("openFile"); return -1;}
     if (flagP) printf("Successo\n");
 
     if (flagP) printf("Scrittura del file %s nel server\n", path);

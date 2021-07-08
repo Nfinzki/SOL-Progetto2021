@@ -271,7 +271,11 @@ int openFile(const char* pathname, int flags) {
         newof->path = calloc(pathlen, sizeof(char));
         if (newof->path == NULL) return -1;
         strncpy(newof->path, tmp, pathlen);
-        newof->op = 0;
+        if (flags == (O_CREATE | O_LOCK)) {
+            newof->op = 0;
+        } else {
+            newof->op = 1;
+        }
 
         free(tmp);
         
@@ -650,7 +654,8 @@ int writeFile(const char* pathname, const char* dirname) {
     if (!exists) {
         //Il file non è più presente nel server. Viene rimosso dalla lista dei file aperti e viene restituito un errore
         if (list_delete(openedFiles, file, freeOFile) == -1) {free(path); return -1;}
-        free(path); 
+        free(path);
+        free(file);
         errno = ENOENT;
         return -1;
     }
@@ -659,7 +664,6 @@ int writeFile(const char* pathname, const char* dirname) {
     //Effettua il controllo che non siano state fatte già altre operazioni sul file
     if (f->op == 1) {
         free(path);
-        free(file);
         errno = EPERM;
         return -1;
     } else {
