@@ -928,6 +928,18 @@ int appendFile(int fd) {
 
     SYSCALL_ONE_RETURN_F(readn(fd, newData, fileDim * sizeof(char)), "readn", free(newData); Pthread_mutex_lock(&(f->mutex_file)); f->isLocked = 0; Pthread_mutex_unlock(&(f->mutex_file)); res = EINTR; SYSCALL_ONE_EXIT(writen(fd, &res, sizeof(int)), "writen"))
 
+    //Se la quantità da scrivere è più grande della capacità massima dello storage non potrà mai essere inserito nel server
+    //Oppure se la quantità complessiva del file supera la capacità massima dello storage non inserisce i nuovi dati nel file
+    if (fileDim > fileStorage->max_space || f->byteDim + fileDim > fileStorage->max_space) {
+        Pthread_mutex_lock(&(f->mutex_file));
+        f->isLocked = 0;
+        Pthread_mutex_unlock(&(f->mutex_file));
+        free(newData);
+        res = EFBIG;
+        SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
+        return -1;
+    }
+
     if (fileStorage->actual_space + fileDim > fileStorage->max_space) {
         int resPolicy;
         if ((resPolicy = FIFO_ReplacementPolicy(fileStorage->actual_space + fileDim, fileStorage->actual_numFile, fd, f->path)) != 0) {
@@ -1344,10 +1356,6 @@ pthread_t* spawnThread(int W, int *writeEndpoint) {
     if (tidLst == NULL) return NULL;
     for(int i = 0; i < W; i++) {
         int err;
-        // pthread_t tid;
-        // SYSCALL_NOT_ZERO_EXIT(err, pthread_create(&tid, NULL, workerThread, (void*) writeEndpoint), "pthread_create")
-        // SYSCALL_NOT_ZERO_EXIT(err, pthread_detach(tid), "pthread_detach")
-
         SYSCALL_NOT_ZERO_EXIT(err, pthread_create(&(tidLst[i]), NULL, workerThread, (void*) writeEndpoint), "pthread_create")
     }
 
