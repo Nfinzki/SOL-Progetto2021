@@ -63,8 +63,6 @@ int stopConnections = 0;
 char* socketName;
 char* logFile;
 
-//Scrivere nella relazione che fileHistory e i file in storage hanno lo stesso path allocato quindi basta liberare uno dei due per liberare entrambi
-
 file_storage_t* initializeStorage(file_storage_t* storage) {
     if ((storage = malloc(sizeof(file_storage_t))) == NULL) return NULL;
 
@@ -98,7 +96,7 @@ int FIFO_ReplacementPolicy(long space, int numFiles, int fd, char* pathInvoked) 
     Pthread_mutex_lock(&mutex_storage);
     Pthread_mutex_lock(&mutex_filehistory);
     fileStorage->replacementPolicy++;
-    while(space > fileStorage->max_space || numFiles > fileStorage->max_file) {
+    while((space > fileStorage->max_space || numFiles > fileStorage->max_file) && !pathInv) {
         char* oldFile_name = (char*) list_pop(fileHistory);
 
         if (oldFile_name == NULL) {
