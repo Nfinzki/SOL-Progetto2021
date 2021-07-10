@@ -1019,11 +1019,12 @@ int main(int argc, char* argv[]) {
                 break;
             }
             case 'R': {
+                int r;
                 char* dir = (char*) list_pop(dirLst);
                 if (flagP && req->option != 0) printf("Lettura di %d file dal server\n", req->option);
                 if (flagP && req->option == 0) printf("Lettura di tutti i file dal server\n");
-                if (readNFiles(req->option, dir) == -1) {perror("readNFile"); return -1;}
-                if (flagP) printf("Lettura dei file dal server completata correttamente\n");
+                if ((r = readNFiles(req->option, dir)) == -1) {perror("readNFile"); return -1;}
+                if (flagP) printf("Lettura %d file dal server correttamente\n", r);
                 free(dir);
                 break;
             }
