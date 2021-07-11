@@ -912,19 +912,11 @@ int main(int argc, char* argv[]) {
                     if (flagP) printf("Lock del file %s\n", req->arg[i]);
                     if (lockFile(req->arg[i]) == -1) {perror("lockFile"); return -1;}
                     if (flagP) printf("Successo\n");
-
-                    if (flagP) printf("Chiusura file %s\n", req->arg[i]);
-                    if (closeFile(req->arg[i]) == -1) {perror("closeFile"); return -1;}
-                    if (flagP) printf("File %s chiuso correttamente\n", req->arg[i]);
                 }
                 break;
             }
             case 'u': {
                 for(int i = 0; i < req->dim; i++) {
-                    if (flagP) printf("Apertura file %s\n", req->arg[i]);
-                    if (openFile(req->arg[i], 0) == -1) {perror("openFile"); return -1;}
-                    if (flagP) printf("File %s aperto correttamente\n", req->arg[i]);
-
                     if (flagP) printf("Unlock del file %s\n", req->arg[i]);
                     if (unlockFile(req->arg[i]) == -1) {perror("unlockFile"); return -1;}
                     if (flagP) printf("Successo\n");
