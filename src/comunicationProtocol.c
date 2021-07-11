@@ -330,34 +330,24 @@ int readFile(const char* pathname, void** buf, size_t* size) {
 
     f->op = 1;
 
-    int exists;
-    if ((exists = existFile(tmp)) == -1) {
-        free(tmp);
-        free(file);
-        return -1;
-    }
-
-    if (!exists) {
-        //Il file non è più presente nel server. Viene rimosso dalla lista dei file aperti e viene restituito un errore
-        if (list_delete(openedFiles, file, freeOFile) == -1) {free(tmp); free(file); return -1;}
-        free(tmp); 
-        free(file);
-        errno = ENOENT;
-        return -1;
-    }
-    free(file);
-
     //Richiesta al server
     int opt = READ_FILE;
-    if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(tmp); return -1;}
-    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {free(tmp); return -1;}
-    if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(tmp); free(file); return -1;}
+    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {free(tmp); free(file); return -1;}
+    if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {free(tmp); free(file); return -1;}
     
-    free(tmp);
-
     //Attesa risposta del server
     int res;
-    if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
+    if (readn(fdSocket, &res, sizeof(int)) == -1) {free(tmp); free(file); return -1;}
+    if (res == ENOENT) {
+        list_delete(openedFiles, file, freeOFile);
+        free(tmp); 
+        free(file);
+        errno = res;
+        return -1;
+    }
+    free(tmp);
+    free(file);
     if (res != 0) {errno = res; return -1;}
 
     //Lettura della dimensione del file
@@ -644,26 +634,10 @@ int writeFile(const char* pathname, const char* dirname) {
         return -1;
     }
 
-    int exists;
-    if ((exists = existFile(path)) == -1) {
-        free(path);
-        free(file);
-        return -1;
-    }
-
-    if (!exists) {
-        //Il file non è più presente nel server. Viene rimosso dalla lista dei file aperti e viene restituito un errore
-        if (list_delete(openedFiles, file, freeOFile) == -1) {free(path); return -1;}
-        free(path);
-        free(file);
-        errno = ENOENT;
-        return -1;
-    }
-    free(file);
-
     //Effettua il controllo che non siano state fatte già altre operazioni sul file
     if (f->op == 1) {
         free(path);
+        free(file);
         errno = EPERM;
         return -1;
     } else {
@@ -672,37 +646,46 @@ int writeFile(const char* pathname, const char* dirname) {
 
     int fd;
     //Apre il file
-    if ((fd = open(path, O_RDONLY)) == -1) return -1;
+    if ((fd = open(path, O_RDONLY)) == -1) {free(file); free(path); return -1;}
 
     char* tmp = calloc(STRLEN, sizeof(char));
-    if (tmp == NULL) return -1;
+    if (tmp == NULL) {free(file); free(path); return -1;}
 
     int opt = WRITE_FILE;
-    if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(path); free(tmp); return -1;}
-    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {free(path); free(tmp); return -1;}
-    if (writen(fdSocket, path, pathlen * sizeof(char)) == -1) {free(path); free(tmp); return -1;}
-    free(path);
+    if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(file); free(path); free(tmp); return -1;}
+    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {free(file); free(path); free(tmp); return -1;}
+    if (writen(fdSocket, path, pathlen * sizeof(char)) == -1) {free(file); free(path); free(tmp); return -1;}
 
     size_t res;
     //Scrive il file sul server STRLEN byte alla volta
     do {
         size_t len;
-        if ((res = readn(fd, tmp, STRLEN)) == -1) return -1;
+        if ((res = readn(fd, tmp, STRLEN)) == -1) {free(file); free(path); free(tmp); return -1;}
         if (res == 0) len = strnlen(tmp, STRLEN) + 1;
         else len = res;
         
-        if (writen(fdSocket, &len, sizeof(size_t)) == -1) {free(tmp); return -1;}
-        if (writen(fdSocket, tmp, len * sizeof(char)) == -1) {free(tmp); return -1;}
+        if (writen(fdSocket, &len, sizeof(size_t)) == -1) {free(file); free(path); free(tmp); return -1;}
+        if (writen(fdSocket, tmp, len * sizeof(char)) == -1) {free(file); free(path); free(tmp); return -1;}
         memset(tmp, 0, STRLEN);
     } while(res != 0);
     free(tmp);
     close(fd);
     
     res = 0;
-    if (writen(fdSocket, &res, sizeof(size_t)) == -1) return -1;
+    if (writen(fdSocket, &res, sizeof(size_t)) == -1) {free(path); free(file); return -1;}
 
     int result;
-    if (readn(fdSocket, &result, sizeof(int)) == -1) return -1;
+    if (readn(fdSocket, &result, sizeof(int)) == -1) {free(path); free(file); return -1;}
+
+    if (res == ENOENT) {
+        list_delete(openedFiles, file, freeOFile);
+        free(path);
+        free(file);
+        errno = res;
+        return -1;
+    }
+    free(path);
+    free(file);
 
     if (result != SEND_FILE) {
         if (result != 0) {errno = res; return -1;}
@@ -752,37 +735,28 @@ int appendToFile(const char* pathname, void* buf, size_t size, const char* dirna
 
     f->op = 1;
 
-    int exists;
-    if ((exists = existFile(tmp)) == -1) {
-        free(tmp);
-        free(file);
-        return -1;
-    }
-
-    if (!exists) {
-        //Il file non è più presente nel server. Viene rimosso dalla lista dei file aperti e viene restituito un errore
-        if (list_delete(openedFiles, file, freeOFile) == -1) {free(tmp); free(file); return -1;}
-        free(tmp); 
-        free(file);
-        errno = ENOENT;
-        return -1;
-    }
-
-    free(file);
-
     //Richiesta al server
     int opt = APPEND_FILE;
-    if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(tmp); return -1;}
-    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {free(tmp); return -1;}
-    if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {free(tmp); return -1;}
-    if (writen(fdSocket, &size, sizeof(size_t)) == -1) {free(tmp); return -1;}
-    if (writen(fdSocket, buf, size * sizeof(char)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(tmp); free(file); return -1;}
+    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {free(tmp); free(file); return -1;}
+    if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {free(tmp); free(file); return -1;}
+    if (writen(fdSocket, &size, sizeof(size_t)) == -1) {free(tmp); free(file); return -1;}
+    if (writen(fdSocket, buf, size * sizeof(char)) == -1) {free(tmp); free(file); return -1;}
 
-    free(tmp);
 
     //Lettura risposta
     int res;
-    if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
+    if (readn(fdSocket, &res, sizeof(int)) == -1) {free(tmp); free(file); return -1;}
+
+    if (res == ENOENT) {
+        list_delete(openedFiles, file, freeOFile);
+        free(tmp);
+        free(file);
+        errno = res;
+        return -1;
+    }
+    free(tmp);
+    free(file);
 
     if (res != SEND_FILE) {
         if (res != 0) {errno = res; return -1;}
@@ -833,35 +807,26 @@ int lockFile(const char* pathname) {
 
     f->op = 1;
 
-    int exists;
-    if ((exists = existFile(tmp)) == -1) {
-        free(tmp);
-        free(file);
-        return -1;
-    }
-
-    if (!exists) {
-        //Il file non è più presente nel server. Viene rimosso dalla lista dei file aperti e viene restituito un errore
-        if (list_delete(openedFiles, file, freeOFile) == -1) {free(tmp); free(file); return -1;}
-        free(tmp); 
-        free(file);
-        errno = ENOENT;
-        return -1;
-    }
-
-    free(file);
-
     //Richiesta al server
     int opt = LOCK_FILE;
-    if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(tmp); return -1;}
-    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {free(tmp); return -1;}
-    if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(tmp); free(file); return -1;}
+    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {free(tmp); free(file); return -1;}
+    if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {free(tmp); free(file); return -1;}
 
-    free(tmp);
 
     //Lettura risposta
     int res;
-    if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
+    if (readn(fdSocket, &res, sizeof(int)) == -1) {free(tmp); free(file); return -1;}
+
+    if (res == ENOENT) {
+        list_delete(openedFiles, file, freeOFile);
+        free(tmp);
+        free(file);
+        errno = res;
+        return -1;
+    }
+    free(tmp);
+    free(file);
 
     if (res != 0) {errno = res; return -1;}
     return res;
@@ -905,35 +870,26 @@ int unlockFile(const char* pathname) {
 
     f->op = 1;
 
-    int exists;
-    if ((exists = existFile(tmp)) == -1) {
-        free(tmp);
-        free(file);
-        return -1;
-    }
-
-    if (!exists) {
-        //Il file non è più presente nel server. Viene rimosso dalla lista dei file aperti e viene restituito un errore
-        if (list_delete(openedFiles, file, freeOFile) == -1) {free(tmp); free(file); return -1;}
-        free(tmp); 
-        free(file);
-        errno = ENOENT;
-        return -1;
-    }
-
-    free(file);
-
     //Richiesta al server
     int opt = UNLOCK_FILE;
-    if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(tmp); return -1;}
-    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {free(tmp); return -1;}
-    if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(tmp); free(file); return -1;}
+    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {free(tmp); free(file); return -1;}
+    if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {free(tmp); free(file); return -1;}
 
-    free(tmp);
 
     //Lettura risposta
     int res;
-    if (readn(fdSocket, &res, sizeof(int)) == -1) return -1;
+    if (readn(fdSocket, &res, sizeof(int)) == -1) {free(tmp); free(file); return -1;}
+
+    if (res == ENOENT) {
+        list_delete(openedFiles, file, freeOFile);
+        free(tmp);
+        free(file);
+        errno = res;
+        return -1;
+    }
+    free(tmp);
+    free(file);
 
     if (res != 0) {errno = res; return -1;}
     return res;
@@ -963,7 +919,7 @@ int closeFile(const char* pathname) {
 
     //Costruisce la struttura per poter ricercare il file nella lista dei file aperti
     oFile *file = malloc(sizeof(oFile));
-    if (file == NULL) return -1;
+    if (file == NULL) {free(tmp); return -1;}
     file->path = tmp;
     oFile *f;
 
@@ -983,33 +939,11 @@ int closeFile(const char* pathname) {
     }
     free(file);
 
-    int exists;
-    if ((exists = existFile(tmp)) == -1) {
-        free(tmp);
-        return -1;
-    }
-
-    if (!exists) {
-        free(tmp);
-        errno = ENOENT;
-        return -1;
-    }
-
     int opt = CLOSE_FILE;
 
-    if(writen(fdSocket, &opt, sizeof(int)) == -1) {
-        free(tmp);
-        return -1;
-    }
-
-    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {
-        free(tmp);
-        return -1;
-    }
-    if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {
-        free(tmp);
-        return -1;
-    }
+    if(writen(fdSocket, &opt, sizeof(int)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, &pathlen, sizeof(int)) == -1) {free(tmp); return -1;}
+    if (writen(fdSocket, tmp, pathlen * sizeof(char)) == -1) {free(tmp); return -1;}
     free(tmp);
 
     //Attende la risposta del server
@@ -1062,18 +996,6 @@ int removeFile(const char* pathname) {
     free(file);
 
     f->op = 1;
-
-    int exists;
-    if ((exists = existFile(tmp)) == -1) {
-        free(tmp);
-        return -1;
-    }
-
-    if (!exists) {
-        free(tmp);
-        errno = ENOENT;
-        return -1;
-    }
 
     //Richiesta al server
     int opt = REMOVE_FILE;
