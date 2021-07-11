@@ -9,6 +9,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <dirent.h>
+#include <limits.h>
 
 #include "../includes/util.h"
 #include "../includes/comunicationProtocol.h"
@@ -58,128 +59,6 @@ int countComma (char* str) {
     return commas;
 }
 
-char* getabspath(char* path) {
-    int len = strnlen(path, STRLEN) + 1;
-        
-    int i;
-    for(i = len - 1; i >= 0; i--) {
-        if (path[i] == '/') break;
-    }
-
-    if (i == -1) {
-        char* cwd = calloc(STRLEN, sizeof(char));
-        if (cwd == NULL) return NULL;
-
-        int len_cwd = STRLEN;
-        if((cwd = getcwd(cwd, len_cwd)) == NULL) {
-            if (errno != ERANGE) {
-                perror("getcwd");
-                free(cwd);
-                return NULL;
-            }
-            do {
-                len_cwd *= 2;
-                char* tmp = realloc(cwd, len_cwd);
-                if (tmp == NULL) {perror("realloc in getabspath"); return NULL;}
-                cwd = tmp;
-            } while((cwd = getcwd(cwd, len_cwd)) == NULL);
-        }
-
-        if (len_cwd <= strnlen(cwd, len_cwd) + len) {
-            cwd += (len - i);
-            char* tmp = realloc(cwd, len_cwd * sizeof(char));
-            if (tmp == NULL) {
-                free(cwd);
-                return NULL;
-            }
-            cwd = tmp;
-        }
-
-        strncat(cwd, "/", 2);
-        strncat(cwd, path, len);
-
-        return cwd;
-    }
-    
-    char* dirpath = calloc(i+1, sizeof(char));
-    if (dirpath == NULL) return NULL;
-
-    strncpy(dirpath, path, i);
-
-    char* cwd = calloc(STRLEN, sizeof(char));
-    if (cwd == NULL) {free(dirpath); return NULL;}
-
-    int len_cwd = STRLEN;
-    if((cwd = getcwd(cwd, len_cwd)) == NULL) {
-        if (errno != ERANGE) {
-            perror("getcwd");
-            free(cwd);
-            free(dirpath);
-            return NULL;
-        }
-        do {
-            len_cwd *= 2;
-            char* tmp = realloc(cwd, len_cwd);
-            if (tmp == NULL) {perror("realloc in getabspath"); return NULL;}
-            cwd = tmp;
-        } while((cwd = getcwd(cwd, len_cwd)) == NULL);
-    }
-
-    if (chdir(dirpath) == -1) {
-        fprintf(stderr, "Percorso del file invalido\n");
-        free(cwd);
-        free(dirpath);
-        return NULL;
-    }
-
-
-    char* cwd_file = calloc(STRLEN, sizeof(char));
-    if (cwd_file == NULL) {free(path); return NULL;}
-
-    int len_cwd_file = STRLEN;
-    if((cwd_file = getcwd(cwd_file, len_cwd_file)) == NULL) {
-        if (errno != ERANGE) {
-            perror("getcwd");
-            free(cwd_file);
-            free(cwd);
-            free(dirpath);
-            return NULL;
-        }
-        do {
-            len_cwd_file *= 2;
-            char* tmp = realloc(cwd, len_cwd_file);
-            if (tmp == NULL) return NULL;
-            cwd_file = tmp;
-        } while((cwd_file = getcwd(cwd_file, len_cwd_file)) == NULL);
-    }
-
-    if (len_cwd_file <= strnlen(cwd_file, len_cwd_file) + (len - i)) {
-        len_cwd_file += (len - i);
-        char* tmp = realloc(cwd_file, len_cwd_file * sizeof(char));
-        if (tmp == NULL) {
-            free(cwd);
-            free(cwd_file);
-            free(dirpath);
-            return NULL;
-        }
-        cwd_file = tmp;
-    }
-
-    strncat(cwd_file, path + i, len_cwd_file);
-
-    if (chdir(cwd) == -1) {
-        free(cwd);
-        free(cwd_file);
-        free(dirpath);
-        return NULL;
-    }
-
-    free(cwd);
-    free(dirpath);
-
-    return cwd_file;
-}
-
 char** tokString (char** str, int* initSize) {
     *initSize = countComma(*str) + 1;
 
@@ -195,16 +74,7 @@ char** tokString (char** str, int* initSize) {
 
     int i = 0;
     while(token) {
-        char* file = getabspath(token);
-        if (file == NULL) {perror("getabspath"); return NULL;}
-        int filelen = strnlen(file, STRLEN) + 1;
-        arg[i] = calloc(filelen, sizeof(char));
-        if (arg[i] == NULL) {
-            fprintf(stderr, "Errore critico in memoria\n");
-            return NULL;
-        }
-        strncpy(arg[i], file, filelen);
-        free(file);
+        arg[i] = realpath(token, NULL);
         i++;
         token = strtok_r(NULL, ",", &state);
     }
