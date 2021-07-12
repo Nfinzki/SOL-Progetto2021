@@ -22,16 +22,17 @@
 typedef struct _request {
     char flag;
     int option;
-    char** arg;
-    int dim;
+    char** arg; //Lista dei file/directory
+    int dim; //Dimensione della lista
 } request_t;
 
-list_t* requestLst;
-list_t* dirLst;
-list_t* DdirLst;
+list_t* requestLst; //Lista delle richieste da effettuare
+list_t* dirLst; //Lista delle directory specificate da '-d' in cui salvare i file
+list_t* DdirLst; //Lista delle directory specificate da '-D' in cui salvare i file
 
 int flagP = 0;
 
+//Confronta due richieste
 int compareRequest(void* a, void* b) {
     request_t *reqA = (request_t*) a;
     request_t *reqB = (request_t*) b;
@@ -42,6 +43,7 @@ int compareRequest(void* a, void* b) {
     return 1;
 }
 
+//Libera la memoria di una richiesta
 void freeRequest(void* r) {
     request_t *req = (request_t*) r;
     for(int i = 0; i < req->dim; i++)
@@ -59,6 +61,7 @@ int countComma (char* str) {
     return commas;
 }
 
+//Separa tutti i file contenuti nella stringa
 char** tokString (char** str, int* initSize) {
     *initSize = countComma(*str) + 1;
 
@@ -75,6 +78,10 @@ char** tokString (char** str, int* initSize) {
     int i = 0;
     while(token) {
         arg[i] = realpath(token, NULL);
+        if (arg[i] == NULL) {
+            perror("realpath");
+            return NULL;
+        }
         i++;
         token = strtok_r(NULL, ",", &state);
     }
@@ -130,6 +137,7 @@ void arg_w (char* arg) {
     } else {
         long tmp;
 
+        //Converte l'argomento opzionale in numero
         if (isNumber(arg + lenDir + 2, &tmp) != 0) {
             fprintf(stderr, "Errore in isNumber in arg_w\n");
             freeRequest(newR);
@@ -139,6 +147,7 @@ void arg_w (char* arg) {
         newR->option = tmp;
     }
 
+    //Aggiunge la richiesta in coda
     if (list_append(requestLst, newR) == -1) {
         freeRequest(newR);
         SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
@@ -162,6 +171,7 @@ void arg_W(char** arg) {
         exit(EXIT_FAILURE);
     }
     
+    //Aggiunge la richiesta in coda
     if (list_append(requestLst, newR) == -1) {
         freeRequest(newR);
         SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
@@ -185,6 +195,7 @@ void arg_r(char** arg) {
         exit(EXIT_FAILURE);
     }
     
+    //Aggiunge la richiesta in coda
     if (list_append(requestLst, newR) == -1) {
         freeRequest(newR);
         SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
@@ -207,6 +218,7 @@ int arg_R(char* arg) {
     newR->dim = 0;
     newR->arg = NULL;
 
+    //Converte l'argomento in numero
     long tmp;
     if (isNumber(arg+2, &tmp) != 0) {
         fprintf(stderr, "isNumber in case 'R'\n");
@@ -215,6 +227,7 @@ int arg_R(char* arg) {
     }
     newR->option = tmp;
 
+    //Aggiunge la richiesta in coda
     if (list_append(requestLst, newR) == -1) {
         freeRequest(newR);
         SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
@@ -240,7 +253,8 @@ void arg_c(char** arg) {
         SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
         exit(EXIT_FAILURE);
     }
-    
+
+    //Aggiunge la richiesta in coda
     if (list_append(requestLst, newR) == -1) {
         freeRequest(newR);
         SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
@@ -261,6 +275,7 @@ void arg_d(char* arg) {
 
     strncpy(newD, arg, len);
 
+    //Aggiunge la richiesta in coda
     if (list_append(dirLst, newD) == -1) {
         free(newD);
         SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
@@ -271,38 +286,16 @@ void arg_d(char* arg) {
 }
 
 void arg_D(char* arg) {    
-    char* newD = calloc(STRLEN, sizeof(char));
-    if(newD == NULL) {
-        perror("calloc in arg_d");
+    char* newD = realpath(arg, NULL);
+    if (newD == NULL) {
+        perror("realpath");
         SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
         SYSCALL_ONE_EXIT(list_destroy(dirLst, free), "list_destroy");
         SYSCALL_ONE_EXIT(list_destroy(DdirLst, free), "list_destroy");
         exit(EXIT_FAILURE);
     }
 
-    //Salva la cwd
-    int len_cwd = STRLEN;
-    if((newD = getcwd(newD, len_cwd)) == NULL) {
-        if (errno != ERANGE) { 
-            perror("getcwd in arg_d");
-            free(newD);
-            SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
-            SYSCALL_ONE_EXIT(list_destroy(dirLst, free), "list_destroy");
-            SYSCALL_ONE_EXIT(list_destroy(DdirLst, free), "list_destroy");
-            exit(EXIT_FAILURE);
-        }
-        do {
-            len_cwd *= 2;
-            char* tmp = realloc(newD, len_cwd);
-            if (tmp == NULL) exit(EXIT_FAILURE);
-            newD = tmp;
-        } while((newD = getcwd(newD, len_cwd)) == NULL);
-    }
-
-    strcat(newD, "/");
-    int len = strnlen(arg, STRLEN) + 1;
-    strncat(newD, arg, len);
-
+    //Aggiunge la richiesta in coda
     if (list_append(DdirLst, newD) == -1) {
         free(newD);
         SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
@@ -329,6 +322,7 @@ void arg_l(char** arg) {
         exit(EXIT_FAILURE);
     }
     
+    //Aggiunge la richiesta in coda
     if (list_append(requestLst, newR) == -1) {
         freeRequest(newR);
         SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
@@ -353,6 +347,7 @@ void arg_u(char** arg) {
         exit(EXIT_FAILURE);
     }
     
+    //Aggiunge la richiesta in coda
     if (list_append(requestLst, newR) == -1) {
         freeRequest(newR);
         SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
@@ -368,6 +363,7 @@ void ignoreSigpipe() {
     SYSCALL_ONE_EXIT(sigaction(SIGPIPE, &s, NULL), "sigaction");
 }
 
+//Visita ricorsivamente le directory fino a quando non manda 'n' file al server
 int inspectDir(const char* dir, int* n, char* saveDir) {
     if (*n == 0) return 0;
 
@@ -403,31 +399,14 @@ int inspectDir(const char* dir, int* n, char* saveDir) {
 
     while ((errno = 0, currentFile = readdir(d)) != NULL) {
 
-        if (strncmp(".", currentFile->d_name, 2) != 0 && strncmp("..", currentFile->d_name, 3) != 0 && *n != 0) {
+        if (strncmp(".", currentFile->d_name, 2) != 0 && strncmp("..", currentFile->d_name, 3) != 0 && *n != 0) { //Se la directory è diversa da "." e ".."
 
-            char* filepath = calloc(STRLEN, sizeof(char));
-            if (filepath == NULL) {perror("calloc in inspectDir"); return -1;}
-
-            int len = STRLEN;
-            if((filepath = getcwd(filepath, len)) == NULL) {
-                if (errno != ERANGE) {perror("getcwd"); return -1;}
-                do {
-                    len *= 2;
-                    char* tmp = realloc(filepath, len);
-                    if (tmp == NULL) {perror("realloc in inspectDir"); return -1;}
-                    filepath = tmp;
-                } while((filepath = getcwd(filepath, len)) == NULL);
+            //Calcola il path assoluto
+            char* filepath = realpath(currentFile->d_name, NULL);
+            if (filepath == NULL) {
+                perror("filepath");
+                return -1;
             }
-
-            if (strnlen(filepath, len) + strnlen(currentFile->d_name, STRLEN) > len) {
-                len += strnlen(currentFile->d_name, STRLEN);
-                char* tmp = realloc(filepath, len);
-                if (tmp == NULL) {perror("realloc in inspectDir"); return -1;}
-                filepath = tmp;
-            }
-
-            strncat(filepath, "/", len);
-            strncat(filepath, currentFile->d_name, len);
 
             struct stat statFile;
             if (stat(filepath, &statFile) == -1) {
@@ -436,16 +415,20 @@ int inspectDir(const char* dir, int* n, char* saveDir) {
             }
 
             if (S_ISDIR(statFile.st_mode)) {
-                inspectDir(filepath, n, saveDir);
+                //Visita ricorsiva della directory
+                if (inspectDir(filepath, n, saveDir) == -1) {free(filepath); return -1;}
             } else {
+                //Crea il file sul server
                 if (flagP) printf("Apertura del file %s nel server\n", filepath);
                 if (openFile(filepath, O_CREATE | O_LOCK) == -1) {perror("openFile"); return -1;}
                 if (flagP) printf("Successo\n");
 
+                //Scrive il file sul server
                 if (flagP) printf("Scrittura del file %s nel server\n", filepath);
                 if (writeFile(filepath, saveDir) == -1) {perror("writeFile"); return -1;}
                 if (flagP) printf("Scrittura completata con successo\n");
                 
+                //Chiude il file
                 if (flagP) printf("Chiusura del file %s\n", filepath);
                 if (closeFile(filepath) == -1) {perror("closeFile"); return -1;}
                 if (flagP) printf("Successo\n");
@@ -455,19 +438,23 @@ int inspectDir(const char* dir, int* n, char* saveDir) {
             free(filepath);
         }
     }
+
     if (errno != 0) {
         perror("Error reading directory");
         return -1;
     }
 
+    //Ripristina la CWD
     if (chdir(cwd) == -1) {perror("chdir"); return -1;}
     free(cwd);
 
+    //Chiude la directory
     if (closedir(d) == -1) {perror("Closing directory"); return -1;}
 
     return 0;
 }
 
+//Implementa l'esecuzione della richiesta '-w'
 int req_w(const char* dirname, int n, char* saveDir) {
     if (dirname == NULL) return -1;
 
@@ -491,6 +478,7 @@ int req_w(const char* dirname, int n, char* saveDir) {
     return 0;
 }
 
+//Crea un file nella directory dirname. Restituisce il file descriptor del file creato
 int createLocalFile(char* dirname, char* filepath) {
     int len = strnlen(filepath, STRLEN) + 1;
 
@@ -510,6 +498,7 @@ int createLocalFile(char* dirname, char* filepath) {
     char* extension;
     int extension_len = -1;
     if (fullstop != -1) {
+        //Salvataggio estensione
         extension_len = len - fullstop;
         extension = calloc(extension_len, sizeof(char));
         if (extension == NULL) {free(path); return -1;}
@@ -517,7 +506,6 @@ int createLocalFile(char* dirname, char* filepath) {
         strncpy(extension, path + fullstop, extension_len);
     }
 
-    //Salvataggio e cambio della CWD per poter salvare i file
     char* cwd = calloc(STRLEN, sizeof(char));
     if (cwd == NULL) {
         fprintf(stderr, "Errore critico in memoria\n");
@@ -526,6 +514,7 @@ int createLocalFile(char* dirname, char* filepath) {
         return -1;
     }
 
+    //Salvataggio della CWD per poter salvare i file
     //Nell'evenutlità che non ci sia abbastanza memoria allocata, la rialloca
     int len_cwd = STRLEN;
     if((cwd = getcwd(cwd, len_cwd)) == NULL) {
@@ -608,9 +597,9 @@ int createLocalFile(char* dirname, char* filepath) {
 
         oldCifre = nCifre;
 
+        //Modifica il nome del file per il nuovo tentativo
         int offset = (fullstop == -1 ? len-(3+nCifre) : fullstop);
         snprintf(path + offset, 2 + nCifre + 1, "(%d)", try);
-        // if (fullstop != -1) strncpy(path + fullstop + nCifre + 2, extension, len - fullstop);
         if (fullstop != -1) strncat(path, extension, extension_len);
         
         try++;
@@ -632,6 +621,7 @@ int createLocalFile(char* dirname, char* filepath) {
     return createdFile;
 }
 
+//Implementa l'esecuzione della richiesta '-W'
 int req_W(const char* path, char* saveDir) {
     if (path == NULL) return -1;
 
@@ -658,6 +648,7 @@ int main(int argc, char* argv[]) {
 
     ignoreSigpipe();
 
+    //Inizializzazione liste
     EQ_NULL_EXIT(requestLst = list_create(requestLst, compareRequest), "list_create")
     EQ_NULL_EXIT(dirLst = list_create(dirLst, str_compare), "list_create")
     EQ_NULL_EXIT(DdirLst = list_create(DdirLst, str_compare), "list_create")
@@ -670,12 +661,15 @@ int main(int argc, char* argv[]) {
     int flagw = 0;
     int flagW = 0;
 
+    //Parsing dei parametri da riga di comando
     int opt;
     while((opt = getopt(argc, argv, ":hf:w:W:D:r:R:d:t:l:u:c:p")) != -1) {
         switch (opt) {
         case 'h': {
             arg_h(argv[0]);
             SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
+            SYSCALL_ONE_EXIT(list_destroy(dirLst, freeRequest), "list_destroy");
+            SYSCALL_ONE_EXIT(list_destroy(DdirLst, freeRequest), "list_destroy");
             return 0;
         }
         case 'f': {
@@ -684,18 +678,23 @@ int main(int argc, char* argv[]) {
             else {
                 fprintf(stderr, "Il flag -f può essere specificato una sola volta\n");
                 SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
-                return -1;
+                SYSCALL_ONE_EXIT(list_destroy(dirLst, freeRequest), "list_destroy");
+                SYSCALL_ONE_EXIT(list_destroy(DdirLst, freeRequest), "list_destroy");
+                exit(EXIT_FAILURE);
             }
             break;
         }
         case 'w': arg_w(optarg); flagw = 1; break;
         case 'W': arg_W(&optarg); flagW = 1; break;
         case 'D': {
-            if (flagw || flagW) {
+            if (flagw || flagW) { //È stato specificato il flag '-w' o '-W'
                 arg_D(optarg);
             } else {
                 fprintf(stderr, "Il flag -D va utilizzato dopo aver specificato -w o -W\n");
                 SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
+                SYSCALL_ONE_EXIT(list_destroy(dirLst, freeRequest), "list_destroy");
+                SYSCALL_ONE_EXIT(list_destroy(DdirLst, freeRequest), "list_destroy");
+                exit(EXIT_FAILURE);
             }
             flagw = 0;
             flagW = 0;
@@ -717,16 +716,21 @@ int main(int argc, char* argv[]) {
             if (flagR == -1) {
                 fprintf(stderr, "Error in arg_R\n");
                 SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
+                SYSCALL_ONE_EXIT(list_destroy(dirLst, freeRequest), "list_destroy");
+                SYSCALL_ONE_EXIT(list_destroy(DdirLst, freeRequest), "list_destroy");
                 exit(EXIT_FAILURE);
             }
             break;
         }
         case 'd': {
-            if (flagR || flagr) {
+            if (flagR || flagr) { //È stato specificato il flag '-r' o '-R'
                 arg_d(optarg);
             } else {
                 fprintf(stderr, "Il flag -d va utilizzato dopo aver specificato -r o -R\n");
                 SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
+                SYSCALL_ONE_EXIT(list_destroy(dirLst, freeRequest), "list_destroy");
+                SYSCALL_ONE_EXIT(list_destroy(DdirLst, freeRequest), "list_destroy");
+                exit(EXIT_FAILURE);
             }
             flagR = 0;
             flagr = 0;
@@ -736,7 +740,9 @@ int main(int argc, char* argv[]) {
             if (isNumber(optarg, &flagT) != 0) {
                 perror("isNumber");
                 SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
-                return -1;
+                SYSCALL_ONE_EXIT(list_destroy(dirLst, freeRequest), "list_destroy");
+                SYSCALL_ONE_EXIT(list_destroy(DdirLst, freeRequest), "list_destroy");
+                exit(EXIT_FAILURE);
             }
             break;
         }
@@ -749,28 +755,36 @@ int main(int argc, char* argv[]) {
             else {
                 fprintf(stderr, "Il flag -p può essere specificato una sola volta\n");
                 SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
-                return -1;
+                SYSCALL_ONE_EXIT(list_destroy(dirLst, freeRequest), "list_destroy");
+                SYSCALL_ONE_EXIT(list_destroy(DdirLst, freeRequest), "list_destroy");
+                exit(EXIT_FAILURE);
             }
             break;
         }
         case ':': {
-            if (optopt == 'R') {
+            if (optopt == 'R') { //L'opzione '-R' non ha un parametro
                 if ((flagR = arg_R("n=0")) == -1) {
                     fprintf(stderr, "Error in arg_R\n");
                     SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
+                    SYSCALL_ONE_EXIT(list_destroy(dirLst, freeRequest), "list_destroy");
+                    SYSCALL_ONE_EXIT(list_destroy(DdirLst, freeRequest), "list_destroy");
                     exit(EXIT_FAILURE);
                 }
                 break;
             } else {
                 printf("L'opzione '-%c' richiede un argomento\n", optopt);
                 SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
-                return 0;
+                SYSCALL_ONE_EXIT(list_destroy(dirLst, freeRequest), "list_destroy");
+                SYSCALL_ONE_EXIT(list_destroy(DdirLst, freeRequest), "list_destroy");
+                exit(EXIT_FAILURE);
             }
         }
         case '?': {
             printf("L'opzione '-%c' non è gestita\n", optopt);
             SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
-            return 0;
+            SYSCALL_ONE_EXIT(list_destroy(dirLst, freeRequest), "list_destroy");
+            SYSCALL_ONE_EXIT(list_destroy(DdirLst, freeRequest), "list_destroy");
+            exit(EXIT_FAILURE);
         }
         default: break;
         }
@@ -779,12 +793,16 @@ int main(int argc, char* argv[]) {
     if (socketName == NULL) {
         fprintf(stderr, "Socket non specificato\n");
         SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
+        SYSCALL_ONE_EXIT(list_destroy(dirLst, freeRequest), "list_destroy");
+        SYSCALL_ONE_EXIT(list_destroy(DdirLst, freeRequest), "list_destroy");
         return -1;
     }
 
     if (flagd && !(flagR || flagr)) {
         fprintf(stderr, "Flag -d incompatibile senza -R o -r\n");
         SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
+        SYSCALL_ONE_EXIT(list_destroy(dirLst, freeRequest), "list_destroy");
+        SYSCALL_ONE_EXIT(list_destroy(DdirLst, freeRequest), "list_destroy");
         return -1;
     }
 
@@ -807,7 +825,9 @@ int main(int argc, char* argv[]) {
     }
     if (flagP) printf("Connesso\n");
 
+    //Esecuzione delle richieste
     while(requestLst->head != NULL) {
+        //Preleva la nuova richiesta
         request_t *req = list_pop(requestLst);
         
         if (req == NULL && errno == EINVAL) {
@@ -817,6 +837,7 @@ int main(int argc, char* argv[]) {
 
         switch (req->flag) {
             case 'w': {
+                //Preleva la directory in cui salvare gli eventuali file
                 char* dir = (char*) list_pop(DdirLst);
 
                 if (req_w(req->arg[0], req->option, dir) == -1) {perror("flag -w"); free(dir); return -1;}
@@ -824,6 +845,7 @@ int main(int argc, char* argv[]) {
                 break;
             }
             case 'W': {
+                //Preleva la directory in cui salvare gli eventuali file
                 char* dir = (char*) list_pop(DdirLst);
                 if (dir != NULL) {
                     //Verifica che dir sia una directory
@@ -834,6 +856,7 @@ int main(int argc, char* argv[]) {
                         return -1;
                     }
                 }
+
                 for(int i = 0; i < req->dim; i++) {
                     if (req_W(req->arg[i], dir) == -1) {perror("flag -W"); free(dir); return -1;}
                 }
@@ -841,6 +864,7 @@ int main(int argc, char* argv[]) {
                 break;
             }
             case 'r': {
+                //Preleva la directory in cui salvare gli eventuali file
                 char* dir = (char*) list_pop(dirLst);
                 if (dir != NULL) {
                 //Verifica che dir sia una directory
@@ -890,11 +914,14 @@ int main(int argc, char* argv[]) {
             }
             case 'R': {
                 int r;
+                //Preleva la directory in cui salvare gli eventuali file
                 char* dir = (char*) list_pop(dirLst);
+
                 if (flagP && req->option != 0) printf("Lettura di %d file dal server\n", req->option);
                 if (flagP && req->option == 0) printf("Lettura di tutti i file dal server\n");
                 if ((r = readNFiles(req->option, dir)) == -1) {perror("readNFile"); return -1;}
                 if (flagP) printf("Lettura %d file dal server correttamente\n", r);
+
                 free(dir);
                 break;
             }
@@ -946,6 +973,7 @@ int main(int argc, char* argv[]) {
             }
         }
 
+        //Attesa tra una richiesta e l'altra
         if(flagT != 0) {
             struct timespec nextReq;
             nextReq.tv_sec = flagT / 1000;
@@ -959,10 +987,12 @@ int main(int argc, char* argv[]) {
         freeRequest(req);
     }
 
+    //Chiude la connessione
     if (flagP) printf("Chiusura connessione...\n");
     if (closeConnection(socketName) == -1) {perror("closeConnection"); exit(EXIT_FAILURE);}
     if (flagP) printf("Chiusura completata con successo\n");
 
+    //Libera la memoria
     SYSCALL_ONE_EXIT(list_destroy(requestLst, freeRequest), "list_destroy");
     SYSCALL_ONE_EXIT(list_destroy(dirLst, freeRequest), "list_destroy");
     SYSCALL_ONE_EXIT(list_destroy(DdirLst, freeRequest), "list_destroy");
