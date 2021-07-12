@@ -63,6 +63,11 @@ int stopConnections = 0;
 char* socketName;
 char* logFile;
 
+//Set che contiene le connessioni ancora attive
+fd_set setConnected;
+int connectedMax = 0;
+static pthread_mutex_t mutex_fdset = PTHREAD_MUTEX_INITIALIZER;
+
 file_storage_t* initializeStorage(file_storage_t* storage) {
     if ((storage = malloc(sizeof(file_storage_t))) == NULL) return NULL;
 
@@ -121,7 +126,7 @@ int FIFO_ReplacementPolicy(long space, int numFiles, int fd, char* pathInvoked) 
         Pthread_mutex_unlock(&(oldFile->mutex_file));
 
         int *fd_waiting;
-        int res = -1;
+        int res = ENOENT;
         while ((fd_waiting = list_pop(oldFile->pendingLock)) != NULL) {
             SYSCALL_ONE_RETURN_F(writen(*fd_waiting, &res, sizeof(int)), "writen", Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
             free(fd_waiting);
@@ -343,6 +348,26 @@ int parseFile(const char* filepath, int* numWorkers, long* memorySpace, int* num
     return 0;
 }
 
+int checkLock(file_t *f) {
+    int res;
+    //Controlla se il detentore della lock è ancora connesso, altrimenti assegna la lock al prossimo richiedente
+    Pthread_mutex_lock(&mutex_fdset);
+    if (!FD_ISSET(f->lock, &setConnected)) {
+        int *lock_fd = list_pop(f->pendingLock);
+        if (lock_fd == NULL) {
+            f->lock = 0;
+        } else {
+            f->lock = *lock_fd;
+            free(lock_fd);
+            res = 0;
+            SYSCALL_ONE_RETURN_F(writen(f->lock, &res, sizeof(int)), "writen", Pthread_mutex_lock(&(f->mutex_file)); f->isLocked = 0; Pthread_mutex_unlock(&(f->mutex_file)); Pthread_mutex_unlock(&mutex_fdset))
+        }
+    }
+    Pthread_mutex_unlock(&mutex_fdset);
+    
+    return 0;
+}
+
 int createFile(int fd, int len, char* path) {
     int res;
     file_t *newFile = malloc(sizeof(file_t));
@@ -481,18 +506,6 @@ int openFile(int fd) {
     f->isLocked = 1;
     Pthread_mutex_unlock(&(f->mutex_file));
 
-    //Il file non può essere aperto se è stato precedentemente lockato da qualche altro client
-    if (f->lock != fd && f->lock != 0) {
-        Pthread_mutex_lock(&(f->mutex_file));
-        f->isLocked = 0;
-        Pthread_mutex_unlock(&(f->mutex_file));
-        res = EPERM;
-        SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
-        return 0;
-    }
-
-    if ((flag & O_LOCK) == O_LOCK) f->lock = fd;
-    
     //Se il file è già aperto restituisce esito positivo al client. Non effettua cambiamenti
     if (list_find(f->clients, &fd) != NULL) {
         Pthread_mutex_lock(&(f->mutex_file));
@@ -502,7 +515,7 @@ int openFile(int fd) {
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return 0;
     }
-
+    
     int *newClient = malloc(sizeof(int));
     EQ_NULL_EXIT(newClient, "malloc error in openFile")
 
@@ -516,6 +529,32 @@ int openFile(int fd) {
         free(newClient);
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return -1;
+    }
+
+    if ((flag & O_LOCK) == O_LOCK){
+        if (f->lock != fd && f->lock != 0) {
+            if (checkLock(f) == -1) {
+                Pthread_mutex_lock(&(f->mutex_file));
+                f->isLocked = 0;
+                pthread_cond_signal(&(f->wait_lock));
+                Pthread_mutex_unlock(&(f->mutex_file));
+                return -1;
+            }
+
+            if (f->lock != 0) {
+                int *lock_fd = malloc(sizeof(int));
+                EQ_NULL_EXIT(lock_fd, "malloc in lock_file")
+                *lock_fd = fd;
+                SYSCALL_ONE_RETURN_F(list_append(f->pendingLock, lock_fd), "list_append in lock_file", Pthread_mutex_lock(&(f->mutex_file)); f->isLocked = 0; Pthread_mutex_unlock(&(f->mutex_file)); res = ECANCELED; SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen"))
+                Pthread_mutex_lock(&(f->mutex_file));
+                f->isLocked = 0;
+                pthread_cond_signal(&(f->wait_lock));
+                Pthread_mutex_unlock(&(f->mutex_file));
+                return 0;
+            }
+        }
+
+        if (f->lock == 0) f->lock = fd;
     }
 
     Pthread_mutex_lock(&(f->mutex_file));
@@ -643,12 +682,22 @@ int readFile(int fd) {
 
     //Controlla se il file è lockato da qualcun altro
     if (f->lock != fd && f->lock != 0) {
-        Pthread_mutex_lock(&(f->mutex_file));
-        f->isLocked = 0;
-        Pthread_mutex_unlock(&(f->mutex_file));
-        res = EPERM;
-        SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
-        return 0;
+        if (checkLock(f) == -1) {
+            Pthread_mutex_lock(&(f->mutex_file));
+            f->isLocked = 0;
+            pthread_cond_signal(&(f->wait_lock));
+            Pthread_mutex_unlock(&(f->mutex_file));
+            return -1;
+        }
+
+        if (f->lock != 0) {
+            Pthread_mutex_lock(&(f->mutex_file));
+            f->isLocked = 0;
+            Pthread_mutex_unlock(&(f->mutex_file));
+            res = EPERM;
+            SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
+            return 0;
+        }
     }
 
     //Comunica al Client che non ci sono stati errori a recuperare il file
@@ -782,12 +831,23 @@ int writeFile(int fd) {
 
     //Controlla se il file è lockato da qualcun altro
     if (f->lock != fd && f->lock != 0) {
-        Pthread_mutex_lock(&(f->mutex_file));
-        f->isLocked = 0;
-        Pthread_mutex_unlock(&(f->mutex_file));
-        res = EPERM;
-        SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
-        return 0;
+        if (checkLock(f) == -1) {
+            Pthread_mutex_lock(&(f->mutex_file));
+            f->isLocked = 0;
+            pthread_cond_signal(&(f->wait_lock));
+            Pthread_mutex_unlock(&(f->mutex_file));
+            return -1;
+        }
+
+
+        if (f->lock != 0) {
+            Pthread_mutex_lock(&(f->mutex_file));
+            f->isLocked = 0;
+            Pthread_mutex_unlock(&(f->mutex_file));
+            res = EPERM;
+            SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
+            return 0;
+        }
     }
 
     size_t dim;
@@ -910,12 +970,22 @@ int appendFile(int fd) {
 
     //Controlla se il file è lockato da qualcun altro
     if (f->lock != fd && f->lock != 0) {
-        Pthread_mutex_lock(&(f->mutex_file));
-        f->isLocked = 0;
-        Pthread_mutex_unlock(&(f->mutex_file));
-        res = EPERM;
-        SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
-        return 0;
+        if (checkLock(f) == -1) {
+            Pthread_mutex_lock(&(f->mutex_file));
+            f->isLocked = 0;
+            pthread_cond_signal(&(f->wait_lock));
+            Pthread_mutex_unlock(&(f->mutex_file));
+            return -1;
+        }
+
+        if (f->lock != 0) {
+            Pthread_mutex_lock(&(f->mutex_file));
+            f->isLocked = 0;
+            Pthread_mutex_unlock(&(f->mutex_file));
+            res = EPERM;
+            SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
+            return 0;
+        }
     }
     
     size_t fileDim;
@@ -1107,6 +1177,14 @@ int removeFile(int fd) {
 
     file->isDeleted = 1;
     pthread_cond_broadcast(&(file->wait_lock));
+
+    //Comunica a tutti i client in attesa di lock che non è possibile ottenerla
+    int *fd_waiting;
+    res = ENOENT;
+    while ((fd_waiting = list_pop(file->pendingLock)) != NULL) {
+        writen(*fd_waiting, &res, sizeof(int));
+        free(fd_waiting);
+    }
 
     if (list_delete(fileHistory, path, NULL) == -1) { //Non libero la memoria perché verrà liberata dalla icl_hash_delete
         free(path);
@@ -1420,6 +1498,7 @@ int main(int argc, char* argv[]) {
     int listenSocket;
     initializeSocket(&listenSocket);
 
+    //Set per gestire le connessioni
     int fdMax = 0;
     if (listenSocket > fdMax) fdMax = listenSocket;
     if (fdPipe[0] > fdMax) fdMax = fdPipe[0];
@@ -1430,9 +1509,9 @@ int main(int argc, char* argv[]) {
     FD_SET(fdPipe[0], &set);
     FD_SET(signalPipe[0], &set);
 
-    int connectedMax = 0;
-    fd_set setConnected;
+    Pthread_mutex_lock(&mutex_fdset);
     FD_ZERO(&setConnected);
+    Pthread_mutex_unlock(&mutex_fdset);
 
     int stillConnected = 1;
     
@@ -1449,7 +1528,9 @@ int main(int argc, char* argv[]) {
         for(int fd = 0; fd < fdMax + 1; fd++) {
             if (FD_ISSET(fd, &rdset)) {
                 if (stopRequests) { //Chiude tutte le connessioni attive
+                    Pthread_mutex_lock(&mutex_fdset);
                     closeConnections(&setConnected, connectedMax);
+                    Pthread_mutex_unlock(&mutex_fdset);
                     break;
                 }
 
@@ -1463,7 +1544,10 @@ int main(int argc, char* argv[]) {
 
                     if (c_fd < 0) {
                         c_fd *= -1;
+                        Pthread_mutex_lock(&mutex_fdset);
                         FD_CLR(c_fd, &setConnected);
+                        connectedMax = updateSet(&setConnected, connectedMax);
+                        Pthread_mutex_unlock(&mutex_fdset);
                         break;
                     }
 
@@ -1482,8 +1566,12 @@ int main(int argc, char* argv[]) {
 
                     FD_SET(newFd, &set);
                     if (newFd > fdMax) fdMax = newFd;
+
+                    Pthread_mutex_lock(&mutex_fdset);
                     FD_SET(newFd, &setConnected);
                     if (newFd > connectedMax) connectedMax = newFd;
+                    Pthread_mutex_unlock(&mutex_fdset);
+
                     printf("Client connesso\n");
                     fflush(stdout);
                     break;
@@ -1515,7 +1603,11 @@ int main(int argc, char* argv[]) {
             }
         }
 
-        if (stopConnections) stillConnected = checkConnections(&setConnected, connectedMax);
+        if (stopConnections) {
+            Pthread_mutex_lock(&mutex_fdset);
+            stillConnected = checkConnections(&setConnected, connectedMax);
+            Pthread_mutex_unlock(&mutex_fdset);
+        }
 
     }
 
