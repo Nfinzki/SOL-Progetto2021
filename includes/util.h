@@ -14,6 +14,14 @@
         exit(errno);                \
     }
 
+#define SYSCALL_NOT_ZERO_RETURN_F(r, f, name, cleanup)    \
+    if ((r = f) != 0) {             \
+        cleanup;                    \
+        errno = r;                  \
+        perror(name);               \
+        return errno;              \
+    }
+
 #define SYSCALL_NOT_ONE_EXIT(f, name)    \
     if ((f) != -1) {                  \
         perror(name);               \
