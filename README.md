@@ -12,5 +12,5 @@ Per eseguire lo script "statistiche.sh" basta specificare il file di log al mome
 * `lockFile`
 * `unlockFile`
 * flag `-D`
-* log del server su un file
-* script statistiche.sh
+* `log` del server su un file
+* script `statistiche.sh`
