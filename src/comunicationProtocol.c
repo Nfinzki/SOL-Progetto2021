@@ -1000,8 +1000,6 @@ int removeFile(const char* pathname) {
     }
     free(file);
 
-    f->op = 1; //Sul file non è più possibile utilizzare writeFile
-
     //Invia il tipo di operazione
     int opt = REMOVE_FILE;
     if (writen(fdSocket, &opt, sizeof(int)) == -1) {free(tmp); return -1;}

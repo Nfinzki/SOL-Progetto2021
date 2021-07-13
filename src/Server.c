@@ -161,7 +161,7 @@ int FIFO_ReplacementPolicy(long space, int numFiles, int fd, char* pathInvoked) 
         if (fd != -1 && oldFile->M) {
             int opt = SEND_FILE;
             SYSCALL_ONE_RETURN_F(writen(fd, &opt, sizeof(int)), "writen", Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
-            int len = strnlen(oldFile->path, STRLEN);
+            int len = strnlen(oldFile->path, STRLEN) + 1;
             SYSCALL_ONE_RETURN_F(writen(fd, &len, sizeof(int)), "writen", Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
             SYSCALL_ONE_RETURN_F(writen(fd, oldFile->path, len * sizeof(char)), "writen", Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
             SYSCALL_ONE_RETURN_F(writen(fd, &(oldFile->byteDim), sizeof(size_t)), "writen", Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
