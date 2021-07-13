@@ -1,0 +1,2569 @@
+2021-07-13 21:27:51 [THREAD] Spawed 99034880
+2021-07-13 21:27:51 [SOCKET] Socket initialized
+2021-07-13 21:27:51 [CONNECTION] New connection
+2021-07-13 21:27:51 [CONNECTION] Actual connections: 1
+2021-07-13 21:27:51 [NEW REQUEST] Client 9
+2021-07-13 21:27:51 [REQUEST] 99034880 handled request
+2021-07-13 21:27:51 [NEW REQUEST] Client 9
+2021-07-13 21:27:51 [CREATE FILE] Created file: /home/dilux/SOL/SOL-Progetto2021/TestFolder/Canzoni/LaVieEnRose.txt
+2021-07-13 21:27:51 [STORAGE SIZE] Actual size: 0
+2021-07-13 21:27:51 [STORAGE FILE] Actual file: 1
+2021-07-13 21:27:51 [OPEN_LOCK] /home/dilux/SOL/SOL-Progetto2021/TestFolder/Canzoni/LaVieEnRose.txt
+2021-07-13 21:27:51 [REQUEST] 99034880 handled request
+2021-07-13 21:27:51 [NEW REQUEST] Client 9
+2021-07-13 21:27:51 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/Canzoni/LaVieEnRose.txt 256
+2021-07-13 21:27:51 [STORAGE SIZE] Actual size: 256
+2021-07-13 21:27:51 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/Canzoni/LaVieEnRose.txt 136
+2021-07-13 21:27:51 [STORAGE SIZE] Actual size: 392
+2021-07-13 21:27:51 [REQUEST] 99034880 handled request
+2021-07-13 21:27:51 [NEW REQUEST] Client 9
+2021-07-13 21:27:51 [CLOSE] 9 closed successfully /home/dilux/SOL/SOL-Progetto2021/TestFolder/Canzoni/LaVieEnRose.txt
+2021-07-13 21:27:51 [REQUEST] 99034880 handled request
+2021-07-13 21:27:51 [NEW REQUEST] Client 9
+2021-07-13 21:27:51 [REQUEST] 99034880 handled request
+2021-07-13 21:27:51 [NEW REQUEST] Client 9
+2021-07-13 21:27:51 [CREATE FILE] Created file: /home/dilux/SOL/SOL-Progetto2021/TestFolder/Canzoni/NewYorkNewYork.txt
+2021-07-13 21:27:51 [STORAGE SIZE] Actual size: 392
+2021-07-13 21:27:51 [STORAGE FILE] Actual file: 2
+2021-07-13 21:27:51 [OPEN_LOCK] /home/dilux/SOL/SOL-Progetto2021/TestFolder/Canzoni/NewYorkNewYork.txt
+2021-07-13 21:27:51 [REQUEST] 99034880 handled request
+2021-07-13 21:27:51 [NEW REQUEST] Client 9
+2021-07-13 21:27:51 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/Canzoni/NewYorkNewYork.txt 256
+2021-07-13 21:27:51 [STORAGE SIZE] Actual size: 648
+2021-07-13 21:27:51 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/Canzoni/NewYorkNewYork.txt 256
+2021-07-13 21:27:51 [STORAGE SIZE] Actual size: 904
+2021-07-13 21:27:51 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/Canzoni/NewYorkNewYork.txt 256
+2021-07-13 21:27:51 [STORAGE SIZE] Actual size: 1160
+2021-07-13 21:27:51 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/Canzoni/NewYorkNewYork.txt 39
+2021-07-13 21:27:51 [STORAGE SIZE] Actual size: 1199
+2021-07-13 21:27:51 [REQUEST] 99034880 handled request
+2021-07-13 21:27:51 [NEW REQUEST] Client 9
+2021-07-13 21:27:51 [CLOSE] 9 closed successfully /home/dilux/SOL/SOL-Progetto2021/TestFolder/Canzoni/NewYorkNewYork.txt
+2021-07-13 21:27:51 [REQUEST] 99034880 handled request
+2021-07-13 21:27:52 [NEW REQUEST] Client 9
+2021-07-13 21:27:52 [REQUEST] 99034880 handled request
+2021-07-13 21:27:52 [NEW REQUEST] Client 9
+2021-07-13 21:27:52 [CREATE FILE] Created file: /home/dilux/SOL/SOL-Progetto2021/TestFolder/prova.txt
+2021-07-13 21:27:52 [STORAGE SIZE] Actual size: 1199
+2021-07-13 21:27:52 [STORAGE FILE] Actual file: 3
+2021-07-13 21:27:52 [OPEN_LOCK] /home/dilux/SOL/SOL-Progetto2021/TestFolder/prova.txt
+2021-07-13 21:27:52 [REQUEST] 99034880 handled request
+2021-07-13 21:27:52 [NEW REQUEST] Client 9
+2021-07-13 21:27:52 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/prova.txt 103
+2021-07-13 21:27:52 [STORAGE SIZE] Actual size: 1302
+2021-07-13 21:27:52 [REQUEST] 99034880 handled request
+2021-07-13 21:27:52 [NEW REQUEST] Client 9
+2021-07-13 21:27:52 [CLOSE] 9 closed successfully /home/dilux/SOL/SOL-Progetto2021/TestFolder/prova.txt
+2021-07-13 21:27:52 [REQUEST] 99034880 handled request
+2021-07-13 21:27:52 [NEW REQUEST] Client 9
+2021-07-13 21:27:52 [REQUEST] 99034880 handled request
+2021-07-13 21:27:52 [NEW REQUEST] Client 9
+2021-07-13 21:27:52 [CREATE FILE] Created file: /home/dilux/SOL/SOL-Progetto2021/TestFolder/file.txt
+2021-07-13 21:27:52 [STORAGE SIZE] Actual size: 1302
+2021-07-13 21:27:52 [STORAGE FILE] Actual file: 4
+2021-07-13 21:27:52 [OPEN_LOCK] /home/dilux/SOL/SOL-Progetto2021/TestFolder/file.txt
+2021-07-13 21:27:52 [REQUEST] 99034880 handled request
+2021-07-13 21:27:52 [NEW REQUEST] Client 9
+2021-07-13 21:27:52 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/file.txt 61
+2021-07-13 21:27:52 [STORAGE SIZE] Actual size: 1363
+2021-07-13 21:27:52 [REQUEST] 99034880 handled request
+2021-07-13 21:27:52 [NEW REQUEST] Client 9
+2021-07-13 21:27:52 [CLOSE] 9 closed successfully /home/dilux/SOL/SOL-Progetto2021/TestFolder/file.txt
+2021-07-13 21:27:52 [REQUEST] 99034880 handled request
+2021-07-13 21:27:52 [NEW REQUEST] Client 9
+2021-07-13 21:27:52 [REQUEST] 99034880 handled request
+2021-07-13 21:27:52 [NEW REQUEST] Client 9
+2021-07-13 21:27:52 [OPEN_LOCK] /home/dilux/SOL/SOL-Progetto2021/TestFolder/Canzoni/LaVieEnRose.txt
+2021-07-13 21:27:52 [REQUEST] 99034880 handled request
+2021-07-13 21:27:52 [NEW REQUEST] Client 9
+2021-07-13 21:27:52 [REQUEST] 99034880 handled request
+2021-07-13 21:27:52 [NEW REQUEST] Client 9
+2021-07-13 21:27:52 [REQUEST] 99034880 handled request
+2021-07-13 21:27:52 [NEW REQUEST] Client 9
+2021-07-13 21:27:52 [LOCK] 9 got /home/dilux/SOL/SOL-Progetto2021/TestFolder/prova.txt
+2021-07-13 21:27:52 [REQUEST] 99034880 handled request
+2021-07-13 21:27:52 [NEW REQUEST] Client 9
+2021-07-13 21:27:52 [UNLOCK] 9 unlocked /home/dilux/SOL/SOL-Progetto2021/TestFolder/Canzoni/LaVieEnRose.txt
+2021-07-13 21:27:52 [REQUEST] 99034880 handled request
+2021-07-13 21:27:52 [NEW REQUEST] Client 9
+2021-07-13 21:27:52 [CLOSE] 9 closed successfully /home/dilux/SOL/SOL-Progetto2021/TestFolder/Canzoni/LaVieEnRose.txt
+2021-07-13 21:27:52 [REQUEST] 99034880 handled request
+2021-07-13 21:27:52 [NEW REQUEST] Client 9
+2021-07-13 21:27:52 [REQUEST] 99034880 handled request
+2021-07-13 21:27:52 [CONNECTION] Closed connection
+2021-07-13 21:27:52 [CONNECTION] Actual connections: 0
+2021-07-13 21:27:52 [CONNECTION] New connection
+2021-07-13 21:27:52 [CONNECTION] Actual connections: 1
+2021-07-13 21:27:52 [NEW REQUEST] Client 9
+2021-07-13 21:27:52 [WRITE] /home/dilux/SOL/SOL-Progetto2021/TestFolder/Canzoni/LaVieEnRose.txt 392
+2021-07-13 21:27:52 [WRITE] /home/dilux/SOL/SOL-Progetto2021/TestFolder/Canzoni/NewYorkNewYork.txt 807
+2021-07-13 21:27:52 [WRITE] /home/dilux/SOL/SOL-Progetto2021/TestFolder/prova.txt 103
+2021-07-13 21:27:52 [REQUEST] 99034880 handled request
+2021-07-13 21:27:52 [NEW REQUEST] Client 9
+2021-07-13 21:27:52 [REQUEST] 99034880 handled request
+2021-07-13 21:27:52 [NEW REQUEST] Client 9
+2021-07-13 21:27:52 [OPEN_LOCK] /home/dilux/SOL/SOL-Progetto2021/TestFolder/Canzoni/LaVieEnRose.txt
+2021-07-13 21:27:52 [REQUEST] 99034880 handled request
+2021-07-13 21:27:53 [NEW REQUEST] Client 9
+2021-07-13 21:27:53 [WRITE] /home/dilux/SOL/SOL-Progetto2021/TestFolder/Canzoni/LaVieEnRose.txt 392
+2021-07-13 21:27:53 [REQUEST] 99034880 handled request
+2021-07-13 21:27:53 [NEW REQUEST] Client 9
+2021-07-13 21:27:53 [CLOSE] 9 closed successfully /home/dilux/SOL/SOL-Progetto2021/TestFolder/Canzoni/LaVieEnRose.txt
+2021-07-13 21:27:53 [REQUEST] 99034880 handled request
+2021-07-13 21:27:53 [NEW REQUEST] Client 9
+2021-07-13 21:27:53 [REQUEST] 99034880 handled request
+2021-07-13 21:27:53 [NEW REQUEST] Client 9
+2021-07-13 21:27:53 [CREATE FILE] Created file: /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 1363
+2021-07-13 21:27:53 [STORAGE FILE] Actual file: 5
+2021-07-13 21:27:53 [OPEN_LOCK] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg
+2021-07-13 21:27:53 [REQUEST] 99034880 handled request
+2021-07-13 21:27:53 [NEW REQUEST] Client 9
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 1619
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 1875
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 2131
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 2387
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 2643
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 2899
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 3155
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 3411
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 3667
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 3923
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 4179
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 4435
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 4691
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 4947
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 5203
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 5459
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 5715
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 5971
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 6227
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 6483
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 6739
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 6995
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 7251
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 7507
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 7763
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 8019
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 8275
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 8531
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 8787
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 9043
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 9299
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 9555
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 9811
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 10067
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 10323
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 10579
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 10835
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 11091
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 11347
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 11603
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 11859
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 12115
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 12371
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 12627
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 12883
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 13139
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 13395
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 13651
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 13907
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 14163
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 14419
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 14675
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 14931
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 15187
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 15443
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 15699
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 15955
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 16211
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 16467
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 16723
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 16979
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 17235
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 17491
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 17747
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 18003
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 18259
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 18515
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 18771
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 19027
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 19283
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 19539
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 19795
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 20051
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 20307
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 20563
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 20819
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 21075
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 21331
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 21587
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 21843
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 22099
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 22355
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 22611
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 22867
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 23123
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 23379
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 23635
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 23891
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 24147
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 24403
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 24659
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 24915
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 25171
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 25427
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 25683
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 25939
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 26195
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 26451
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 26707
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 26963
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 27219
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 27475
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 27731
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 27987
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 28243
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 28499
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 28755
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 29011
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 29267
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 29523
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 29779
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 30035
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 30291
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 30547
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 30803
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 31059
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 31315
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 31571
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 31827
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 32083
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 32339
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 32595
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 32851
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 33107
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 33363
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 33619
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 33875
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 34131
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 34387
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 34643
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 34899
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 35155
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 35411
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 35667
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 35923
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 36179
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 36435
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 36691
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 36947
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 37203
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 37459
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 37715
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 37971
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 38227
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 38483
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 38739
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 38995
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 39251
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 39507
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 39763
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 40019
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 40275
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 40531
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 40787
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 41043
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 41299
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 41555
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 41811
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 42067
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 42323
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 42579
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 42835
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 43091
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 43347
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 43603
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 43859
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 44115
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 44371
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 44627
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 44883
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 45139
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 45395
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 45651
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 45907
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 46163
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 46419
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 46675
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 46931
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 47187
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 47443
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 47699
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 47955
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 48211
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 48467
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 48723
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 48979
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 49235
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 49491
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 49747
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 50003
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 50259
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 50515
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 50771
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 51027
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 51283
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 51539
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 51795
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 52051
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 52307
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 52563
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 52819
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 53075
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 53331
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 53587
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 53843
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 54099
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 54355
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 54611
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 54867
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 55123
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 55379
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 55635
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 55891
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 56147
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 56403
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 56659
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 56915
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 57171
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 57427
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 57683
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 57939
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 58195
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 58451
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 58707
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 58963
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 59219
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 59475
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 59731
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 59987
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 60243
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 60499
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 60755
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 61011
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 61267
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 61523
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 61779
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 62035
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 62291
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 62547
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 62803
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 63059
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 63315
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 63571
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 63827
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 64083
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 64339
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 64595
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 64851
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 65107
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 65363
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 65619
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 65875
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 66131
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 66387
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 66643
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 66899
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 67155
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 67411
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 67667
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 67923
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 68179
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 68435
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg 41
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 68476
+2021-07-13 21:27:53 [REQUEST] 99034880 handled request
+2021-07-13 21:27:53 [NEW REQUEST] Client 9
+2021-07-13 21:27:53 [CLOSE] 9 closed successfully /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/basket/DRose.jpg
+2021-07-13 21:27:53 [REQUEST] 99034880 handled request
+2021-07-13 21:27:53 [NEW REQUEST] Client 9
+2021-07-13 21:27:53 [REQUEST] 99034880 handled request
+2021-07-13 21:27:53 [NEW REQUEST] Client 9
+2021-07-13 21:27:53 [CREATE FILE] Created file: /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 68476
+2021-07-13 21:27:53 [STORAGE FILE] Actual file: 6
+2021-07-13 21:27:53 [OPEN_LOCK] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg
+2021-07-13 21:27:53 [REQUEST] 99034880 handled request
+2021-07-13 21:27:53 [NEW REQUEST] Client 9
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 68732
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 68988
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 69244
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 69500
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 69756
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 70012
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 70268
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 70524
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 70780
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 71036
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 71292
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 71548
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 71804
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 72060
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 72316
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 72572
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 72828
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 73084
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 73340
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 73596
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 73852
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 74108
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 74364
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 74620
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 74876
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 75132
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 75388
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 75644
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 75900
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 76156
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 76412
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 76668
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 76924
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 77180
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 77436
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 77692
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 77948
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 78204
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 78460
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 78716
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 78972
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 79228
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 79484
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 79740
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 79996
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 80252
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 80508
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 80764
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 81020
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 81276
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 81532
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 81788
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 82044
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 82300
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 82556
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 82812
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 83068
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 83324
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 83580
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 83836
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 84092
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 84348
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 84604
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 84860
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 85116
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 85372
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 85628
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 85884
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 86140
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 86396
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 86652
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 86908
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 87164
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 87420
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 87676
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 87932
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 88188
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 88444
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 88700
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 88956
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 89212
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 89468
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 89724
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 89980
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 90236
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 90492
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 90748
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 91004
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 91260
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 91516
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 91772
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 92028
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 92284
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 92540
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 92796
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 93052
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 93308
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 93564
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 93820
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 94076
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 94332
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 94588
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 94844
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 95100
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 95356
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 95612
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 95868
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 96124
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 96380
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 96636
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 96892
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 97148
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 97404
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 97660
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 97916
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 98172
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 98428
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 98684
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 98940
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 99196
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 99452
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 99708
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 99964
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 100220
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 100476
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 100732
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 100988
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 101244
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 101500
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 101756
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 102012
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 102268
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 102524
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 102780
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 103036
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 103292
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 103548
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 103804
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 104060
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 104316
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 104572
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 104828
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 105084
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 105340
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 105596
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 105852
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 106108
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 106364
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 106620
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 106876
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 107132
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 107388
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 107644
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 107900
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 108156
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 108412
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 108668
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 108924
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 109180
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 109436
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 109692
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 109948
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 110204
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 110460
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 110716
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 110972
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 111228
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 111484
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 111740
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 111996
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 112252
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 112508
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 112764
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 113020
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 113276
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 113532
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 113788
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 114044
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 114300
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 114556
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 114812
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 115068
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 115324
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 115580
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 115836
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 116092
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 116348
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 116604
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 116860
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 117116
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 117372
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 117628
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 117884
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 118140
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 118396
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 118652
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 118908
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 119164
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 119420
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 119676
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 119932
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 120188
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 120444
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 120700
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 120956
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 121212
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 121468
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 121724
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 121980
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 122236
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 122492
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 122748
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 123004
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 123260
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 123516
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 123772
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 124028
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 124284
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 124540
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 124796
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 125052
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 125308
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 125564
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 125820
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 126076
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 126332
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 126588
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 126844
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 127100
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 127356
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 127612
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 127868
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 128124
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 128380
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 128636
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 128892
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 129148
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 129404
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 129660
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 129916
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 130172
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 130428
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 130684
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 130940
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 131196
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 131452
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 131708
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 131964
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 132220
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 132476
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 132732
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 132988
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 133244
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 133500
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 133756
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 134012
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 134268
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 134524
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 134780
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 135036
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 135292
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 135548
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 135804
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 136060
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 136316
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 136572
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 136828
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 137084
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 137340
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 137596
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 137852
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 138108
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 138364
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 138620
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 138876
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 139132
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 139388
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 139644
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 139900
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 140156
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 140412
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 140668
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 140924
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 141180
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 141436
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 141692
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 141948
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 142204
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 142460
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 142716
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 142972
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 143228
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 143484
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 143740
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 143996
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 144252
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 144508
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 144764
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 145020
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 145276
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 145532
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 145788
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 146044
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 146300
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 146556
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 146812
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 147068
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 147324
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 147580
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 147836
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 148092
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 148348
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 148604
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 148860
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 149116
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 149372
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 149628
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 149884
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 150140
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 150396
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 150652
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 150908
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 151164
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 151420
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 151676
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 151932
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 152188
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 152444
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 152700
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 152956
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 153212
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 153468
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 153724
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 153980
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 154236
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 154492
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 154748
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 155004
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 155260
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 155516
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 155772
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 156028
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 156284
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 156540
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 156796
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 157052
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 157308
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 157564
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 157820
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 158076
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 158332
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 158588
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 158844
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 159100
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 159356
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 159612
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 159868
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 160124
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 160380
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 160636
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 160892
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 161148
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 161404
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 161660
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 161916
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 162172
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 162428
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 162684
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 162940
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 163196
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 163452
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 163708
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 163964
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 164220
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 164476
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 164732
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 164988
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 165244
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 165500
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 165756
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 166012
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 166268
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 166524
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 166780
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 167036
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 167292
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 167548
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 167804
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 168060
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 168316
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 168572
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 168828
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 169084
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 169340
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 169596
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 169852
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 170108
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 170364
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 170620
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 170876
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 171132
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 171388
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 171644
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 171900
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 172156
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 172412
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 172668
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 172924
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 173180
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 173436
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 173692
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 173948
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 174204
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 174460
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 174716
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 174972
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 175228
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 175484
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 175740
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 175996
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 176252
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 176508
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 176764
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 177020
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 177276
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 177532
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 177788
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 178044
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 178300
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 178556
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 178812
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 179068
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 179324
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 179580
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 179836
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 180092
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 180348
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 180604
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 180860
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 181116
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 181372
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 181628
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 181884
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 182140
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 182396
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 182652
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 182908
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 183164
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 183420
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 183676
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 183932
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 184188
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 184444
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 184700
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 184956
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 185212
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 185468
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 185724
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 185980
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 186236
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 186492
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 186748
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 187004
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 187260
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 187516
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 187772
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 188028
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 188284
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 188540
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 188796
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 189052
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 189308
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 189564
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 189820
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 190076
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 190332
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 190588
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 190844
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 191100
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 191356
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 191612
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 191868
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 192124
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 192380
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 192636
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 192892
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 193148
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 193404
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 193660
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 193916
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 194172
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 194428
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 194684
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 194940
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 195196
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 195452
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 195708
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 195964
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 196220
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 196476
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 196732
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 196988
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 197244
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 197500
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 197756
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 198012
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 198268
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 198524
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 198780
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 199036
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 199292
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 199548
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 199804
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 200060
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 200316
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 200572
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 200828
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 201084
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 201340
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 201596
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 201852
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 202108
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 202364
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 202620
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 202876
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 203132
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 203388
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 203644
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 203900
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 204156
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 204412
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 204668
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 204924
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 205180
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 205436
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 205692
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 205948
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 206204
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 206460
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 206716
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 206972
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 207228
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 207484
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 207740
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 207996
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 208252
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 208508
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 208764
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 209020
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 209276
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 209532
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 209788
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 210044
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 210300
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 210556
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 210812
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 211068
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 211324
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 211580
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 211836
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 212092
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 212348
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 212604
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 212860
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 213116
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 213372
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 213628
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 213884
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 214140
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 214396
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 214652
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 214908
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 215164
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 215420
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 215676
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 215932
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 216188
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 216444
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 216700
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 216956
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 217212
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 217468
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 217724
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 217980
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 218236
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 218492
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 218748
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 219004
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 219260
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 219516
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 219772
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 220028
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 220284
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 220540
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 220796
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 221052
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 221308
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 221564
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 221820
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 222076
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 222332
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 222588
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 222844
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 223100
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 223356
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 223612
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 223868
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 224124
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 224380
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 224636
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 224892
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 225148
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 225404
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 225660
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 225916
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 226172
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 226428
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 226684
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 226940
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 227196
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 227452
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 227708
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 227964
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 228220
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 228476
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 228732
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 228988
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 229244
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 229500
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 229756
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 230012
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 230268
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 230524
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 230780
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 231036
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 231292
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 231548
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 231804
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 232060
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 232316
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 232572
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 232828
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 233084
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 233340
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 233596
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 233852
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 234108
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 234364
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 234620
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 234876
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 235132
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 235388
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 235644
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 235900
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 236156
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 236412
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 236668
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 236924
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 237180
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 237436
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 237692
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 237948
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 238204
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 238460
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 238716
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 238972
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 239228
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 239484
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 239740
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 239996
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 240252
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 240508
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 240764
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 241020
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 241276
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 241532
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 241788
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 242044
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 242300
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 242556
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 242812
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 243068
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 243324
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 243580
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 243836
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 244092
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 244348
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 244604
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 244860
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 245116
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 245372
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 245628
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 245884
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 246140
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 246396
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 246652
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 246908
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 247164
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 247420
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 247676
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 247932
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 248188
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 248444
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 248700
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 248956
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 249212
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 249468
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 249724
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 249980
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 250236
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 250492
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 250748
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 251004
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 251260
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 251516
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 251772
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 252028
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 252284
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 252540
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 252796
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 253052
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 253308
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 253564
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 253820
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 254076
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 254332
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 254588
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 254844
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 255100
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 255356
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 255612
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 255868
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 256124
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 256380
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 256636
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 256892
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 257148
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 257404
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 257660
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 257916
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 258172
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 258428
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 258684
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 258940
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 259196
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 259452
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 259708
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 259964
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 260220
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 260476
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 260732
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 260988
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 261244
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 261500
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 261756
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 262012
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 262268
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 262524
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 262780
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 263036
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 263292
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 263548
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 263804
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 264060
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 264316
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 264572
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 264828
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 265084
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 265340
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 265596
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 265852
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 266108
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 266364
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 266620
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 266876
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 267132
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 267388
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 267644
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 267900
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 268156
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 268412
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 268668
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 268924
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 269180
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 269436
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 269692
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 269948
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 270204
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 270460
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 270716
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 270972
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 271228
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 271484
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 271740
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 271996
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 272252
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 272508
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 272764
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 273020
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 273276
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 273532
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 273788
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 274044
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 274300
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 274556
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 274812
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 275068
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 275324
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 275580
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 275836
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 276092
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 276348
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 276604
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 276860
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 277116
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 277372
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 277628
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 277884
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 278140
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 278396
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 278652
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 278908
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 279164
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 279420
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 279676
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 279932
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 280188
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 280444
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 280700
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 280956
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 281212
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 281468
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 281724
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 281980
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 282236
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 282492
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 282748
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 283004
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 283260
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 283516
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 283772
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 284028
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 284284
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 284540
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 284796
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 285052
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 285308
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 285564
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 285820
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 286076
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 286332
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 286588
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 286844
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 287100
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 287356
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 287612
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 287868
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 288124
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 288380
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 288636
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 288892
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 289148
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 289404
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 289660
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 289916
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 290172
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 290428
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 290684
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 290940
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 291196
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 291452
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 291708
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 291964
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 292220
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 292476
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 292732
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 292988
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 293244
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 293500
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 293756
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 294012
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 294268
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 294524
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 294780
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 295036
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 295292
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 295548
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 295804
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 296060
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 296316
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 296572
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 296828
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 297084
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 297340
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 297596
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 297852
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 298108
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 298364
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 298620
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 298876
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 299132
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 299388
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 299644
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 299900
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 300156
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 300412
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 300668
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 300924
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 301180
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 301436
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 301692
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 301948
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 302204
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 302460
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 302716
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 302972
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 303228
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 303484
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 303740
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 303996
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 304252
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 304508
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 304764
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 305020
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 305276
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 305532
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 305788
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 306044
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 306300
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 306556
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 306812
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 307068
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 307324
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 307580
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 307836
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 308092
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 308348
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 308604
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 308860
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 309116
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 256
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 309372
+2021-07-13 21:27:53 [READ] /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg 16
+2021-07-13 21:27:53 [STORAGE SIZE] Actual size: 309388
+2021-07-13 21:27:53 [REQUEST] 99034880 handled request
+2021-07-13 21:27:53 [NEW REQUEST] Client 9
+2021-07-13 21:27:53 [CLOSE] 9 closed successfully /home/dilux/SOL/SOL-Progetto2021/TestFolder/img/NewYorkCity.jpg
+2021-07-13 21:27:53 [REQUEST] 99034880 handled request
+2021-07-13 21:27:53 [NEW REQUEST] Client 9
+2021-07-13 21:27:53 [REQUEST] 99034880 handled request
+2021-07-13 21:27:53 [CONNECTION] Closed connection
+2021-07-13 21:27:53 [CONNECTION] Actual connections: 0
+2021-07-13 21:27:53 [CONNECTION] New connection
+2021-07-13 21:27:53 [CONNECTION] Actual connections: 1
+2021-07-13 21:27:53 [NEW REQUEST] Client 9
+2021-07-13 21:27:53 [REQUEST] 99034880 handled request
+2021-07-13 21:27:53 [NEW REQUEST] Client 9
+2021-07-13 21:27:53 [OPEN_LOCK] /home/dilux/SOL/SOL-Progetto2021/TestFolder/Canzoni/LaVieEnRose.txt
+2021-07-13 21:27:53 [REQUEST] 99034880 handled request
+2021-07-13 21:27:54 [NEW REQUEST] Client 9
+2021-07-13 21:27:54 [STORAGE SIZE] Actual size: 308996
+2021-07-13 21:27:54 [STORAGE FILE] Actual file: 5
+2021-07-13 21:27:54 [REQUEST] 99034880 handled request
+2021-07-13 21:27:54 [NEW REQUEST] Client 9
+2021-07-13 21:27:54 [REQUEST] 99034880 handled request
+2021-07-13 21:27:54 [CONNECTION] Closed connection
+2021-07-13 21:27:54 [CONNECTION] Actual connections: 0
+2021-07-13 21:27:54 [SIGNAL] Catched signal: 1
+2021-07-13 21:27:54 [STORAGE] System terminated successfully

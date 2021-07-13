@@ -7,6 +7,8 @@
 #include <sys/un.h>
 #include <sys/select.h>
 #include <unistd.h>
+#include <time.h>
+#include <stdarg.h>
 
 #include "../includes/util.h"
 #include "../includes/comunication.h"
@@ -61,7 +63,8 @@ int stopRequests = 0;
 int stopConnections = 0;
 
 char* socketName;
-char* logFile;
+FILE *log_fd = NULL;
+static pthread_mutex_t mutex_log = PTHREAD_MUTEX_INITIALIZER;
 
 //Set delle connessioni ancora attive
 fd_set setConnected;
@@ -83,6 +86,23 @@ file_storage_t* initializeStorage(file_storage_t* storage) {
     return storage;
 }
 
+void printLog(const char* logString, ...) {
+    if (log_fd != NULL) {
+        va_list argLst;
+        va_start(argLst, logString);
+
+        time_t t = time(NULL);
+        struct tm tm = *localtime(&t);
+
+        Pthread_mutex_lock(&mutex_log);
+        fprintf(log_fd, "%d-%02d-%02d %02d:%02d:%02d ", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+
+        vfprintf(log_fd, logString, argLst);
+        Pthread_mutex_unlock(&mutex_log);
+        va_end(argLst);
+    }
+}
+
 //Libera la memoria di un file
 void freeFile(void* f) {
     file_t *file = (file_t*) f;
@@ -96,6 +116,9 @@ void freeFile(void* f) {
 
 int FIFO_ReplacementPolicy(long space, int numFiles, int fd, char* pathInvoked) {
     int pathInv = 0;
+
+    //Scrittura sul file di log
+    printLog("[REPLACEMENT POLICY] New execution\n");
 
     Pthread_mutex_lock(&mutex_storage);
     Pthread_mutex_lock(&mutex_filehistory);
@@ -115,7 +138,7 @@ int FIFO_ReplacementPolicy(long space, int numFiles, int fd, char* pathInvoked) 
 
         file_t* oldFile = (file_t*) icl_hash_find(fileStorage->files, oldFile_name);
         if (oldFile == NULL) { //Inconsistenza, il file storage non è più affidabile
-            fprintf(stderr, "Inconsistenza tra lo storage e la cronologia dei file\n");
+            printLog("[REPLACEMENT POLICY] Inconsistency between storage and fileHistory\n");
             exit(EXIT_FAILURE);
         }
 
@@ -143,6 +166,8 @@ int FIFO_ReplacementPolicy(long space, int numFiles, int fd, char* pathInvoked) 
             SYSCALL_ONE_RETURN_F(writen(fd, oldFile->path, len * sizeof(char)), "writen", Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
             SYSCALL_ONE_RETURN_F(writen(fd, &(oldFile->byteDim), sizeof(size_t)), "writen", Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
             SYSCALL_ONE_RETURN_F(writen(fd, oldFile->data, oldFile->byteDim * sizeof(char)), "writen", Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
+
+            printLog("[WRITE] %s %d\n", oldFile->path, oldFile->byteDim);
         }
 
         //Aggiorna le informazioni del file storage
@@ -151,6 +176,11 @@ int FIFO_ReplacementPolicy(long space, int numFiles, int fd, char* pathInvoked) 
         fileStorage->actual_space -= oldFile->byteDim;
         fileStorage->actual_numFile--;
 
+        //Scrittura sul file di log
+        printLog("[REPLACEMENT POLICY] File deleted: %s\n", oldFile_name);
+        printLog("[STORAGE SIZE] Actual size: %ld\n", fileStorage->actual_space);
+        printLog("[STORAGE FILE] Actual file: %d\n", fileStorage->actual_numFile);
+
         //Elimina il file dallo storage
         if (icl_hash_delete(fileStorage->files, oldFile_name, NULL, freeFile) == -1) exit(EXIT_FAILURE);
     }
@@ -158,11 +188,6 @@ int FIFO_ReplacementPolicy(long space, int numFiles, int fd, char* pathInvoked) 
     Pthread_mutex_unlock(&mutex_storage);
 
     return pathInv;
-}
-
-void freeGlobal(){
-    if (socketName != NULL) free(socketName);
-    if (logFile != NULL) free(logFile);
 }
 
 //Gestione dei segnali
@@ -184,6 +209,9 @@ void* sighandler(void* arg){
         case SIGQUIT: stopRequests = 1;
         case SIGHUP: stopConnections = 1; break;
     }
+
+    //Scrivo sul file di log
+    printLog("[SIGNAL] Catched signal: %d\n", sig);
 
     close(sigPipe);
 
@@ -349,6 +377,7 @@ void checkLock(file_t *f) {
             free(lock_fd);
             res = 0;
             writen(f->lock, &res, sizeof(int));
+            printLog("[LOCK] %d got %s\n", f->lock, f->path);
         }
     }
 
@@ -388,7 +417,7 @@ int createFile(int fd, int len, char* path) {
         int resPolicy;
         if ((resPolicy = FIFO_ReplacementPolicy(fileStorage->actual_space + newFile->byteDim, fileStorage->actual_numFile + 1, -1, newFile->path)) != 0) {
             if (resPolicy == -1) {
-                fprintf(stderr, "Errore nell'algoritmo di esecuzione\n");
+                printLog("[REPLACEMENT POLICY] Error\n");
                 res = ENOMEM;
             } else {
                 res = ECANCELED;
@@ -416,18 +445,25 @@ int createFile(int fd, int len, char* path) {
         return -1;
     }
 
+    //Scrive sul file di log
+    printLog("[CREATE FILE] Created file: %s\n", newFile->path);
+
     //Aggiorna le informazioni del file storage
     fileStorage->actual_space += newFile->byteDim;
     fileStorage->actual_numFile++;
     if (fileStorage->actual_space > fileStorage->max_space_reached) fileStorage->max_space_reached = fileStorage->actual_space;
     if (fileStorage->actual_numFile > fileStorage->max_file_reached) fileStorage->max_file_reached = fileStorage->actual_numFile;
 
+    //Scrive sul file di log
+    printLog("[STORAGE SIZE] Actual size: %ld\n", fileStorage->actual_space);
+    printLog("[STORAGE FILE] Actual file: %d\n", fileStorage->actual_numFile);
+
     Pthread_mutex_unlock(&mutex_storage);
 
     //Aggiunge il path del nuovo file in coda a fileHistory
     Pthread_mutex_lock(&mutex_filehistory);
     if (list_append(fileHistory, newFile->path) == -1) {
-        perror("list_append");
+        printLog("[CREATE FILE] Error in list_append\n");
         icl_hash_delete(fileStorage->files, newFile->path, NULL, freeFile);
         res = ECANCELED;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
@@ -495,6 +531,8 @@ int openFile(int fd) {
     free(path);
     if (f == NULL) { //File non presente all'interno dello storage
         Pthread_mutex_unlock(&mutex_storage);
+        
+        printLog("[OPEN FILE] File not found\n");
         res = ENOENT;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return -1;
@@ -507,6 +545,8 @@ int openFile(int fd) {
     
     //Controlla se il file è stato cancellato
     if (f->isDeleted) {
+        printLog("[OPEN FILE] File was deleted\n");
+
         res = ENOENT;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return -1;
@@ -521,6 +561,7 @@ int openFile(int fd) {
         f->isLocked = 0;
         Pthread_mutex_unlock(&(f->mutex_file));
 
+        printLog("[OPEN FILE] File already opened by %d\n", fd);
         res = 0;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return 0;
@@ -537,6 +578,7 @@ int openFile(int fd) {
         f->isLocked = 0;
         Pthread_mutex_unlock(&(f->mutex_file));
 
+        printLog("[OPEN FILE] Failed to add %d in the clients list of %s\n", fd, f->path);
         res = ECANCELED;
         free(newClient);
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
@@ -544,6 +586,8 @@ int openFile(int fd) {
     }
 
     if ((flag & O_LOCK) == O_LOCK){ //Flag O_LOCK specificato, verifica disponibilità
+        printLog("[OPEN_LOCK] %s\n", f->path);
+
         if (f->lock != fd && f->lock != 0) { //File lockato ma non dal client
             checkLock(f);
 
@@ -605,6 +649,8 @@ int closeConnection(int fd) {
         free(path);
         if (f == NULL) { //File non presente nello storage
             Pthread_mutex_unlock(&mutex_storage);
+
+            printLog("[CLOSE CONNECTION] File not found\n");
             res = ENOENT;
             SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
             return -1;
@@ -617,6 +663,7 @@ int closeConnection(int fd) {
 
         //Controlla se il file è stato cancellato
         if (f->isDeleted) {
+            printLog("[CLOSE CONNECTION] File was deleted\n");
             res = ENOENT;
             SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
             return -1;
@@ -637,6 +684,7 @@ int closeConnection(int fd) {
                 res = 0;
                 //Invia il risultato al client in attesa di acquisire la lock
                 SYSCALL_ONE_RETURN_F(writen(f->lock, &res, sizeof(int)), "writen", Pthread_mutex_lock(&(f->mutex_file)); f->isLocked = 0; pthread_cond_signal(&(f->wait_lock)); Pthread_mutex_unlock(&(f->mutex_file)))
+                printLog("[LOCK] %d got %s\n", f->lock, f->path);
             }
         }
 
@@ -674,6 +722,8 @@ int readFile(int fd) {
     free(path);
     if (f == NULL) { //File non presente nello storage
         Pthread_mutex_unlock(&mutex_storage);
+
+        printLog("[READ FILE] File not found\n");
         res = ENOENT;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return -1;
@@ -686,6 +736,7 @@ int readFile(int fd) {
 
     //Controlla se il file è stato cancellato
     if (f->isDeleted) {
+        printLog("[READ FILE] File was deleted\n");
         res = ENOENT;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return -1;
@@ -700,6 +751,7 @@ int readFile(int fd) {
         f->isLocked = 0;
         Pthread_mutex_unlock(&(f->mutex_file));
 
+        printLog("[READ FILE] %d didn't open %s\n", fd, f->path);
         res = EACCES;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return -1;
@@ -714,6 +766,7 @@ int readFile(int fd) {
             f->isLocked = 0;
             Pthread_mutex_unlock(&(f->mutex_file));
 
+            printLog("[READ FILE] %s is locked\n", f->path);
             res = EPERM;
             SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
             return -1;
@@ -727,7 +780,8 @@ int readFile(int fd) {
     //Invia al client la dimensione e il contenuto del file
     SYSCALL_ONE_RETURN_F(writen(fd, &(f->byteDim), sizeof(size_t)), "writen", Pthread_mutex_lock(&(f->mutex_file)); f->isLocked = 0; Pthread_mutex_unlock(&(f->mutex_file)))
     SYSCALL_ONE_RETURN_F(writen(fd, f->data, f->byteDim * sizeof(char)), "writen", Pthread_mutex_lock(&(f->mutex_file)); f->isLocked = 0; Pthread_mutex_unlock(&(f->mutex_file)))
-    
+    printLog("[WRITE] %s %d\n", f->path, f->byteDim);
+
     Pthread_mutex_lock(&(f->mutex_file));
     f->isLocked = 0;
     pthread_cond_signal(&(f->wait_lock));
@@ -763,7 +817,7 @@ int readnFile(int fd) {
         //Cerca il file nello storage
         file_t *f = icl_hash_find(fileStorage->files, path);
         if (f == NULL) {
-            fprintf(stderr, "Errore critico: Inconsistenza tra storage e fileHistory\n");
+            printLog("[READNFILE] Critical error: Inconsistency between storage and fileHistory\n");
             exit(EXIT_FAILURE);
         }
 
@@ -774,6 +828,7 @@ int readnFile(int fd) {
 
         //Controlla se il file è stato cancellato
         if (f->isDeleted) {
+            printLog("[READNFILE] File was deleted\n");
             res = ENOENT;
             SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
             return -1;
@@ -790,6 +845,7 @@ int readnFile(int fd) {
         SYSCALL_ONE_RETURN_F(writen(fd, path, len * sizeof(char)), "writen", Pthread_mutex_lock(&(f->mutex_file)); f->isLocked = 0; Pthread_mutex_unlock(&(f->mutex_file)); Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
         SYSCALL_ONE_RETURN_F(writen(fd, &(f->byteDim), sizeof(size_t)), "writen", Pthread_mutex_lock(&(f->mutex_file)); f->isLocked = 0; Pthread_mutex_unlock(&(f->mutex_file)); Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
         SYSCALL_ONE_RETURN_F(writen(fd, f->data, f->byteDim * sizeof(char)), "writen", Pthread_mutex_lock(&(f->mutex_file)); f->isLocked = 0; Pthread_mutex_unlock(&(f->mutex_file)); Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
+        printLog("[WRITE] %s %d\n", f->path, f->byteDim);
 
         Pthread_mutex_lock(&(f->mutex_file));
         f->isLocked = 0;
@@ -831,7 +887,8 @@ int writeFile(int fd) {
     free(path);
     if (f == NULL) { //File non presente nello storage
         Pthread_mutex_unlock(&mutex_storage);
-        fprintf(stderr, "File non presente nello storage\n");
+        
+        printLog("[WRITEFILE] File not found\n");
         res = ENOENT;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return -1;
@@ -845,6 +902,7 @@ int writeFile(int fd) {
 
     //Controlla se il file è stato cancellato
     if (f->isDeleted) {
+        printLog("[WRITEFILE] File was deleted\n");
         res = ENOENT;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return -1;
@@ -858,7 +916,8 @@ int writeFile(int fd) {
         Pthread_mutex_lock(&(f->mutex_file));
         f->isLocked = 0;
         Pthread_mutex_unlock(&(f->mutex_file));
-        fprintf(stderr, "File non aperto dal client\n");
+        
+        printLog("[WRITEFILE] %d didn't open %s\n", fd, f->path);
         res = EACCES;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return -1;
@@ -872,6 +931,8 @@ int writeFile(int fd) {
             Pthread_mutex_lock(&(f->mutex_file));
             f->isLocked = 0;
             Pthread_mutex_unlock(&(f->mutex_file));
+
+            printLog("[WRITEFILE] %s is locked\n", f->path);
             res = EPERM;
             SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
             return -1;
@@ -895,6 +956,7 @@ int writeFile(int fd) {
             f->isLocked = 0;
             Pthread_mutex_unlock(&(f->mutex_file));
 
+            printLog("[WRITEFILE] %s is too big for the storage\n", f->path);
             if (f->data != NULL) free(f->data);
             free(buf);
             res = EFBIG;
@@ -907,7 +969,7 @@ int writeFile(int fd) {
             int resPolicy;
             if ((resPolicy = FIFO_ReplacementPolicy(fileStorage->actual_space + dim, fileStorage->actual_numFile, fd, f->path)) != 0) {
                 if (resPolicy == -1) {
-                    fprintf(stderr, "Errore nell'esecuzione dell'algoritmo di sostituzione\n");
+                    printLog("[REPLACEMENT POLICY] Error\n");
                     res = ENOMEM;
                 } else { //È stato rimosso il file da scrivere
                     res = ECANCELED;
@@ -934,11 +996,14 @@ int writeFile(int fd) {
             free(buf);
         }
         f->byteDim += dim;
+        printLog("[READ] %s %d\n", f->path, dim);
 
         //Aggiorna le dimensioni dello storage
         Pthread_mutex_lock(&mutex_storage);
         fileStorage->actual_space += dim;
         if (fileStorage->actual_space > fileStorage->max_space_reached) fileStorage->max_space_reached = fileStorage->actual_space;
+        
+        printLog("[STORAGE SIZE] Actual size: %ld\n", fileStorage->actual_space);
         Pthread_mutex_unlock(&mutex_storage);
 
         //Lettura della lunghezza del prossimo buffer
@@ -977,7 +1042,8 @@ int appendFile(int fd) {
     free(path);
     if (f == NULL) { //File non presente all'interno dello storage
         Pthread_mutex_unlock(&mutex_storage);
-        fprintf(stderr, "File non presente nello storage\n");
+        
+        printLog("[APPEND FILE] File not found\n");
         res = ENOENT;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return -1;
@@ -990,6 +1056,7 @@ int appendFile(int fd) {
 
     //Controlla se il file è stato cancellato
     if (f->isDeleted) {
+        printLog("[APPEND FILE] File was deleted\n");
         res = ENOENT;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return -1;
@@ -1000,10 +1067,11 @@ int appendFile(int fd) {
     
     //Controlla che il client abbia aperto quel file
     if (list_find(f->clients, &fd) == NULL) {
-        fprintf(stderr, "File non aperto dal client\n");
         Pthread_mutex_lock(&(f->mutex_file));
         f->isLocked = 0;
         Pthread_mutex_unlock(&(f->mutex_file));
+
+        printLog("[APPEND FILE] %d didn't open %s\n", fd, f->path);
         res = EACCES;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return -1;
@@ -1017,6 +1085,8 @@ int appendFile(int fd) {
             Pthread_mutex_lock(&(f->mutex_file));
             f->isLocked = 0;
             Pthread_mutex_unlock(&(f->mutex_file));
+
+            printLog("[APPEND FILE] %s is locked\n", f->path);
             res = EPERM;
             SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
             return -1;
@@ -1033,12 +1103,16 @@ int appendFile(int fd) {
     //Lettura del buffer
     SYSCALL_ONE_RETURN_F(readn(fd, newData, fileDim * sizeof(char)), "readn", free(newData); Pthread_mutex_lock(&(f->mutex_file)); f->isLocked = 0; Pthread_mutex_unlock(&(f->mutex_file)); res = EINTR; writen(fd, &res, sizeof(int)))
 
+    printLog("[READ] %s %ld\n", f->path, fileDim);
+
     //Se la quantità da scrivere è più grande della capacità massima dello storage non potrà mai essere inserito nel server
     //Oppure se la quantità complessiva del file supera la capacità massima dello storage non inserisce i nuovi dati nel file
     if (fileDim > fileStorage->max_space || f->byteDim + fileDim > fileStorage->max_space) {
         Pthread_mutex_lock(&(f->mutex_file));
         f->isLocked = 0;
         Pthread_mutex_unlock(&(f->mutex_file));
+
+        printLog("[APPEND FILE] %s is too big for the storage\n", f->path);
         free(newData);
         res = EFBIG;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
@@ -1050,7 +1124,7 @@ int appendFile(int fd) {
         int resPolicy;
         if ((resPolicy = FIFO_ReplacementPolicy(fileStorage->actual_space + fileDim, fileStorage->actual_numFile, fd, f->path)) != 0) {
             if (resPolicy == -1) {
-                fprintf(stderr, "Errore nell'esecuzione dell'algoritmo di sostituzione\n");
+                printLog("[REPLACEMENT POLICY] Error\n");
                 res = ENOMEM;
             } else { //È stato designato come vittima il file attualmente in uso
                 res = ECANCELED;
@@ -1086,6 +1160,7 @@ int appendFile(int fd) {
     Pthread_mutex_lock(&mutex_storage);
     fileStorage->actual_space += fileDim;
     if (fileStorage->actual_space > fileStorage->max_space_reached) fileStorage->max_space_reached = fileStorage->actual_space;
+    printLog("[STORAGE SIZE] Actual size: %ld\n", fileStorage->actual_space);
     Pthread_mutex_unlock(&mutex_storage);
 
     //Invia esito positivo al client
@@ -1115,7 +1190,8 @@ int closeFile(int fd) {
 
     if (file == NULL) { //File non presente nello storage
         Pthread_mutex_unlock(&mutex_storage);
-        fprintf(stderr, "File non presente nello storage\n");
+        
+        printLog("[CLOSE FILE] File not found\n");
         res = ENOENT;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return -1;
@@ -1128,6 +1204,7 @@ int closeFile(int fd) {
 
     //Controlla se il file è stato cancellato
     if (file->isDeleted) {
+        printLog("[CLOSE FILE] File was deleted\n");
         res = ENOENT;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return -1;
@@ -1146,11 +1223,13 @@ int closeFile(int fd) {
             free(lock_fd);
             res = 0;
             SYSCALL_ONE_RETURN_F(writen(file->lock, &res, sizeof(int)), "writen", Pthread_mutex_lock(&(file->mutex_file)); file->isLocked = 0; Pthread_mutex_unlock(&(file->mutex_file)))
+            printLog("[LOCK] %d got %s \n", file->lock, file->path);
         }
     }
 
     //Elimina il client dalla lista dei client che hanno aperto il file
     if (list_delete(file->clients, &fd, free) == -1) {
+        printLog("[CLOSE FILE] Error deleting %d from %s client list\n", fd, file->path);
         res = EINVAL;
         SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "writen", Pthread_mutex_lock(&(file->mutex_file)); file->isLocked = 0; Pthread_mutex_unlock(&(file->mutex_file)))
         return -1;
@@ -1164,6 +1243,7 @@ int closeFile(int fd) {
     //Invia esito positivo al client
     res = 0;
     SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
+    printLog("[CLOSE] %d closed successfully %s\n", fd, file->path);
 
     return 0;
 }
@@ -1189,7 +1269,7 @@ int removeFile(int fd) {
         Pthread_mutex_unlock(&mutex_filehistory);
         Pthread_mutex_unlock(&mutex_storage);
 
-        fprintf(stderr, "File non presente nello storage\n");
+        printLog("[REMOVE FILE] File not found\n");
         free(path);
         res = ENOENT;
         SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "writen", Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
@@ -1204,6 +1284,7 @@ int removeFile(int fd) {
     //Controlla se il file è stato cancellato
     if (file->isDeleted) {
         free(path);
+        printLog("[REMOVE FILE] File was deleted\n");
         res = ENOENT;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return -1;
@@ -1221,6 +1302,7 @@ int removeFile(int fd) {
         Pthread_mutex_unlock(&mutex_filehistory);
         Pthread_mutex_unlock(&mutex_storage); 
         free(path);
+        printLog("[REMOVE FILE] %d didn't lock %s\n", fd, file->path);
         res = EPERM;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return -1;
@@ -1240,6 +1322,7 @@ int removeFile(int fd) {
     //Rimuove path da fileHistory
     if (list_delete(fileHistory, path, NULL) == -1) { //Non libero la memoria perché verrà liberata dalla icl_hash_delete
         free(path);
+        printLog("[REMOVE FILE] Failed to delete %s from fileHistory\n", file->path);
         res = EINVAL;
         SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "writen", Pthread_mutex_lock(&(file->mutex_file)); file->isLocked = 0; Pthread_mutex_unlock(&(file->mutex_file)); Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
         return -1;
@@ -1250,6 +1333,7 @@ int removeFile(int fd) {
     //Rimuove il file dallo storage
     if (icl_hash_delete(fileStorage->files, path, NULL, freeFile) == -1) {
         free(path);
+        printLog("[REMOVE FILE] Failed to delete %s from storage\n", file->path);
         res = EINVAL;
         SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "writen", Pthread_mutex_lock(&(file->mutex_file)); file->isLocked = 0; Pthread_mutex_unlock(&(file->mutex_file)); Pthread_mutex_unlock(&mutex_filehistory); Pthread_mutex_unlock(&mutex_storage))
         return -1;
@@ -1258,6 +1342,8 @@ int removeFile(int fd) {
     //Aggiorna le informazioni dello storage
     fileStorage->actual_numFile--;
     fileStorage->actual_space -= byteDim;
+    printLog("[STORAGE SIZE] Actual size: %ld\n", fileStorage->actual_space);
+    printLog("[STORAGE FILE] Actual file: %d\n", fileStorage->actual_numFile);
 
     free(path);
     Pthread_mutex_unlock(&mutex_filehistory);
@@ -1289,7 +1375,7 @@ int lock_file(int fd) {
     free(path);
     if (f == NULL) { //File non presente nello storage
         Pthread_mutex_unlock(&mutex_storage);
-        fprintf(stderr, "File non presente nello storage\n");
+        printLog("[LOCK FILE] File not found\n");
 
         res = ENOENT;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
@@ -1303,6 +1389,7 @@ int lock_file(int fd) {
 
     //Controlla se il file è stato cancellato
     if (f->isDeleted) {
+        printLog("[LOCK FILE] File was deleted\n");
         res = ENOENT;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return -1;
@@ -1317,7 +1404,7 @@ int lock_file(int fd) {
         f->isLocked = 0;
         Pthread_mutex_unlock(&(f->mutex_file));
 
-        fprintf(stderr, "File non aperto dal client\n");
+        printLog("[LOCK FILE] %d didn't lock %s\n", fd, f->path);
         res = EACCES;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return -1;
@@ -1330,12 +1417,14 @@ int lock_file(int fd) {
         //Invia esito positivo al client
         res = 0;
         SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "writen", Pthread_mutex_lock(&(f->mutex_file)); f->isLocked = 0; Pthread_mutex_unlock(&(f->mutex_file)))
+        printLog("[LOCK] %d got %s\n", fd, f->path);
     } else {
         int *lock_fd = malloc(sizeof(int));
         EQ_NULL_EXIT(lock_fd, "malloc in lock_file")
         *lock_fd = fd;
         //Aggiunge il client alla lista dei client che stanno aspettando di ottenere una lock
         SYSCALL_ONE_RETURN_F(list_append(f->pendingLock, lock_fd), "list_append in lock_file", Pthread_mutex_lock(&(f->mutex_file)); f->isLocked = 0; Pthread_mutex_unlock(&(f->mutex_file)); res = ECANCELED; SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen"))
+        printLog("[LOCK FILE] %d added to %s pending list\n", fd, f->path);
     }
 
     Pthread_mutex_lock(&(f->mutex_file));
@@ -1365,7 +1454,7 @@ int unlock_file(int fd) {
     free(path);
     if (f == NULL) { //File non presente nello storage
         Pthread_mutex_unlock(&mutex_storage);
-        fprintf(stderr, "File non presente nello storage\n");
+        printLog("[UNLOCK FILE] File not found\n");
 
         res = ENOENT;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
@@ -1379,6 +1468,7 @@ int unlock_file(int fd) {
 
     //Controlla se il file è stato cancellato
     if (f->isDeleted) {
+        printLog("[UNLOCK FILE] File was deleted\n");
         res = ENOENT;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
         return -1;
@@ -1393,7 +1483,7 @@ int unlock_file(int fd) {
         f->isLocked = 0;
         Pthread_mutex_unlock(&(f->mutex_file));
 
-        fprintf(stderr, "File non aperto dal client\n");
+        printLog("[UNLOCK FILE] %d didn't open %s\n", fd, f->path);
         res = EACCES;
         SYSCALL_ONE_RETURN(writen(fd, &res, sizeof(int)), "writen")
     }
@@ -1417,10 +1507,12 @@ int unlock_file(int fd) {
         //Invia esito positivo al client
         res = 0;
         SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "writen", Pthread_mutex_lock(&(f->mutex_file)); f->isLocked = 0; Pthread_mutex_unlock(&(f->mutex_file)))
+        printLog("[UNLOCK] %d unlocked %s\n", fd, f->path);
     } else {
         //Il client non deteneva la lock sul file, gli viene inviato un codice d'errore
         res = EPERM;
         SYSCALL_ONE_RETURN_F(writen(fd, &res, sizeof(int)), "writen", Pthread_mutex_lock(&(f->mutex_file)); f->isLocked = 0; Pthread_mutex_unlock(&(f->mutex_file)))
+        printLog("[UNLOCK FILE] %d hadn't lock on %s\n", fd, f->path);
     }
     
     Pthread_mutex_lock(&(f->mutex_file));
@@ -1484,6 +1576,8 @@ void* workerThread(void* arg) {
             default: {closeFd = 1; break;}
         }
 
+        printLog("[REQUEST] %ld handled request\n", pthread_self());
+
         if (opt == -1 || closeFd) {
             close(fd);
             fd *= -1;
@@ -1509,6 +1603,8 @@ void initializeSocket(int* fd_socket) {
     
     SYSCALL_ONE_EXIT(bind(*fd_socket, (struct sockaddr *) &sa, sizeof(sa)), "bind")
     SYSCALL_ONE_EXIT(listen(*fd_socket, MAXCONN), "listen")
+
+    printLog("[SOCKET] Socket initialized\n");
 }
 
 pthread_t* spawnThread(int W, int *writeEndpoint) {
@@ -1517,6 +1613,7 @@ pthread_t* spawnThread(int W, int *writeEndpoint) {
     for(int i = 0; i < W; i++) {
         int err;
         SYSCALL_NOT_ZERO_EXIT(err, pthread_create(&(tidLst[i]), NULL, workerThread, (void*) writeEndpoint), "pthread_create")
+        printLog("[THREAD] Spawed %ld\n", tidLst[i]);
     }
 
     return tidLst;
@@ -1538,6 +1635,8 @@ void closeConnections(fd_set *set, int max) {
             FD_CLR(i, set);
         }
     }
+
+    printLog("[CONNECTION] Closed all connections\n");
 }
 
 //Controlla se c'è ancora almeno una connessione attiva
@@ -1572,11 +1671,16 @@ int main(int argc, char* argv[]) {
     SYSCALL_NOT_ZERO_EXIT(err, pthread_create(&sighandler_thread, NULL, sighandler, (void*) &signalPipe[1]), "pthread_create")
 
     //Parsing del file di config
+    char* logFile = NULL;
     int numW;
     if (parseFile(argv[1], &numW, &(fileStorage->max_space), &(fileStorage->max_file), &socketName, &logFile) != 0) {
         fprintf(stderr, "Error parsing %s\n", argv[1]);
-        freeGlobal();
         return EXIT_FAILURE;
+    }
+    
+    if (logFile != NULL) {
+        EQ_NULL_EXIT(log_fd = fopen(logFile, "w"), "fopen")
+        free(logFile);
     }
 
     //Creazione pipe per comunicare con i thread worker
@@ -1608,14 +1712,15 @@ int main(int argc, char* argv[]) {
     Pthread_mutex_unlock(&mutex_fdset);
 
     int stillConnected = 1;
-    
+    int actualConnections = 0;
     while(stillConnected) {
         rdset = set;
 
         if (select(fdMax + 1, &rdset, NULL, NULL, NULL) == -1) {
             if (errno == EINTR && sigCaught) break;
             perror("select");
-            freeGlobal();
+            printLog("[CONNECTION] Select fail\n");
+            free(socketName);
             return -1;
         }
 
@@ -1644,6 +1749,13 @@ int main(int argc, char* argv[]) {
                         connectedMax = updateSet(&setConnected, connectedMax);
                         Pthread_mutex_unlock(&mutex_fdset);
                         
+                        //Scrittura sul file di log
+                        printLog("[CONNECTION] Closed connection\n");
+                        Pthread_mutex_lock(&mutex_log);
+                        actualConnections--;
+                        Pthread_mutex_unlock(&mutex_log);
+                        printLog("[CONNECTION] Actual connections: %d\n", actualConnections);
+
                         break;
                     }
 
@@ -1672,8 +1784,14 @@ int main(int argc, char* argv[]) {
                     if (newFd > connectedMax) connectedMax = newFd;
                     Pthread_mutex_unlock(&mutex_fdset);
 
-                    printf("Client connesso\n");
-                    fflush(stdout);
+                    //Scrittura sul file di log
+                    printLog("[CONNECTION] New connection\n");
+
+                    Pthread_mutex_lock(&mutex_log);
+                    actualConnections++;
+                    Pthread_mutex_unlock(&mutex_log);
+                    
+                    printLog("[CONNECTION] Actual connections: %d\n", actualConnections);
                     break;
                 }
 
@@ -1695,6 +1813,9 @@ int main(int argc, char* argv[]) {
                     
                     pthread_cond_signal(&cond_emptyConnections);
                     Pthread_mutex_unlock(&mutex_connections);
+
+                    //Scrittura sul file di log
+                    printLog("[NEW REQUEST] Client %d\n", fd);
 
                     break;
                 }
@@ -1740,6 +1861,7 @@ int main(int argc, char* argv[]) {
     SYSCALL_ONE_EXIT(list_destroy(connection, free), "list_destroy")
     SYSCALL_ONE_EXIT(icl_hash_destroy(fileStorage->files, NULL, freeFile), "icl_hash_destrory")
 
+
     free(fileStorage);
     close(listenSocket);
     close(fdPipe[0]);
@@ -1747,7 +1869,9 @@ int main(int argc, char* argv[]) {
     close(signalPipe[0]);
     close(signalPipe[1]);
     SYSCALL_ONE_EXIT(unlink(socketName), "unlink");
-    freeGlobal();
+    free(socketName);
 
+    printLog("[STORAGE] System terminated successfully\n");
+    if (log_fd != NULL) fclose(log_fd);
     return 0;
 }
