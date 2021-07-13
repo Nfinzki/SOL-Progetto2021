@@ -6,7 +6,8 @@ Una volta scaricato il codice è altamente consigliato effettuare un `make clean
 ## Esecuzione
 Controllare che i file all'interno della cartella script abbiano i permessi di esecuzione. Se così non fosse, utilizzare all'interno della cartella script il comando `chmod +x *`.
 Per eseguire i test digitare da dentro la cartella "SOL-Progetto2021" il comando "make test1" per eseguire il primo test e "make test2" per eseguire il secondo test.
-I file restituiti dal Server saranno presenti nella cartella "tmp"
+I file restituiti dal Server, dopo l'esecuzione dei test, saranno presenti nella cartella "tmp".
+Per eseguire lo script "statistiche.sh" basta specificare il file di log al momento dell'esecuzione.
 ## Funzionalità facoltative implementate
 * `lockFile`
 * `unlockFile`
