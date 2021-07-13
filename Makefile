@@ -6,6 +6,8 @@ TARGETS = ./bin/Server ./bin/Client
 
 .PHONY: all clean cleanall
 
+all: $(TARGETS)
+
 ./bin/Server: ./objs/Server.o ./libs/dataStructures.so
 	$(CC) $(CFLAGS) $(INCLUDES) $< -o $@ -Wl,-rpath,./libs -L ./libs -ldataStructures -lpthread
 
@@ -26,8 +28,6 @@ TARGETS = ./bin/Server ./bin/Client
 
 ./objs/%.o: ./src/%.c
 	$(CC) $(CFLAGS) $< -c -fPIC -o $@
-
-all: $(TARGETS)
 
 clean:
 	rm -f $(TARGETS) tmp/* log/*
