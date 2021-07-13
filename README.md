@@ -11,3 +11,5 @@ I file restituiti dal Server saranno presenti nella cartella "tmp"
 * `lockFile`
 * `unlockFile`
 * flag `-D`
+* log del server su un file
+* script statistiche.sh
