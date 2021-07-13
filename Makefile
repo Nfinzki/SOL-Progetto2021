@@ -30,15 +30,15 @@ TARGETS = ./bin/Server ./bin/Client
 all: $(TARGETS)
 
 clean:
-	rm -f $(TARGETS)
+	rm -f $(TARGETS) tmp/* log/*
 
 cleanall: clean
-	\rm -f objs/*.o *~ libs/*.a libs/*.so tmp/*
+	\rm -f objs/*.o *~ libs/*.a libs/*.so
 
 test1:
-	echo FILE_SPACE 10000 > ./tmp/test1.txt && echo MEM_SPACE 128MB >> ./tmp/test1.txt && echo N_WORKERS 1 >> ./tmp/test1.txt && echo SOCKET_NAME tmp/socket.sk >> ./tmp/test1.txt
+	echo FILE_SPACE 10000 > ./tmp/test1.txt && echo MEM_SPACE 128MB >> ./tmp/test1.txt && echo N_WORKERS 1 >> ./tmp/test1.txt && echo SOCKET_NAME tmp/socket.sk >> ./tmp/test1.txt && echo LOG_FILE log/log.txt >> ./tmp/test1.txt
 	./script/test1.sh
 
 test2:
-	echo FILE_SPACE 10 > ./tmp/test2.txt && echo MEM_SPACE 1MB >> ./tmp/test2.txt && echo N_WORKERS 4 >> ./tmp/test2.txt && echo SOCKET_NAME tmp/socket.sk >> ./tmp/test2.txt
+	echo FILE_SPACE 10 > ./tmp/test2.txt && echo MEM_SPACE 1MB >> ./tmp/test2.txt && echo N_WORKERS 4 >> ./tmp/test2.txt && echo SOCKET_NAME tmp/socket.sk >> ./tmp/test2.txt && echo LOG_FILE log/log2.txt >> ./tmp/test2.txt
 	./script/test2.sh
